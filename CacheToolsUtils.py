@@ -113,6 +113,9 @@ class PrefixedMemCached(PrefixedCache):
         import base64
         return self._prefix + base64.b64encode(str(key).encode('utf-8'))
 
+    def __len__(self):
+        return self._cache.stats()[b'curr_items']
+
 
 class StatsMemCached(MutMapMix, MutableMapping):
     """Cache MemCached-compatible class with key prefix."""
