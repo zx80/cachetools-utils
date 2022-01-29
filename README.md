@@ -126,7 +126,7 @@ This code is public domain.
 
 ## Versions
 
-### 1.1.0 in future
+### 1.1.0 on 2022-01-30
 
 Improved documentation.
 Add `TwoLevelCache`.
