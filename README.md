@@ -3,9 +3,11 @@
 Classes to add key prefix and stats to
 [cachetools](https://pypi.org/project/cachetools/) classes and use
 [redis](https://redis.io/) and
-[memcached](https://memcached.org/) as storage backends.
+[memcached](https://memcached.org/) as storage backends,
+and other utils.
 
-## Usage
+
+## Install
 
 Install with `pip`:
 
@@ -13,7 +15,8 @@ Install with `pip`:
 pip install CacheToolsUtils
 ```
 
-See below.
+See below for example usage.
+
 
 ## Documentation
 
@@ -115,9 +118,11 @@ Wrapper with stats (call `hits()`) and a ttl.
 scache = ctu.StatsRedisCache(pcache)
 ```
 
+
 ## License
 
 This code is public domain.
+
 
 ## Versions
 
