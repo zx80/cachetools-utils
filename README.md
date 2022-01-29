@@ -27,9 +27,9 @@ Add a key prefix.
 ```Python
 import CacheToolsUtils as ctu
 
-base = cachetools.TTLCache(ttl=600)
-foo_cache = ctu.PrefixedCache(base, "foo.")
-bla_cache = ctu.PrefixedCache(base, "bla.")
+ct_base = cachetools.TTLCache(ttl=600)
+foo_cache = ctu.PrefixedCache(ct_base, "foo.")
+bla_cache = ctu.PrefixedCache(ct_base, "bla.")
 
 @cachetools.cached(cache=foo_cache)
 def foo(…):
@@ -51,8 +51,8 @@ Basic wrapper with JSON key encoding.
 ```Python
 import pymemcache as pmc
 
-mcbase = pmc.Client(server="localhost", serde=ctu.JsonSerde())
-cache = ctu.MemCached(mcbase)
+mc_base = pmc.Client(server="localhost", serde=ctu.JsonSerde())
+cache = ctu.MemCached(mc_base)
 
 @cachetools.cached(cache=cache)
 def poc(…):
@@ -63,12 +63,16 @@ def poc(…):
 Wrapper with a prefix.
 
 ```Python
-pcache = ctu.PrefixedMemCached(mcbase, prefix="pic.")
+pcache = ctu.PrefixedMemCached(mc_base, prefix="pic.")
 ```
 
 ### StatsMemCached
 
 Wrapper with stats actually taken from the MemCached server.
+
+```Python
+scache = ctu.StatsMemCached(mc_base)
+```
 
 ### RedisCache
 
@@ -85,15 +89,27 @@ cache = ctu.RedisCache(rd_base, ttl=60)
 
 Wrapper with a prefix and a ttl.
 
+```Python
+pcache = ctu.PrefixedRedisCache(rd_base, "pac.", ttl=3600)
+```
+
 ### StatsRedisCache
 
 Wrapper with stats (call `hits()`) and a ttl.
+
+```Python
+scache = ctu.StatsRedisCache(pcache)
+```
 
 ## License
 
 This code is public domain.
 
 ## Versions
+
+### 1.1.0 in future
+
+Improved documentation.
 
 ### 1.0.0 on 2022-01-29
 
@@ -107,5 +123,5 @@ Initial version extracted from another project.
 
 ## TODO
 
-- improve documentation
+- improve documentation further.
 - add a `close`?
