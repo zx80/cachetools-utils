@@ -27,7 +27,7 @@ Add a key prefix.
 ```Python
 import CacheToolsUtils as ctu
 
-ct_base = cachetools.TTLCache(ttl=600)
+ct_base = cachetools.TTLCache(maxsize=1048576, ttl=600)
 foo_cache = ctu.PrefixedCache(ct_base, "foo.")
 bla_cache = ctu.PrefixedCache(ct_base, "bla.")
 
@@ -43,6 +43,10 @@ def bla(…):
 ### StatsCache
 
 Keep stats, cache hit rate shown with `hits()`.
+
+```Python
+scache = StatsCache(cache)
+```
 
 ### TwoLevelCache
 
