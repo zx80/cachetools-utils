@@ -98,3 +98,4 @@ Initial version extracted from another project.
 - improve documentation
 - add `__version__`
 - add a `close`?
+- test with `flask-simple-auth`
