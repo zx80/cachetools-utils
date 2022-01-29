@@ -44,6 +44,16 @@ def bla(…):
 
 Keep stats, cache hit rate shown with `hits()`.
 
+### TwoLevelCache
+
+Two-level cache, for instance a local in-memory cachetools cache for the first
+level, and a larger shared redis or memcached distributed cache for the second
+level.
+
+```Python
+cache = TwoLevelCache(TTLCache(…), RedisCache(…))
+```
+
 ### MemCached
 
 Basic wrapper with JSON key encoding.
@@ -125,4 +135,3 @@ Initial version extracted from another project.
 
 - improve documentation further.
 - add a `close`?
-- cache stacking?

@@ -98,6 +98,36 @@ class StatsCache(MutMapMix, MutableMapping):
         return self._cache.clear()
 
 
+class TwoLevelCache(MutMapMix, MutableMapping):
+    """Two-Level Cache class for CacheTools."""
+
+    def __init__(self, cache: MutableMapping, cache2: MutableMapping):
+        self._cache = cache
+        self._cache2 = cache2
+
+    def __getitem__(self, key):
+        try:
+            return self._cache.__getitem__(key)
+        except KeyError:
+            val = self._cache2.__getitem__(key)
+            self._cache.__setitem__(key, val)
+            return val
+
+    def __setitem__(self, key, val):
+        self._cache2.__setitem__(key, val)
+        return self._cache.__setitem__(key, val)
+
+    def __delitem__(self, key):
+        try:
+            self._cache2.__delitem__(self, key)
+        except KeyError:
+            pass
+        return self._cache.__delitem__(self, key)
+
+    def clear(self):
+        return self._cache.clear()
+
+
 #
 # MEMCACHED
 #

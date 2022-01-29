@@ -141,3 +141,33 @@ def test_stacked_redis():
     run_cached(c3)
     assert len(c3) >= 50
     assert c2.hits() > 0.0
+
+def test_two_level_small():
+    # front cache is too small, always fallback
+    c0 = ct.TTLCache(100, ttl=60)
+    c1 = ct.LFUCache(10)
+    c0s = ctu.StatsCache(c0)
+    c1s = ctu.StatsCache(c1)
+    c2 = ctu.TwoLevelCache(c1s, c0s)
+    run_cached(c2)
+    assert len(c1s) == 10
+    assert len(c0s) == 50
+    assert c0s._reads == c1s._reads
+    assert c1s.hits() == 0.0
+    assert c0s.hits() > 0.8
+
+def test_two_level_ok():
+    # front cache is too small, always fallback
+    c0 = ct.LRUCache(200)
+    c1 = ct.MRUCache(100)
+    c0s = ctu.StatsCache(c0)
+    c1s = ctu.StatsCache(c1)
+    c2 = ctu.TwoLevelCache(c1s, c0s)
+    run_cached(c2)
+    assert len(c1s) == 50
+    assert len(c0s) == 50
+    assert c0s._reads == 50
+    assert c0s._writes == 50
+    assert c1s._reads == 500
+    assert c1s.hits() == 0.9
+    assert c0s.hits() == 0.0
