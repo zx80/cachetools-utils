@@ -77,8 +77,8 @@ TTL'ed Redis wrapper, default ttl is 10 minutes.
 ```Python
 import redis
 
-rd_base = redis.Redis(…, ttl=60)
-cache = ctu.RedisCache(rd_base)
+rd_base = redis.Redis(host="localhost")
+cache = ctu.RedisCache(rd_base, ttl=60)
 ```
 
 ### PrefixedRedisCache
