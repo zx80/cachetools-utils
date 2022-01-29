@@ -5,7 +5,7 @@ MODULE	= CacheToolsUtils.py
 F.md	= $(wildcard *.md)
 F.pdf	= $(F.md:%.md=%.pdf)
 
-PYTEST	= pytest
+PYTEST	= pytest --log-level=debug --capture=tee-sys
 PYTOPT	=
 
 .PHONY: check
