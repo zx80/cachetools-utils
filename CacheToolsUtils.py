@@ -21,13 +21,13 @@ __version__ = pkg.require("CacheToolsUtils")[0].version
 class MutMapMix:
     """Convenient MutableMapping Mixin, forward to _cache."""
 
-    def __getitem__(self, key):
+    def __getitem__(self, key):  # pragma: no cover
         return self._cache.__getitem__(key)
 
-    def __setitem__(self, key, val):
+    def __setitem__(self, key, val):  # pragma: no cover
         return self._cache.__setitem__(key, val)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key):  # pragma: no cover
         return self._cache.__delitem__(key)
 
     def __len__(self):
@@ -39,9 +39,6 @@ class MutMapMix:
 
 class KeyMutMapMix(MutMapMix):
     """Convenient MutableMapping Mixin with a key filter, forward to _cache."""
-
-    def _key(self, key):
-        return key
 
     def __getitem__(self, key):
         return self._cache.__getitem__(self._key(key))
@@ -73,11 +70,14 @@ class StatsCache(MutMapMix, MutableMapping):
     """Cache class to keep stats."""
 
     def __init__(self, cache: MutableMapping):
-        self._reads, self._writes, self._dels, self._hits = 0, 0, 0, 0
         self._cache = cache
+        self.reset()
 
     def hits(self):
         return float(self._hits) / float(max(self._reads, 1))
+
+    def reset(self):
+        self._reads, self._writes, self._dels, self._hits = 0, 0, 0, 0
 
     def __getitem__(self, key):
         # log.debug(f"get: {key} {key in self._cache}")
@@ -119,10 +119,10 @@ class TwoLevelCache(MutMapMix, MutableMapping):
 
     def __delitem__(self, key):
         try:
-            self._cache2.__delitem__(self, key)
+            self._cache2.__delitem__(key)
         except KeyError:
             pass
-        return self._cache.__delitem__(self, key)
+        return self._cache.__delitem__(key)
 
     def clear(self):
         return self._cache.clear()
@@ -149,7 +149,7 @@ class JsonSerde:
             return value.decode("utf-8")
         elif flags == 2:
             return json.loads(value.decode("utf-8"))
-        else:
+        else:  # pragma: no cover
             raise Exception("Unknown serialization format")
 
 
@@ -172,7 +172,7 @@ class MemCached(KeyMutMapMix, MutableMapping):
     def stats(self):
         return self._cache.stats()
 
-    def clear(self):
+    def clear(self):  # pragma: no cover
         return self._cache.flush_all()
 
 
@@ -212,7 +212,7 @@ class RedisCache(MutableMapping):
         self._cache = cache
         self._ttl = ttl
 
-    def clear(self):
+    def clear(self):  # pragma: no cover
         return self._cache.flushdb()
 
     def _serialize(self, s):

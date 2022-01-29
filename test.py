@@ -44,6 +44,24 @@ def run_cached(cache):
                     x += v
     assert x == 30000
 
+KEY, VAL = "hello-world!", "Hello World…"
+
+def setgetdel(cache):
+    # str value
+    cache[KEY] = VAL
+    assert cache[KEY] == VAL
+    del cache[KEY]
+    try:
+       val = cache[KEY]
+       assert False, "should raise KeyError"
+    except Exception as e:
+       assert isinstance(e, KeyError)
+    # int value
+    cache[KEY] = 65536
+    assert cache[KEY] == 65536
+    del cache[KEY]
+    # assert KEY not in cache
+
 def test_key_ct():
     c0 = ct.TTLCache(maxsize=100, ttl=100)
     c1 = ctu.PrefixedCache(c0, "f.")
@@ -59,6 +77,15 @@ def test_key_ct():
     run_cached(c3)
     assert len(c0) == 100
     assert c3[(2, "", True)] == 102
+    c0.clear()
+    setgetdel(c0)
+    setgetdel(c1)
+    setgetdel(c2)
+    setgetdel(c3)
+    for key in c0:
+        assert key[0] in ("f", "g") and key[1] == "."
+    for key in c3:
+        assert key[0] in ("f", "g") and key[1] == "."
 
 def test_stats_ct():
     c0 = ct.TTLCache(maxsize=100, ttl=100)
@@ -68,6 +95,9 @@ def test_stats_ct():
     assert cache[(4, "a", True)] == 114
     assert cache[(0, None, False)] == -20
     assert cache.hits() > 0.8
+    cache.clear()
+    setgetdel(c0)
+    setgetdel(cache)
 
 @pytest.mark.skipif(not has_service(port=11211), reason="no local memcached service available for testing")
 def test_memcached():
@@ -78,6 +108,7 @@ def test_memcached():
     assert len(c1) >= 50
     assert c1["(1, 'a', True)"] == 111
     assert c1["(3, None, False)"] == -17
+    assert isinstance(c1.stats(), dict)
 
 @pytest.mark.skipif(not has_service(port=11211), reason="no local memcached service available for testing")
 def test_key_memcached():
@@ -99,6 +130,8 @@ def test_stats_memcached():
     assert c1["(1, 'a', True)"] == 111
     assert c1["(3, None, False)"] == -17
     assert c1.hits() > 0.0
+    setgetdel(c0)
+    setgetdel(c1)
 
 @pytest.mark.skipif(not has_service(port=6379), reason="no local redis service available for testing")
 def test_redis():
@@ -109,6 +142,12 @@ def test_redis():
     assert len(c1) >= 50
     assert c1[(1, 'a', True)] == 111
     assert c1[(3, None, False)] == -17
+    setgetdel(c1)
+    try:
+        c1.__iter__()
+        assert False, "should raise an Exception"
+    except Exception as e:
+        assert "not implemented yet" in str(e)
 
 @pytest.mark.skipif(not has_service(port=6379), reason="no local redis service available for testing")
 def test_key_redis():
@@ -119,6 +158,7 @@ def test_key_redis():
     assert len(c1) >= 50
     assert c1[(1, 'a', True)] == 111
     assert c1[(3, None, False)] == -17
+    setgetdel(c1)
 
 @pytest.mark.skipif(not has_service(port=6379), reason="no local redis service available for testing")
 def test_stats_redis():
@@ -130,6 +170,7 @@ def test_stats_redis():
     assert c1[(1, 'a', True)] == 111
     assert c1[(3, None, False)] == -17
     assert c1.hits() > 0.0
+    setgetdel(c1)
 
 @pytest.mark.skipif(not has_service(port=6379), reason="no local redis service available for testing")
 def test_stacked_redis():
@@ -141,6 +182,9 @@ def test_stacked_redis():
     run_cached(c3)
     assert len(c3) >= 50
     assert c2.hits() > 0.0
+    setgetdel(c1)
+    setgetdel(c2)
+    setgetdel(c3)
 
 def test_two_level_small():
     # front cache is too small, always fallback
@@ -155,6 +199,12 @@ def test_two_level_small():
     assert c0s._reads == c1s._reads
     assert c1s.hits() == 0.0
     assert c0s.hits() > 0.8
+    c2.clear()
+    setgetdel(c0)
+    setgetdel(c1)
+    setgetdel(c0s)
+    setgetdel(c1s)
+    setgetdel(c2)
 
 def test_two_level_ok():
     # front cache is too small, always fallback
@@ -171,3 +221,13 @@ def test_two_level_ok():
     assert c1s._reads == 500
     assert c1s.hits() == 0.9
     assert c0s.hits() == 0.0
+    c2.clear()
+    setgetdel(c0)
+    setgetdel(c1)
+    setgetdel(c0s)
+    setgetdel(c1s)
+    setgetdel(c2)
+    # trigger a level-2 miss
+    c2[KEY] = VAL
+    del c0s[KEY]
+    del c2[KEY]

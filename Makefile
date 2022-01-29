@@ -16,9 +16,15 @@ check: venv
 	flake8 --ignore=E402,E501,F401 $(MODULE)
 	$(PYTEST) $(PYTOPT) test.py
 
+.PHONY: coverage
+coverage:
+	coverage run -m $(PYTEST) $(PYTOPT) test.py
+	coverage html $(MODULE)
+
 .PHONY: clean clean-venv
 clean:
-	$(RM) -r __pycache__ */__pycache__ *.egg-info dist build .mypy_cache .pytest_cache $(F.pdf)
+	$(RM) -r __pycache__ */__pycache__ *.egg-info dist build .mypy_cache .pytest_cache htmlcov
+	$(RM) .coverage $(F.pdf)
 
 clean-venv: clean
 	$(RM) -r venv

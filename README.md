@@ -125,6 +125,7 @@ This code is public domain.
 
 Improved documentation.
 Add `TwoLevelCache`.
+Add 100% coverage test.
 
 ### 1.0.0 on 2022-01-29
 
