@@ -125,3 +125,4 @@ Initial version extracted from another project.
 
 - improve documentation further.
 - add a `close`?
+- cache stacking?
