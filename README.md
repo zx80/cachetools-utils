@@ -7,6 +7,12 @@ Classes to add key prefix and stats to
 
 ## Usage
 
+Install with `pip`:
+
+```Shell
+pip install CacheToolsUtils
+```
+
 See below.
 
 ## Documentation
@@ -89,13 +95,17 @@ This code is public domain.
 
 ## Versions
 
-### 0.9.0
+### 1.0.0 on 2022-01-29
+
+Add `set`, `get` and `delete` forwarding to `RedisCache`, so that redis
+classes can be stacked.
+
+### 0.9.0 on 2022-01-29
 
 Initial version extracted from another project.
+
 
 ## TODO
 
 - improve documentation
-- add `__version__`
 - add a `close`?
-- test with `flask-simple-auth`

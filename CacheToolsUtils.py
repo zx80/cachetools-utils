@@ -9,6 +9,9 @@ from typing import Optional, Callable, Dict, List, Set, Any, Union, MutableMappi
 import cachetools
 import json
 
+import pkg_resources as pkg  # type: ignore
+__version__ = pkg.require("CacheToolsUtils")[0].version
+
 
 #
 # UTILS
@@ -179,9 +182,6 @@ class RedisCache(MutableMapping):
         self._cache = cache
         self._ttl = ttl
 
-    def info(self, *args, **kwargs):
-        return self._cache.info(*args, **kwargs)
-
     def clear(self):
         return self._cache.flushdb()
 
@@ -212,6 +212,22 @@ class RedisCache(MutableMapping):
 
     def __iter__(self):
         raise Exception("not implemented yet")
+
+    # also forward Redis set/get/delele
+    def info(self, *args, **kwargs):
+        return self._cache.info(*args, **kwargs)
+
+    def dbsize(self, *args, **kwargs):
+        return self._cache.dbsize(*args, **kwargs)
+
+    def set(self, *args, **kwargs):
+        return self._cache.set(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self._cache.get(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        return self._cache.delete(*args, **kwargs)
 
 
 class PrefixedRedisCache(RedisCache):

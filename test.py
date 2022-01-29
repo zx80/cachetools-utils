@@ -130,3 +130,14 @@ def test_stats_redis():
     assert c1[(1, 'a', True)] == 111
     assert c1[(3, None, False)] == -17
     assert c1.hits() > 0.0
+
+@pytest.mark.skipif(not has_service(port=6379), reason="no local redis service available for testing")
+def test_stacked_redis():
+    import redis
+    c0 = redis.Redis(host="localhost")
+    c1 = ctu.RedisCache(c0)
+    c2 = ctu.StatsRedisCache(c1)
+    c3 = ctu.PrefixedRedisCache(c2, "CacheToolsUtilsTests.")
+    run_cached(c3)
+    assert len(c3) >= 50
+    assert c2.hits() > 0.0
