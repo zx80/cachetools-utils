@@ -243,7 +243,8 @@ class RedisCache(MutableMapping):
     def __iter__(self):
         raise Exception("not implemented yet")
 
-    # also forward Redis set/get/delele
+    # also forward Redis set/get/delete
+    # FIXME should it pass through the key filter?
     def info(self, *args, **kwargs):
         return self._cache.info(*args, **kwargs)
 
