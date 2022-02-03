@@ -146,3 +146,4 @@ Initial version extracted from another project.
 
 - improve documentation further.
 - add a `close`?
+- Cache methods? With a prefix? How?
