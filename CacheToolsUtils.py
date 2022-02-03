@@ -128,17 +128,16 @@ class TwoLevelCache(MutMapMix, MutableMapping):
         return self._cache.clear()
 
 
-# FIXME need a per-method prefix… use a dict?
-def CacheObjectMethods(cache: MutableMapping, obj: Any, funs: List[str]):
+def cacheMethods(cache: MutableMapping, obj: Any, funs: Dict[str, str]):
     """Cache some object methods."""
-    for fun in funs:
+    for fun, prefix in funs.items():
         if hasattr(obj, fun):
             f = getattr(obj, fun)
             while hasattr(f, "__wrapped__"):
                 f = f.__wrapped__
-            setattr(obj, fun, cachetools.cached(cache=cache)(f))
+            setattr(obj, fun, cachetools.cached(cache=PrefixedCache(cache, prefix))(f))
         else:
-            raise Exception(f"missing method {fun} on {obj}")
+            raise Exception(f"cannot cache missing method {fun} on {obj}")
 
 
 #
