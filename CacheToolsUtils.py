@@ -282,7 +282,8 @@ class PrefixedRedisCache(RedisCache):
         self._prefix = prefix
 
     def _key(self, key):
-        return self._prefix + json.dumps(key)
+        # or self._cache._key(prefix + key)?
+        return self._prefix + self._cache._key(key)
 
 
 class StatsRedisCache(RedisCache):
