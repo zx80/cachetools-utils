@@ -231,3 +231,43 @@ def test_two_level_ok():
     c2[KEY] = VAL
     del c0s[KEY]
     del c2[KEY]
+
+
+class Stuff:
+
+    def __init__(self, name):
+        self._name = name
+
+    def __str__(self):
+        return f"Object {self._name}"
+
+    def sum_n2(self, n: int):
+        if n < 1:
+            return 0
+        else:
+            return n*n + self.sum_n2(n-1)
+
+    def sum_n1(self, n: int):
+        if n < 0:
+            return 0
+        else:
+            return n + self.sum_n1(n-1)
+
+def test_methods():
+    s = Stuff("test_methods")
+    c = ct.TTLCache(1024, ttl=60)
+    cs = ctu.StatsCache(c)
+    ctu.cacheMethods(cs, s, {"sum_n1": "1.", "sum_n2": "2."})
+    n2 = s.sum_n2(128)
+    n1 = s.sum_n1(128)
+    for i in range(1, 128):
+        n = s.sum_n2(i) + s.sum_n1(i)
+        n = s.sum_n2(i) + s.sum_n1(i)
+    assert len(c) == 259
+    assert cs.hits() > 0.6
+    ctu.cacheMethods(cs, s, {"sum_n1": "x."})
+    try:
+        ctu.cacheMethods(cs, s, {"no-such-method": "?."})
+        assert False, "exception must be raised"
+    except Exception as e:
+        assert "missing method" in str(e)

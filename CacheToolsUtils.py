@@ -80,7 +80,7 @@ class StatsCache(MutMapMix, MutableMapping):
         self._reads, self._writes, self._dels, self._hits = 0, 0, 0, 0
 
     def __getitem__(self, key):
-        # log.debug(f"get: {key} {key in self._cache}")
+        # print(f"get: {key} {key in self._cache}")
         self._reads += 1
         res = self._cache.__getitem__(key)
         self._hits += 1
@@ -282,7 +282,7 @@ class PrefixedRedisCache(RedisCache):
 
     def _key(self, key):
         # or self._cache._key(prefix + key)?
-        return self._prefix + self._cache._key(key)
+        return self._prefix + str(key)
 
 
 class StatsRedisCache(RedisCache):

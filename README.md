@@ -118,6 +118,16 @@ Wrapper with stats (call `hits()`) and a ttl.
 scache = ctu.StatsRedisCache(pcache)
 ```
 
+### cacheMethods
+
+This utility function create a prefixed cache around methods of an object.
+First parameter is the actual cache, second parameter is the object,
+third parameter is a dictionary mapping methods names to prefixes.
+
+```Python
+ctu.cacheMethods(cache, obj, {"method1": "1.", "method2": "2."})
+```
+
 
 ## License
 
@@ -125,6 +135,10 @@ This code is public domain.
 
 
 ## Versions
+
+### 1.2.0 on Future
+
+Add `cacheMethods`.
 
 ### 1.1.0 on 2022-01-30
 
@@ -146,4 +160,3 @@ Initial version extracted from another project.
 
 - improve documentation further.
 - add a `close`?
-- Cache methods? With a prefix? How?
