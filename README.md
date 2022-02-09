@@ -160,3 +160,4 @@ Initial version extracted from another project.
 
 - improve documentation further.
 - add a `close`?
+- add my thoughts about caching: TTL!
