@@ -122,7 +122,7 @@ scache = ctu.StatsRedisCache(pcache)
 
 This utility function create a prefixed cache around methods of an object.
 First parameter is the actual cache, second parameter is the object,
-third parameter is a dictionary mapping methods names to prefixes.
+third parameter is a dictionary mapping method names to prefixes.
 
 ```Python
 ctu.cacheMethods(cache, obj, {"method1": "1.", "method2": "2."})
