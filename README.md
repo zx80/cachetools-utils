@@ -56,6 +56,7 @@ scache = StatsCache(cache)
 Two-level cache, for instance a local in-memory cachetools cache for the first
 level, and a larger shared redis or memcached distributed cache for the second
 level.
+Whether such setting can bring performance benefits is an open question.
 
 ```Python
 cache = TwoLevelCache(TTLCache(…), RedisCache(…))
@@ -113,6 +114,7 @@ pcache = ctu.PrefixedRedisCache(rd_base, "pac.", ttl=3600)
 ### StatsRedisCache
 
 Wrapper with stats (call `hits()`) and a ttl.
+Stats are actually taken from the Redis server.
 
 ```Python
 scache = ctu.StatsRedisCache(pcache)
