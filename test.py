@@ -279,6 +279,7 @@ def test_functions():
     c = ct.TTLCache(1024, ttl=60.0)
     cs = ctu.StatsCache(c)
     ctu.cacheFunctions(cs, globals(), {"sum_n2": "2."})
+    ctu.cacheFunctions(cs, globals(), {"sum_n2": "2."})
     assert hasattr(sum_n2, "__wrapped__")
     n2 = sum_n2(128)
     for i in range(1, 128):
