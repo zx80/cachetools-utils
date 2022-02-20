@@ -151,7 +151,7 @@ This code is public domain.
 
 ## Versions
 
-### 1.2.0 on Future
+### 2.0 in Future
 
 Add `cacheMethods`.
 Improve documentation.
@@ -179,4 +179,3 @@ Initial version extracted from another project.
 - add my thoughts about caching: TTL!
 - rename `hits`  `hit_rate`.
 - add some other efficiency statistics?
-- switch to *release.bugfix* version numbering.
