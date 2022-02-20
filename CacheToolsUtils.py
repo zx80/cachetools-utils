@@ -12,11 +12,13 @@ import json
 import pkg_resources as pkg  # type: ignore
 __version__ = pkg.require("CacheToolsUtils")[0].version
 
+import logging
+log = logging.getLogger(__name__)
+
 
 #
 # UTILS
 #
-
 
 class MutMapMix:
     """Convenient MutableMapping Mixin, forward to _cache."""
@@ -80,7 +82,6 @@ class StatsCache(MutMapMix, MutableMapping):
         self._reads, self._writes, self._dels, self._hits = 0, 0, 0, 0
 
     def __getitem__(self, key):
-        # print(f"get: {key} {key in self._cache}")
         self._reads += 1
         res = self._cache.__getitem__(key)
         self._hits += 1
