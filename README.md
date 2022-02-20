@@ -52,8 +52,8 @@ HTTP level and at the database level.
   such a strategy in place.
 
 Basically the application should aim at maximizing throughput for the available
-resources whilst keeping the latency under the objective, eg 90% of queries
-under some limit.
+resources whilst keeping the latency under control, eg 90% of queries under
+some limit.
 
 
 ## Module Documentation
