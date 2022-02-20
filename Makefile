@@ -17,7 +17,7 @@ check: install
 	. venv/bin/activate
 	type $(PYTHON)
 	mypy $(MODULE).py
-	flake8 --ignore=E402,E501,F401 $(MODULE).py
+	flake8 --ignore= $(MODULE).py
 	$(PYTEST) $(PYTOPT) test.py
 
 .PHONY: coverage

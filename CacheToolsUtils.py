@@ -4,7 +4,7 @@ CacheTools Utilities
 This code is public domain.
 """
 
-from typing import Optional, Callable, Dict, List, Set, Any, Union, MutableMapping
+from typing import Dict, Any, Union, MutableMapping
 
 import cachetools
 import json
@@ -136,10 +136,12 @@ def cacheMethods(cache: MutableMapping, obj: Any, funs: Dict[str, str]):
         f = getattr(obj, fun)
         while hasattr(f, "__wrapped__"):
             f = f.__wrapped__
-        setattr(obj, fun, cachetools.cached(cache=PrefixedCache(cache, prefix))(f))
+        setattr(obj, fun,
+                cachetools.cached(cache=PrefixedCache(cache, prefix))(f))
 
 
-def cacheFunctions(cache: MutableMapping, globs: MutableMapping[str, Any], funs: Dict[str, str]):
+def cacheFunctions(cache: MutableMapping, globs: MutableMapping[str, Any],
+                   funs: Dict[str, str]):
     for fun, prefix in funs.items():
         assert fun in globs, "caching functions: {fun} not found"
         f = globs[fun]
@@ -251,7 +253,8 @@ class RedisCache(MutableMapping):
             raise KeyError()
 
     def __setitem__(self, index, value):
-        return self._cache.set(self._key(index), self._serialize(value), ex=self._ttl)
+        return self._cache.set(self._key(index), self._serialize(value),
+                               ex=self._ttl)
 
     def __delitem__(self, index):
         return self._cache.delete(self._key(index))
@@ -300,4 +303,5 @@ class StatsRedisCache(RedisCache):
 
     def hits(self):
         stats = self.info(section="stats")
-        return float(stats["keyspace_hits"]) / (stats["keyspace_hits"] + stats["keyspace_misses"])
+        return float(stats["keyspace_hits"]) / \
+            (stats["keyspace_hits"] + stats["keyspace_misses"])
