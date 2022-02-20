@@ -20,12 +20,21 @@ See below for example usage.
 
 ## Documentation
 
-This module provide the following cache wrappers suitable to use
-with `cachetools`:
+This module provide the following cache wrappers suitable to use with
+`cachetools`:
+
+- Some classes provide actual storage or API to actual storage.
+  For this purpose a cache is basically a key-value store, aka a dictionary,
+  possibly with some constraints on keys (type, size) and values (size,
+  serialization).
+
+- Other classes add features on top of these, such as using a prefix so that
+  a storage can be shared without collisions or keeping usage and efficiency
+  statistics.
 
 ### PrefixedCache
 
-Add a key prefix.
+Add a key prefix to an underlying cache to avoid key collisions.
 
 ```Python
 import CacheToolsUtils as ctu
@@ -54,17 +63,21 @@ scache = StatsCache(cache)
 ### TwoLevelCache
 
 Two-level cache, for instance a local in-memory cachetools cache for the first
-level, and a larger shared redis or memcached distributed cache for the second
-level.
+level, and a larger shared `redis` or `memcached` distributed cache for the
+second level.
 Whether such setting can bring performance benefits is an open question.
 
 ```Python
 cache = TwoLevelCache(TTLCache(…), RedisCache(…))
 ```
 
+There should be some consistency between the two level configurations
+so that it make sense. For instance, having two TTL-ed stores would
+suggest that the secondary has a longer TTL than the primary.
+
 ### MemCached
 
-Basic wrapper with JSON key encoding.
+Basic wrapper, possibly with JSON key encoding.
 
 ```Python
 import pymemcache as pmc
@@ -89,7 +102,7 @@ pcache = ctu.PrefixedMemCached(mc_base, prefix="pic.")
 Wrapper with stats actually taken from the MemCached server.
 
 ```Python
-scache = ctu.StatsMemCached(mc_base)
+scache = ctu.StatsMemCached(pcache)
 ```
 
 ### RedisCache
@@ -105,7 +118,7 @@ cache = ctu.RedisCache(rd_base, ttl=60)
 
 ### PrefixedRedisCache
 
-Wrapper with a prefix and a ttl.
+Wrapper with a prefix *and* a ttl.
 
 ```Python
 pcache = ctu.PrefixedRedisCache(rd_base, "pac.", ttl=3600)
@@ -113,7 +126,7 @@ pcache = ctu.PrefixedRedisCache(rd_base, "pac.", ttl=3600)
 
 ### StatsRedisCache
 
-Wrapper with stats (call `hits()`) and a ttl.
+Wrapper with stats (call `hits()`) *and* a ttl.
 Stats are actually taken from the Redis server.
 
 ```Python
@@ -127,7 +140,7 @@ First parameter is the actual cache, second parameter is the object,
 third parameter is a dictionary mapping method names to prefixes.
 
 ```Python
-ctu.cacheMethods(cache, obj, {"method1": "1.", "method2": "2."})
+ctu.cacheMethods(cache, obj, {"get_data": "1.", "get_some": "2."})
 ```
 
 
@@ -141,10 +154,11 @@ This code is public domain.
 ### 1.2.0 on Future
 
 Add `cacheMethods`.
+Improve documentation.
 
 ### 1.1.0 on 2022-01-30
 
-Improved documentation.
+Improve documentation.
 Add `TwoLevelCache`.
 Add 100% coverage test.
 
@@ -163,3 +177,5 @@ Initial version extracted from another project.
 - improve documentation further.
 - add a `close`?
 - add my thoughts about caching: TTL!
+- rename `hits`  `hit_rate`.
+- add some other efficiency statistics?
