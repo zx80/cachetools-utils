@@ -285,3 +285,4 @@ def test_functions():
     for i in range(1, 128):
         n = sum_n2(i) + sum_n2(i) + sum_n2(i)
     assert len(c) == 129
+    assert cs.hits() > 0.7
