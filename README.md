@@ -133,14 +133,16 @@ Stats are actually taken from the Redis server.
 scache = ctu.StatsRedisCache(pcache)
 ```
 
-### cacheMethods
+### cacheMethods and cacheFunctions
 
-This utility function create a prefixed cache around methods of an object.
-First parameter is the actual cache, second parameter is the object,
+This utility function create a prefixed cache around methods of an object
+or functions in the global scope.
+First parameter is the actual cache, second parameter is the object or scope,
 third parameter is a dictionary mapping method names to prefixes.
 
 ```Python
 ctu.cacheMethods(cache, obj, {"get_data": "1.", "get_some": "2."})
+ctu.cacheFunctions(cache, globals(), {"some_func": "f."})
 ```
 
 
@@ -153,7 +155,7 @@ This code is public domain.
 
 ### 2.0 in Future
 
-Add `cacheMethods`.
+Add `cacheMethods` and `cacheFunctions`.
 Improve documentation.
 
 ### 1.1.0 on 2022-01-30

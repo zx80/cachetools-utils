@@ -131,19 +131,25 @@ class TwoLevelCache(MutMapMix, MutableMapping):
 def cacheMethods(cache: MutableMapping, obj: Any, funs: Dict[str, str]):
     """Cache some object methods."""
     for fun, prefix in funs.items():
-        if hasattr(obj, fun):
-            f = getattr(obj, fun)
-            while hasattr(f, "__wrapped__"):
-                f = f.__wrapped__
-            setattr(obj, fun, cachetools.cached(cache=PrefixedCache(cache, prefix))(f))
-        else:
-            raise Exception(f"cannot cache missing method {fun} on {obj}")
+        assert hasattr(obj, fun), f"cannot cache missing method {fun} on {obj}"
+        f = getattr(obj, fun)
+        while hasattr(f, "__wrapped__"):
+            f = f.__wrapped__
+        setattr(obj, fun, cachetools.cached(cache=PrefixedCache(cache, prefix))(f))
+
+
+def cacheFunctions(cache: MutableMapping, globs: MutableMapping[str, Any], funs: Dict[str, str]):
+    for fun, prefix in funs.items():
+        assert fun in globs, "caching functions: {fun} not found"
+        f = globs[fun]
+        while hasattr(f, "__wrapped__"):
+            f = f.__wrapped__
+        globs[fun] = cachetools.cached(cache=PrefixedCache(cache, prefix))(f)
 
 
 #
 # MEMCACHED
 #
-
 
 class JsonSerde:
     """JSON serialize/deserialize for MemCached."""
