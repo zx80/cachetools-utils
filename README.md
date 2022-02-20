@@ -9,8 +9,8 @@ and other utils.
 
 ## Caching
 
-Caching is a key component of any significant REST backend so as to avoid
-performance issues when accessing the storage tier, both in term of throughput,
+Caching is a key component of any significant Web or REST backend so as to avoid
+performance issues when accessing the storage tier, in term of throughput,
 latency and resource usage.
 
 In order to reduce latency, most time should be lost in network accesses,
@@ -50,6 +50,10 @@ HTTP level and at the database level.
 
   Depending on the access pattern, it may or may not be useful to put
   such a strategy in place.
+
+Basically the application should aim at maximizing throughput for the available
+resources whilst keeping the latency under the objective, eg 90% of queries
+under some limit.
 
 
 ## Module Documentation
