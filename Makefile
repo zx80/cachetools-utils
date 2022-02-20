@@ -35,9 +35,9 @@ clean-venv: clean
 	$(RM) -r venv
 
 .PHONY: install
-install: CacheToolsUtils.egg-info
+install: $(MODULE).egg-info
 
-CacheToolsUtils.egg-info: venv
+$(MODULE).egg-info: venv
 	$(PIP) install -e .
 
 # for local testing
