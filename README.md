@@ -6,15 +6,17 @@ Classes to add key prefix and stats to
 [memcached](https://memcached.org/) as storage backends,
 and other utils.
 
+
 ## Caching
 
 Caching is a key component of any significant REST backend so as to avoid
 performance issues when accessing the storage tier, both in term of throughput,
-latency and ressource usage.
+latency and resource usage.
 
 In order to reduce latency, most time should be lost in network accesses,
 so reducing the number of trips is a key strategy. This suggests combining
-data transfers where possible through higher-level queries.
+data transfers where possible through higher-level queries, both at the
+HTTP level and at the database level.
 
 - write operations need to be sent to storage.
 
@@ -23,15 +25,31 @@ data transfers where possible through higher-level queries.
   the cache and the final storage.
 
 - read operations can be cached, at the price of possibly having inconsistency
-  data shown to various users.
+  data shown to users.
 
   LFU/LRU cache strategies mean that inconsistent data can be kept in cache
   for indefinite time, which is annoying. A TLL expiration on top of that
   makes such discrepancies bounded in time, so that after some time the data
-  shown are up to date.
+  shown are eventually up to date.
 
   Invalidating data from the cache requires a detailed knowledge of internal
-  cache operations and are not very easy to manage at the application level.
+  cache operations and are not very easy to manage at the application level,
+  so devops should want to avoid this path if possible.
+
+- data model
+
+  Denormalizing the data model may help.
+
+  Having an application-oriented view of the model (eg JSON objects rather than
+  attributes and tables) can help performance, at the price of losing some of
+  the consistency warranties provided by a database.
+  The best of both word may be achieved, to some extent, by storing JSON
+  data into a database such as [Postgres](https://postgresql.org/).
+
+- multi-level caching
+
+  Depending on the access pattern, it may or may not be useful to put
+  such a strategy in place.
 
 
 ## Module Documentation
