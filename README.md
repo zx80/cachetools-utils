@@ -202,10 +202,11 @@ This code is public domain.
 
 ## Versions
 
-### 2.0 in Future
+### 2.0 on 2022-02-24
 
 Add `cacheMethods` and `cacheFunctions`.
 Improve documentation.
+100% coverage test.
 
 ### 1.1.0 on 2022-01-30
 
@@ -227,6 +228,5 @@ Initial version extracted from another project.
 
 - improve documentation further.
 - add a `close`?
-- add my thoughts about caching: TTL!
-- rename `hits`  `hit_rate`.
-- add some other efficiency statistics?
+- rename `hits`  `hit_rate`?
+- add other efficiency statistics?
