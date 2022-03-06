@@ -4,27 +4,27 @@ Classes to add key prefix and stats to
 [cachetools](https://pypi.org/project/cachetools/) classes and use
 [redis](https://redis.io/) and
 [memcached](https://memcached.org/) as storage backends,
-and other utils.
+and other cache-related utils.
 
 
-## Caching
+## Thoughts about Caching
 
 Caching is a key component of any significant Web or REST backend so as to avoid
-performance issues when accessing the storage tier, in term of throughput,
-latency and resource usage.
+performance issues when accessing the storage tier, in term of latency,
+throughput and resource usage.
 
-In order to reduce latency, most time should be lost in network accesses,
-so reducing the number of trips is a key strategy. This suggests combining
-data transfers where possible through higher-level queries, both at the
-HTTP level and at the database level.
+- **Latency** In order to reduce latency, most time should be spent in network
+  accesses, so reducing the number of trips is a key strategy. This suggests
+  combining data transfers where possible through higher-level queries, both at
+  the HTTP level and at the database level.
 
-- write operations need to be sent to storage.
+- **Write** operations need to be sent to storage.
 
   Depending on transaction requirements, i.e. whether rare some data loss is
   admissible, various strategies can be applied, such as updating in parallel
   the cache and the final storage.
 
-- read operations can be cached, at the price of possibly having inconsistency
+- **Read** operations can be cached, at the price of possibly having inconsistency
   data shown to users.
 
   LFU/LRU cache strategies mean that inconsistent data can be kept in cache
@@ -36,9 +36,7 @@ HTTP level and at the database level.
   cache operations and are not very easy to manage at the application level,
   so devops should want to avoid this path if possible.
 
-- data model
-
-  Denormalizing the data model may help.
+- **Data Model** Denormalizing the data model may help.
 
   Having an application-oriented view of the model (eg JSON objects rather than
   attributes and tables) can help performance, at the price of losing some of
@@ -46,8 +44,7 @@ HTTP level and at the database level.
   The best of both word may be achieved, to some extent, by storing JSON
   data into a database such as [Postgres](https://postgresql.org/).
 
-- multi-level caching
-
+- **Multi-level caching**
   Depending on the access pattern, it may or may not be useful to put
   such a strategy in place.
 
@@ -205,6 +202,7 @@ This code is public domain.
 ### 3.0 on *later*
 
 Use simpler `kwargs` approach for caching methods and functions.
+Improve documentation.
 
 ### 2.0 on 2022-02-24
 
