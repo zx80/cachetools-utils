@@ -13,50 +13,52 @@ Caching is a key component of any significant Web or REST backend so as to avoid
 performance issues when accessing the storage tier, in term of latency,
 throughput and resource usage.
 
-- **Latency** In order to reduce latency, most time should be spent in network
-  accesses, so reducing the number of trips is a key strategy. This suggests
-  combining data transfers where possible through higher-level queries, both at
-  the HTTP level and at the database level.
+- **Shared Cache**
 
-- **Write** operations need to be sent to storage.
+  A convenient setup is to have *one* shared cache storage tier at the
+  application level, which is accessed through wrappers to avoid collisions
+  between cache functions.
 
-  Depending on transaction requirements, i.e. whether rare some data loss is
-  admissible, various strategies can be applied, such as updating in parallel
-  the cache and the final storage.
+  Depending on the access pattern, it may or may not be useful to put
+  such multiple-level caching strategy in place.
 
-- **Read** operations can be cached, at the price of possibly having inconsistency
-  data shown to users.
+- **Latency**s
 
-  LFU/LRU cache strategies mean that inconsistent data can be kept in cache
-  for indefinite time, which is annoying. A TLL expiration on top of that
-  makes such discrepancies bounded in time, so that after some time the data
-  shown are eventually up to date.
+  In order to reduce latency, most time should be spent in network accesses,
+  so reducing the number of trips is a key strategy. This suggests combining
+  data transfers where possible through higher-level queries, both at the HTTP
+  level and at the database level.
+
+  Denormalizing the data model may help. Having an application-oriented view of
+  the model (eg JSON objects rather than attributes and tables) can help
+  performance, at the price of losing some of the consistency warranties
+  provided by a database.  The best of both word may be achieved, to some
+  extent, by storing JSON data into a database such as
+  [Postgres](https://postgresql.org/).
 
   Invalidating data from the cache requires a detailed knowledge of internal
   cache operations and are not very easy to manage at the application level,
   so devops should want to avoid this path if possible.
 
-- **Data Model** Denormalizing the data model may help.
+- **Throughput**
 
-  Having an application-oriented view of the model (eg JSON objects rather than
-  attributes and tables) can help performance, at the price of losing some of
-  the consistency warranties provided by a database.
-  The best of both word may be achieved, to some extent, by storing JSON
-  data into a database such as [Postgres](https://postgresql.org/).
+  - **Write** operations need to be sent to storage.
 
-- **Shared Cache**
-  A convenient setup is to have *one* shared cache storage tier at the
-  application level, which is accessed through wrappers to avoid collisions
-  between cache functions.
+    Depending on transaction requirements, i.e. whether rare some data loss is
+    admissible, various strategies can be applied, such as updating in parallel
+    the cache and the final storage.
 
-- **Multi-level Caching**
-  Depending on the access pattern, it may or may not be useful to put
-  such a strategy in place.
+  - **Read** operations can be cached, at the price of possibly having
+    inconsistency data shown to users.
+
+    LFU/LRU cache strategies mean that inconsistent data can be kept in cache
+    for indefinite time, which is annoying. A TLL expiration on top of that
+    makes such discrepancies bounded in time, so that after some time the data
+    shown are eventually up to date.
 
 Basically the application should aim at maximizing throughput for the available
 resources whilst keeping the latency under control, eg 90% of queries under
 some limit.
-
 
 ## Module Documentation
 
