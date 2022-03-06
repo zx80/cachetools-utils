@@ -179,8 +179,8 @@ First parameter is the actual cache, second parameter is the object or scope,
 third parameter is a dictionary mapping method names to prefixes.
 
 ```Python
-ctu.cacheMethods(cache, obj, {"get_data": "1.", "get_some": "2."})
-ctu.cacheFunctions(cache, globals(), {"some_func": "f."})
+ctu.cacheMethods(cache, obj, get_data="1.", get_some="2.")
+ctu.cacheFunctions(cache, globals(), some_func="f.")
 ```
 
 
@@ -201,6 +201,10 @@ This code is public domain.
 
 
 ## Versions
+
+### 3.0 on *later*
+
+Use simpler `kwargs` approach for caching methods and functions.
 
 ### 2.0 on 2022-02-24
 

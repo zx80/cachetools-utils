@@ -4,7 +4,7 @@ CacheTools Utilities
 This code is public domain.
 """
 
-from typing import Dict, Any, Union, MutableMapping
+from typing import Any, Union, MutableMapping
 
 import cachetools
 import json
@@ -129,7 +129,7 @@ class TwoLevelCache(MutMapMix, MutableMapping):
         return self._cache.clear()
 
 
-def cacheMethods(cache: MutableMapping, obj: Any, funs: Dict[str, str]):
+def cacheMethods(cache: MutableMapping, obj: Any, **funs):
     """Cache some object methods."""
     for fun, prefix in funs.items():
         assert hasattr(obj, fun), f"cannot cache missing method {fun} on {obj}"
@@ -141,7 +141,7 @@ def cacheMethods(cache: MutableMapping, obj: Any, funs: Dict[str, str]):
 
 
 def cacheFunctions(cache: MutableMapping, globs: MutableMapping[str, Any],
-                   funs: Dict[str, str]):
+                   **funs):
     for fun, prefix in funs.items():
         assert fun in globs, "caching functions: {fun} not found"
         f = globs[fun]

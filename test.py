@@ -257,7 +257,7 @@ def test_methods():
     s = Stuff("test_methods")
     c = ct.TTLCache(1024, ttl=60)
     cs = ctu.StatsCache(c)
-    ctu.cacheMethods(cs, s, {"sum_n1": "1.", "sum_n2": "2."})
+    ctu.cacheMethods(cs, s, sum_n1="1.", sum_n2="2.")
     n2 = s.sum_n2(128)
     n1 = s.sum_n1(128)
     for i in range(1, 128):
@@ -265,9 +265,9 @@ def test_methods():
         n = s.sum_n2(i) + s.sum_n1(i)
     assert len(c) == 259
     assert cs.hits() > 0.6
-    ctu.cacheMethods(cs, s, {"sum_n1": "x."})
+    ctu.cacheMethods(cs, s, sum_n1="x.")
     try:
-        ctu.cacheMethods(cs, s, {"no-such-method": "?."})
+        ctu.cacheMethods(cs, s, no_such_method="?.")
         assert False, "exception must be raised"
     except Exception as e:
         assert "missing method" in str(e)
@@ -278,8 +278,8 @@ def sum_n2(n: int):
 def test_functions():
     c = ct.TTLCache(1024, ttl=60.0)
     cs = ctu.StatsCache(c)
-    ctu.cacheFunctions(cs, globals(), {"sum_n2": "2."})
-    ctu.cacheFunctions(cs, globals(), {"sum_n2": "2."})
+    ctu.cacheFunctions(cs, globals(), sum_n2="2.")
+    ctu.cacheFunctions(cs, globals(), sum_n2="2.")
     assert hasattr(sum_n2, "__wrapped__")
     n2 = sum_n2(128)
     for i in range(1, 128):
