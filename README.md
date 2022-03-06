@@ -17,10 +17,11 @@ throughput and resource usage.
 
   A convenient setup is to have *one* shared cache storage tier at the
   application level, which is accessed through wrappers to avoid collisions
-  between cache functions.
+  between cache functions, basically by prepending keys with some prefix.
 
   Depending on the access pattern, it may or may not be useful to put
-  such multiple-level caching strategy in place.
+  a multiple-level caching strategy in place, with a local in-process cache
+  and a higher-level inter-process and inter-host cache.
 
 - **Latency**
 
