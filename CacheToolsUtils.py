@@ -169,10 +169,10 @@ class JsonSerde:
             return json.dumps(value).encode("utf-8"), 2
 
     # reverse previous serialization
-    def deserialize(self, key, value, flags):
-        if flags == 1:
+    def deserialize(self, key, value, flag):
+        if flag == 1:
             return value.decode("utf-8")
-        elif flags == 2:
+        elif flag == 2:
             return json.loads(value.decode("utf-8"))
         else:  # pragma: no cover
             raise Exception("Unknown serialization format")
