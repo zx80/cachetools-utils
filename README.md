@@ -58,7 +58,7 @@ throughput and resource usage.
   of the time.
 
   **Read** operations can be cached, at the price of possibly having
-  inconsistency data shown to users.
+  inconsistent data shown to users.
   LFU/LRU cache strategies mean that inconsistent data can be kept in cache
   for indefinite time, which is annoying. A TLL expiration on top of that
   makes such discrepancies bounded in time, so that after some time the data
