@@ -103,7 +103,7 @@ def bla(…):
 Keep stats, cache hit rate shown with `hits()`.
 
 ```Python
-scache = StatsCache(cache)
+scache = ctu.StatsCache(cache)
 ```
 
 ### TwoLevelCache
@@ -114,7 +114,7 @@ second level.
 Whether such setting can bring performance benefits is an open question.
 
 ```Python
-cache = TwoLevelCache(TTLCache(…), RedisCache(…))
+cache = ctu.TwoLevelCache(TTLCache(…), RedisCache(…))
 ```
 
 There should be some consistency between the two level configurations
@@ -123,7 +123,7 @@ suggest that the secondary has a longer TTL than the primary.
 
 ### MemCached
 
-Basic wrapper, possibly with JSON key encoding.
+Basic wrapper, possibly with JSON key encoding thanks to the `JsonSerde` class.
 
 ```Python
 import pymemcache as pmc
@@ -138,6 +138,7 @@ def poc(…):
 ### PrefixedMemCached
 
 Wrapper with a prefix.
+A specific class is needed because of necessary key encoding.
 
 ```Python
 pcache = ctu.PrefixedMemCached(mc_base, prefix="pic.")
@@ -165,6 +166,8 @@ cache = ctu.RedisCache(rd_base, ttl=60)
 ### PrefixedRedisCache
 
 Wrapper with a prefix *and* a ttl.
+A specific class is needed because of key encoding and value
+serialization and deserialization.
 
 ```Python
 pcache = ctu.PrefixedRedisCache(rd_base, "pac.", ttl=3600)
@@ -213,6 +216,7 @@ This code is public domain.
 ### 3.0 on *later*
 
 Use simpler `kwargs` approach for caching methods and functions.
+Add a `gen` parameter for caching methods and functions.
 Improve documentation.
 
 ### 2.0 on 2022-02-24

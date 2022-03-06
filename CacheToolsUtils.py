@@ -4,7 +4,7 @@ CacheTools Utilities
 This code is public domain.
 """
 
-from typing import Any, Union, MutableMapping as MutMap
+from typing import Any, Callable, Union, MutableMapping as MutMap
 
 import cachetools
 import json
@@ -129,7 +129,8 @@ class TwoLevelCache(MutMapMix, MutMap):
         return self._cache.clear()
 
 
-def cacheMethods(cache: MutMap, obj: Any, **funs):
+def cacheMethods(cache: MutMap, obj: Any,
+                 gen: Callable[[MutMap, str], MutMap] = PrefixedCache, **funs):
     """Cache some object methods."""
     for fun, prefix in funs.items():
         assert hasattr(obj, fun), f"cannot cache missing method {fun} on {obj}"
@@ -137,16 +138,19 @@ def cacheMethods(cache: MutMap, obj: Any, **funs):
         while hasattr(f, "__wrapped__"):
             f = f.__wrapped__
         setattr(obj, fun,
-                cachetools.cached(cache=PrefixedCache(cache, prefix))(f))
+                cachetools.cached(cache=gen(cache, prefix))(f))
 
 
-def cacheFunctions(cache: MutMap, globs: MutMap[str, Any], **funs):
+def cacheFunctions(cache: MutMap, globs: MutMap[str, Any],
+                   gen: Callable[[MutMap, str], MutMap] = PrefixedCache,
+                   **funs):
+    """Cache some global functions."""
     for fun, prefix in funs.items():
         assert fun in globs, "caching functions: {fun} not found"
         f = globs[fun]
         while hasattr(f, "__wrapped__"):
             f = f.__wrapped__
-        globs[fun] = cachetools.cached(cache=PrefixedCache(cache, prefix))(f)
+        globs[fun] = cachetools.cached(cache=gen(cache, prefix))(f)
 
 
 #
