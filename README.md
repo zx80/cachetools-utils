@@ -22,7 +22,7 @@ throughput and resource usage.
   Depending on the access pattern, it may or may not be useful to put
   such multiple-level caching strategy in place.
 
-- **Latency**s
+- **Latency**
 
   In order to reduce latency, most time should be spent in network accesses,
   so reducing the number of trips is a key strategy. This suggests combining
