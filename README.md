@@ -178,7 +178,7 @@ scache = ctu.StatsRedisCache(pcache)
 This utility function create a prefixed cache around methods of an object
 or functions in the global scope.
 First parameter is the actual cache, second parameter is the object or scope,
-third parameter is a dictionary mapping method names to prefixes.
+and finally a keyword mapping from function names to prefixes.
 
 ```Python
 ctu.cacheMethods(cache, obj, get_data="1.", get_some="2.")
