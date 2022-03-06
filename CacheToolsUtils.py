@@ -4,7 +4,7 @@ CacheTools Utilities
 This code is public domain.
 """
 
-from typing import Any, Union, MutableMapping
+from typing import Any, Union, MutableMapping as MutMap
 
 import cachetools
 import json
@@ -57,10 +57,10 @@ class KeyMutMapMix(MutMapMix):
 #
 
 
-class PrefixedCache(KeyMutMapMix, MutableMapping):
+class PrefixedCache(KeyMutMapMix, MutMap):
     """Cache class to add a key prefix."""
 
-    def __init__(self, cache: MutableMapping, prefix: Union[str, bytes] = ""):
+    def __init__(self, cache: MutMap, prefix: Union[str, bytes] = ""):
         self._prefix = prefix
         self._cache = cache
 
@@ -68,10 +68,10 @@ class PrefixedCache(KeyMutMapMix, MutableMapping):
         return self._prefix + str(key)
 
 
-class StatsCache(MutMapMix, MutableMapping):
+class StatsCache(MutMapMix, MutMap):
     """Cache class to keep stats."""
 
-    def __init__(self, cache: MutableMapping):
+    def __init__(self, cache: MutMap):
         self._cache = cache
         self.reset()
 
@@ -99,10 +99,10 @@ class StatsCache(MutMapMix, MutableMapping):
         return self._cache.clear()
 
 
-class TwoLevelCache(MutMapMix, MutableMapping):
+class TwoLevelCache(MutMapMix, MutMap):
     """Two-Level Cache class for CacheTools."""
 
-    def __init__(self, cache: MutableMapping, cache2: MutableMapping):
+    def __init__(self, cache: MutMap, cache2: MutMap):
         self._cache = cache
         self._cache2 = cache2
 
@@ -129,7 +129,7 @@ class TwoLevelCache(MutMapMix, MutableMapping):
         return self._cache.clear()
 
 
-def cacheMethods(cache: MutableMapping, obj: Any, **funs):
+def cacheMethods(cache: MutMap, obj: Any, **funs):
     """Cache some object methods."""
     for fun, prefix in funs.items():
         assert hasattr(obj, fun), f"cannot cache missing method {fun} on {obj}"
@@ -140,8 +140,7 @@ def cacheMethods(cache: MutableMapping, obj: Any, **funs):
                 cachetools.cached(cache=PrefixedCache(cache, prefix))(f))
 
 
-def cacheFunctions(cache: MutableMapping, globs: MutableMapping[str, Any],
-                   **funs):
+def cacheFunctions(cache: MutMap, globs: MutMap[str, Any], **funs):
     for fun, prefix in funs.items():
         assert fun in globs, "caching functions: {fun} not found"
         f = globs[fun]
@@ -174,7 +173,7 @@ class JsonSerde:
             raise Exception("Unknown serialization format")
 
 
-class MemCached(KeyMutMapMix, MutableMapping):
+class MemCached(KeyMutMapMix, MutMap):
     """MemCached-compatible wrapper class for cachetools with key encoding."""
 
     def __init__(self, cache):
@@ -226,7 +225,7 @@ class StatsMemCached(MemCached):
 #
 
 
-class RedisCache(MutableMapping):
+class RedisCache(MutMap):
     """Redis wrapper for cachetools."""
 
     def __init__(self, cache, ttl=600):
