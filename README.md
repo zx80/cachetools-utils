@@ -44,7 +44,12 @@ throughput and resource usage.
   The best of both word may be achieved, to some extent, by storing JSON
   data into a database such as [Postgres](https://postgresql.org/).
 
-- **Multi-level caching**
+- **Shared Cache**
+  A convenient setup is to have *one* shared cache storage tier at the
+  application level, which is accessed through wrappers to avoid collisions
+  between cache functions.
+
+- **Multi-level Caching**
   Depending on the access pattern, it may or may not be useful to put
   such a strategy in place.
 
