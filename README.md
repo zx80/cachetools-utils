@@ -48,19 +48,17 @@ throughput and resource usage.
 
 - **Throughput**
 
-  - **Write** operations need to be sent to storage.
+  **Write** operations need to be sent to storage.
+  Depending on transaction requirements, i.e. whether rare some data loss is
+  admissible, various strategies can be applied, such as updating in parallel
+  the cache and the final storage.
 
-    Depending on transaction requirements, i.e. whether rare some data loss is
-    admissible, various strategies can be applied, such as updating in parallel
-    the cache and the final storage.
-
-  - **Read** operations can be cached, at the price of possibly having
-    inconsistency data shown to users.
-
-    LFU/LRU cache strategies mean that inconsistent data can be kept in cache
-    for indefinite time, which is annoying. A TLL expiration on top of that
-    makes such discrepancies bounded in time, so that after some time the data
-    shown are eventually up to date.
+  **Read** operations can be cached, at the price of possibly having
+  inconsistency data shown to users.
+  LFU/LRU cache strategies mean that inconsistent data can be kept in cache
+  for indefinite time, which is annoying. A TLL expiration on top of that
+  makes such discrepancies bounded in time, so that after some time the data
+  shown are eventually up to date.
 
 Basically the application should aim at maximizing throughput for the available
 resources whilst keeping the latency under control, eg 90% of queries under
