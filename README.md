@@ -21,37 +21,41 @@ throughput and resource usage.
 
   Depending on the access pattern, it may or may not be useful to put
   a multiple-level caching strategy in place, with a local in-process cache
-  and a higher-level inter-process and inter-host cache.
+  and a higher-level inter-process and inter-host cache such as Redis
+  or MemCached.
 
   When using a global shared cache, it should be clear that the cache may
   hold sensitive data and its manipulation may allow to change the behavior
-  for the application, including working around security by tampering with
+  of the application, including working around security by tampering with
   the application authentication and authorizations guards.
 
 - **Latency**
 
-  In order to reduce latency, most time should be spent in network accesses,
-  so reducing the number of trips is a key strategy. This suggests combining
-  data transfers where possible through higher-level queries, both at the HTTP
-  level and at the database level.
+  In order to reduce latency, as most time should be spent in network accesses,
+  reducing the number of trips is a key strategy. This suggests combining
+  data transfers where possible through higher-level interfaces and queries,
+  both at the HTTP level and at the database level.
 
-  Denormalizing the data model may help. Having an application-oriented view of
-  the model (eg JSON objects rather than attributes and tables) can help
-  performance, at the price of losing some of the consistency warranties
-  provided by a database.  The best of both word may be achieved, to some
-  extent, by storing JSON data into a database such as
+  Denormalizing the relational data model may help. Having an
+  application-oriented view of the model (eg JSON objects rather than
+  attributes and tables) can help performance, at the price of losing some of
+  the consistency warranties provided by a database.  The best of both word may
+  be achieved, to some extent, by storing JSON data into a database such as
   [Postgres](https://postgresql.org/).
 
   Invalidating data from the cache requires a detailed knowledge of internal
   cache operations and are not very easy to manage at the application level,
-  so devops should want to avoid this path if possible.
+  so devops should want to avoid this path if possible, possibly by relying
+  on a time-based cache expiration aka TTL (time-to-live).
 
 - **Throughput**
 
   **Write** operations need to be sent to storage.
   Depending on transaction requirements, i.e. whether rare some data loss is
   admissible, various strategies can be applied, such as updating in parallel
-  the cache and the final storage.
+  the cache and the final storage. Yet again, this strategy requires a deep
+  knowledge of the underlying cache implementation, thus is best avoided most
+  of the time.
 
   **Read** operations can be cached, at the price of possibly having
   inconsistency data shown to users.
