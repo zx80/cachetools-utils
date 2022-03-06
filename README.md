@@ -23,6 +23,11 @@ throughput and resource usage.
   a multiple-level caching strategy in place, with a local in-process cache
   and a higher-level inter-process and inter-host cache.
 
+  When using a global shared cache, it should be clear that the cache may
+  hold sensitive data and its manipulation may allow to change the behavior
+  for the application, including working around security by tampering with
+  the application authentication and authorizations guards.
+
 - **Latency**
 
   In order to reduce latency, most time should be spent in network accesses,
