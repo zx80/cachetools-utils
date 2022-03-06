@@ -239,7 +239,6 @@ Initial version extracted from another project.
 
 ## TODO
 
-- improve documentation further.
 - add a `close`?
 - rename `hits`  `hit_rate`?
 - add other efficiency statistics?
