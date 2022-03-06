@@ -213,7 +213,7 @@ This code is public domain.
 
 ## Versions
 
-### 3.0 on *later*
+### 3.0 on 2022-03-06
 
 Use simpler `kwargs` approach for caching methods and functions.
 Add a `gen` parameter for caching methods and functions.
