@@ -286,3 +286,27 @@ def test_functions():
         n = sum_n2(i) + sum_n2(i) + sum_n2(i)
     assert len(c) == 129
     assert cs.hits() > 0.7
+
+
+class DictCache(ctu.MutMapMix):
+    def __init__(self):
+        self._cache = dict()
+
+
+def test_corners():
+    # MutMapMix coverage
+    c = DictCache()
+    cs = ctu.StatsCache(c)
+    run_cached(cs)
+    assert len(cs) > 0
+    cs["foo-bla-khan"] = 1
+    assert "foo-bla-khan" in cs
+    del cs["foo-bla-khan"]
+    assert "foo-bla-khan" not in cs
+    # raise JsonSerde flag error
+    try:
+        js = ctu.JsonSerde()
+        js.deserialize("foo", "bla", 42)
+        assert False, "exception must be raised"
+    except Exception as e:
+        assert "Unknown serialization format" in str(e)

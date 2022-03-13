@@ -23,13 +23,13 @@ log = logging.getLogger(__name__)
 class MutMapMix:
     """Convenient MutableMapping Mixin, forward to _cache."""
 
-    def __getitem__(self, key):  # pragma: no cover
+    def __getitem__(self, key):
         return self._cache.__getitem__(key)
 
-    def __setitem__(self, key, val):  # pragma: no cover
+    def __setitem__(self, key, val):
         return self._cache.__setitem__(key, val)
 
-    def __delitem__(self, key):  # pragma: no cover
+    def __delitem__(self, key):
         return self._cache.__delitem__(key)
 
     def __len__(self):
@@ -174,7 +174,7 @@ class JsonSerde:
             return value.decode("utf-8")
         elif flag == 2:
             return json.loads(value.decode("utf-8"))
-        else:  # pragma: no cover
+        else:
             raise Exception("Unknown serialization format")
 
 
