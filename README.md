@@ -128,6 +128,8 @@ suggest that the secondary has a longer TTL than the primary.
 ### MemCached
 
 Basic wrapper, possibly with JSON key encoding thanks to the `JsonSerde` class.
+Also add a `hits()` method to compute the cache hit ratio with data taken from
+the memcached server.
 
 ```Python
 import pymemcache as pmc
@@ -148,17 +150,11 @@ A specific class is needed because of necessary key encoding.
 pcache = ctu.PrefixedMemCached(mc_base, prefix="pic.")
 ```
 
-### StatsMemCached
-
-Wrapper with stats actually taken from the MemCached server.
-
-```Python
-scache = ctu.StatsMemCached(pcache)
-```
-
 ### RedisCache
 
 TTL'ed Redis wrapper, default ttl is 10 minutes.
+Also adds a `hits()` method to compute the cache hit ratio with data taken
+from the Redis server.
 
 ```Python
 import redis
@@ -175,15 +171,6 @@ serialization and deserialization.
 
 ```Python
 pcache = ctu.PrefixedRedisCache(rd_base, "pac.", ttl=3600)
-```
-
-### StatsRedisCache
-
-Wrapper with stats (call `hits()`) *and* a ttl.
-Stats are actually taken from the Redis server.
-
-```Python
-scache = ctu.StatsRedisCache(pcache)
 ```
 
 ### cacheMethods and cacheFunctions
@@ -216,6 +203,12 @@ This code is public domain.
 
 
 ## Versions
+
+### 4.0 on 2022-03-13
+
+Remove `StatsRedisCache` and `StatsMemCached` by moving the `hits()` method
+to `RedisCache` and `MemCached`, respectively.
+The two classes still exist for upward compatibility, but are deprecated.
 
 ### 3.0 on 2022-03-06
 

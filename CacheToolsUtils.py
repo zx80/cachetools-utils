@@ -200,6 +200,11 @@ class MemCached(KeyMutMapMix, MutMap):
     def clear(self):  # pragma: no cover
         return self._cache.flush_all()
 
+    def hits(self):
+        """Return overall cache hit rate."""
+        stats = self._cache.stats()
+        return float(stats[b"get_hits"]) / max(stats[b"cmd_get"], 1)
+
 
 class PrefixedMemCached(MemCached):
     """MemCached-compatible wrapper class for cachetools with a key prefix."""
@@ -215,14 +220,7 @@ class PrefixedMemCached(MemCached):
 
 class StatsMemCached(MemCached):
     """Cache MemCached-compatible class with stats."""
-
-    def __init__(self, cache):
-        self._cache = cache
-
-    def hits(self):
-        """Return overall cache hit rate."""
-        stats = self._cache.stats()
-        return float(stats[b"get_hits"]) / max(stats[b"cmd_get"], 1)
+    pass
 
 
 #
@@ -286,6 +284,12 @@ class RedisCache(MutMap):
     def delete(self, *args, **kwargs):
         return self._cache.delete(*args, **kwargs)
 
+    # stats
+    def hits(self):
+        stats = self.info(section="stats")
+        return float(stats["keyspace_hits"]) / \
+            (stats["keyspace_hits"] + stats["keyspace_misses"])
+
 
 class PrefixedRedisCache(RedisCache):
     """Prefixed Redis wrapper class for cachetools."""
@@ -299,13 +303,6 @@ class PrefixedRedisCache(RedisCache):
         return self._prefix + str(key)
 
 
-class StatsRedisCache(RedisCache):
+class StatsRedisCache(PrefixedRedisCache):
     """TTL-ed Redis wrapper class for cachetools."""
-
-    def __init__(self, cache, ttl=600):
-        super().__init__(cache, ttl)
-
-    def hits(self):
-        stats = self.info(section="stats")
-        return float(stats["keyspace_hits"]) / \
-            (stats["keyspace_hits"] + stats["keyspace_misses"])
+    pass
