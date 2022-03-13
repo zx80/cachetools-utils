@@ -209,6 +209,8 @@ This code is public domain.
 Remove `StatsRedisCache` and `StatsMemCached` by moving the `hits()` method
 to `RedisCache` and `MemCached`, respectively.
 The two classes still exist for upward compatibility, but are deprecated.
+Improve test coverage, now only 4 not-covered lines.
+Improve documentation.
 
 ### 3.0 on 2022-03-06
 
