@@ -51,7 +51,7 @@ throughput and resource usage.
 - **Throughput**
 
   **Write** operations need to be sent to storage.
-  Depending on transaction requirements, i.e. whether rare some data loss is
+  Depending on transaction requirements, i.e. whether some rare data loss is
   admissible, various strategies can be applied, such as updating in parallel
   the cache and the final storage. Yet again, this strategy requires a deep
   knowledge of the underlying cache implementation, thus is best avoided most
@@ -141,6 +141,10 @@ cache = ctu.MemCached(mc_base)
 def poc(…):
 ```
 
+Keep in mind MemCached limitations: key size is limited to 250 bytes strings where
+some characters cannot be used, eg spaces, which suggest some encoding
+such as base64, further reducing the actual key size; value size is 1 MiB by default.
+
 ### PrefixedMemCached
 
 Wrapper with a prefix.
@@ -162,6 +166,9 @@ import redis
 rd_base = redis.Redis(host="localhost")
 cache = ctu.RedisCache(rd_base, ttl=60)
 ```
+
+Redis stores arbitrary bytes. Key and values can be up to 512 MiB.
+Keeping keys under 1 KiB seems reasonable.
 
 ### PrefixedRedisCache
 
