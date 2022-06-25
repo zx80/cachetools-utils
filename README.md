@@ -27,7 +27,7 @@ throughput and resource usage.
   When using a global shared cache, it should be clear that the cache may
   hold sensitive data and its manipulation may allow to change the behavior
   of the application, including working around security by tampering with
-  the application authentication and authorizations guards.
+  the application authentication and authorization guards.
 
 - **Latency**
 
@@ -87,6 +87,7 @@ This module provide the following cache wrappers suitable to use with
 Add a key prefix to an underlying cache to avoid key collisions.
 
 ```Python
+import cachetools
 import CacheToolsUtils as ctu
 
 ct_base = cachetools.TTLCache(maxsize=1048576, ttl=600)
@@ -122,7 +123,7 @@ cache = ctu.TwoLevelCache(TTLCache(…), RedisCache(…))
 ```
 
 There should be some consistency between the two level configurations
-so that it make sense. For instance, having two TTL-ed stores would
+so that it makes sense. For instance, having two TTL-ed stores would
 suggest that the secondary has a longer TTL than the primary.
 
 ### MemCached
@@ -188,7 +189,10 @@ First parameter is the actual cache, second parameter is the object or scope,
 and finally a keyword mapping from function names to prefixes.
 
 ```Python
+# add cache to obj.get_data and obj.get_some
 ctu.cacheMethods(cache, obj, get_data="1.", get_some="2.")
+
+# add cache to some_func
 ctu.cacheFunctions(cache, globals(), some_func="f.")
 ```
 
@@ -210,6 +214,10 @@ This code is public domain.
 
 
 ## Versions
+
+### 5.0 on later
+
+Improved documentation.
 
 ### 4.0 on 2022-03-13
 
