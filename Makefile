@@ -15,7 +15,7 @@ clean:
 	$(RM) -r __pycache__ *.egg-info dist build .mypy_cache .pytest_cache htmlcov
 	$(RM) .coverage $(F.pdf)
 
-clean-venv: clean
+clean.venv: clean
 	$(RM) -r venv
 
 PYTHON	= python
