@@ -11,6 +11,7 @@ logging.basicConfig()
 log = logging.getLogger()
 # log.setLevel(logging.DEBUG)
 
+
 def has_service(host="localhost", port=22):
     """check whether a network TCP/IP service is available."""
     try:
@@ -24,12 +25,16 @@ def has_service(host="localhost", port=22):
     finally:
         tcp_ip.close()
 
+
 def cached_fun(cache):
     """return a cached function with basic types."""
+
     @ct.cached(cache=cache)
     def fun(i: int, s: Optional[str], b: bool) -> int:
-        return i + (10*len(s) if s is not None else -20) + (100 if b else 0)
+        return i + (10 * len(s) if s is not None else -20) + (100 if b else 0)
+
     return fun
+
 
 def run_cached(cache):
     """run something on a cached function."""
@@ -44,7 +49,9 @@ def run_cached(cache):
                     x += v
     assert x == 30000
 
+
 KEY, VAL = "hello-world!", "Hello World…"
+
 
 def setgetdel(cache):
     # str value
@@ -52,15 +59,16 @@ def setgetdel(cache):
     assert cache[KEY] == VAL
     del cache[KEY]
     try:
-       val = cache[KEY]
-       assert False, "should raise KeyError"
+        val = cache[KEY]
+        assert False, "should raise KeyError"
     except Exception as e:
-       assert isinstance(e, KeyError)
+        assert isinstance(e, KeyError)
     # int value
     cache[KEY] = 65536
     assert cache[KEY] == 65536
     del cache[KEY]
     # assert KEY not in cache
+
 
 def test_key_ct():
     c0 = ct.TTLCache(maxsize=100, ttl=100)
@@ -87,6 +95,7 @@ def test_key_ct():
     for key in c3:
         assert key[0] in ("f", "g") and key[1] == "."
 
+
 def test_stats_ct():
     c0 = ct.TTLCache(maxsize=100, ttl=100)
     cache = ctu.StatsCache(c0)
@@ -99,9 +108,14 @@ def test_stats_ct():
     setgetdel(c0)
     setgetdel(cache)
 
-@pytest.mark.skipif(not has_service(port=11211), reason="no local memcached service available for testing")
+
+@pytest.mark.skipif(
+    not has_service(port=11211),
+    reason="no local memcached service available for testing",
+)
 def test_memcached():
     import pymemcache as pmc
+
     c0 = pmc.Client(server="localhost", serde=ctu.JsonSerde())
     c1 = ctu.MemCached(c0)
     run_cached(c1)
@@ -110,9 +124,14 @@ def test_memcached():
     assert c1["(3, None, False)"] == -17
     assert isinstance(c1.stats(), dict)
 
-@pytest.mark.skipif(not has_service(port=11211), reason="no local memcached service available for testing")
+
+@pytest.mark.skipif(
+    not has_service(port=11211),
+    reason="no local memcached service available for testing",
+)
 def test_key_memcached():
     import pymemcache as pmc
+
     c0 = pmc.Client(server="localhost", serde=ctu.JsonSerde())
     c1 = ctu.PrefixedMemCached(c0, "CacheToolsUtils.")
     run_cached(c1)
@@ -120,9 +139,14 @@ def test_key_memcached():
     assert c1["(1, 'a', True)"] == 111
     assert c1["(3, None, False)"] == -17
 
-@pytest.mark.skipif(not has_service(port=11211), reason="no local memcached service available for testing")
+
+@pytest.mark.skipif(
+    not has_service(port=11211),
+    reason="no local memcached service available for testing",
+)
 def test_stats_memcached():
     import pymemcache as pmc
+
     c0 = pmc.Client(server="localhost", serde=ctu.JsonSerde(), key_prefix=b"ctu.")
     c1 = ctu.StatsMemCached(c0)
     run_cached(c1)
@@ -133,14 +157,18 @@ def test_stats_memcached():
     setgetdel(c0)
     setgetdel(c1)
 
-@pytest.mark.skipif(not has_service(port=6379), reason="no local redis service available for testing")
+
+@pytest.mark.skipif(
+    not has_service(port=6379), reason="no local redis service available for testing"
+)
 def test_redis():
     import redis
+
     c0 = redis.Redis(host="localhost")
     c1 = ctu.RedisCache(c0)
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1[(1, 'a', True)] == 111
+    assert c1[(1, "a", True)] == 111
     assert c1[(3, None, False)] == -17
     setgetdel(c1)
     try:
@@ -149,32 +177,44 @@ def test_redis():
     except Exception as e:
         assert "not implemented yet" in str(e)
 
-@pytest.mark.skipif(not has_service(port=6379), reason="no local redis service available for testing")
+
+@pytest.mark.skipif(
+    not has_service(port=6379), reason="no local redis service available for testing"
+)
 def test_key_redis():
     import redis
+
     c0 = redis.Redis(host="localhost")
     c1 = ctu.PrefixedRedisCache(c0, "CacheToolsUtils.")
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1[(1, 'a', True)] == 111
+    assert c1[(1, "a", True)] == 111
     assert c1[(3, None, False)] == -17
     setgetdel(c1)
 
-@pytest.mark.skipif(not has_service(port=6379), reason="no local redis service available for testing")
+
+@pytest.mark.skipif(
+    not has_service(port=6379), reason="no local redis service available for testing"
+)
 def test_stats_redis():
     import redis
+
     c0 = redis.Redis(host="localhost")
     c1 = ctu.StatsRedisCache(c0)
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1[(1, 'a', True)] == 111
+    assert c1[(1, "a", True)] == 111
     assert c1[(3, None, False)] == -17
     assert c1.hits() > 0.0
     setgetdel(c1)
 
-@pytest.mark.skipif(not has_service(port=6379), reason="no local redis service available for testing")
+
+@pytest.mark.skipif(
+    not has_service(port=6379), reason="no local redis service available for testing"
+)
 def test_stacked_redis():
     import redis
+
     c0 = redis.Redis(host="localhost")
     c1 = ctu.RedisCache(c0)
     c2 = ctu.StatsRedisCache(c1)
@@ -185,6 +225,7 @@ def test_stacked_redis():
     setgetdel(c1)
     setgetdel(c2)
     setgetdel(c3)
+
 
 def test_two_level_small():
     # front cache is too small, always fallback
@@ -205,6 +246,7 @@ def test_two_level_small():
     setgetdel(c0s)
     setgetdel(c1s)
     setgetdel(c2)
+
 
 def test_two_level_ok():
     # front cache is too small, always fallback
@@ -234,7 +276,6 @@ def test_two_level_ok():
 
 
 class Stuff:
-
     def __init__(self, name):
         self._name = name
 
@@ -245,13 +286,14 @@ class Stuff:
         if n < 1:
             return 0
         else:
-            return n*n + self.sum_n2(n-1)
+            return n * n + self.sum_n2(n - 1)
 
     def sum_n1(self, n: int):
         if n < 0:
             return 0
         else:
-            return n + self.sum_n1(n-1)
+            return n + self.sum_n1(n - 1)
+
 
 def test_methods():
     s = Stuff("test_methods")
@@ -272,8 +314,10 @@ def test_methods():
     except Exception as e:
         assert "missing method" in str(e)
 
+
 def sum_n2(n: int):
-    return n*n + sum_n2(n-1) if n >= 1 else 0
+    return n * n + sum_n2(n - 1) if n >= 1 else 0
+
 
 def test_functions():
     c = ct.TTLCache(1024, ttl=60.0)

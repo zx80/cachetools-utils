@@ -10,15 +10,18 @@ import cachetools
 import json
 
 import pkg_resources as pkg  # type: ignore
+
 __version__ = pkg.require("CacheToolsUtils")[0].version
 
 import logging
+
 log = logging.getLogger(__name__)
 
 
 #
 # UTILS
 #
+
 
 class MutMapMix:
     """Convenient MutableMapping Mixin, forward to _cache."""
@@ -143,8 +146,9 @@ def cacheMethods(cache: MutMap, obj: Any, gen: MapGen = PrefixedCache, **funs):
         setattr(obj, fun, cachetools.cached(cache=gen(cache, prefix))(f))
 
 
-def cacheFunctions(cache: MutMap, globs: MutMap[str, Any],
-                   gen: MapGen = PrefixedCache, **funs):
+def cacheFunctions(
+    cache: MutMap, globs: MutMap[str, Any], gen: MapGen = PrefixedCache, **funs
+):
     """Cache some global functions."""
     for fun, prefix in funs.items():
         assert fun in globs, "caching functions: {fun} not found"
@@ -157,6 +161,7 @@ def cacheFunctions(cache: MutMap, globs: MutMap[str, Any],
 #
 # MEMCACHED
 #
+
 
 class JsonSerde:
     """JSON serialize/deserialize for MemCached."""
@@ -189,6 +194,7 @@ class MemCached(KeyMutMapMix, MutMap):
     # we do not use hashing which might be costly and induce collisions
     def _key(self, key):
         import base64
+
         return base64.b64encode(str(key).encode("utf-8"))
 
     def __len__(self):
@@ -215,11 +221,13 @@ class PrefixedMemCached(MemCached):
 
     def _key(self, key):
         import base64
+
         return self._prefix + base64.b64encode(str(key).encode("utf-8"))
 
 
 class StatsMemCached(MemCached):
     """Cache MemCached-compatible class with stats."""
+
     pass
 
 
@@ -255,8 +263,7 @@ class RedisCache(MutMap):
             raise KeyError()
 
     def __setitem__(self, index, value):
-        return self._cache.set(self._key(index), self._serialize(value),
-                               ex=self._ttl)
+        return self._cache.set(self._key(index), self._serialize(value), ex=self._ttl)
 
     def __delitem__(self, index):
         return self._cache.delete(self._key(index))
@@ -287,8 +294,9 @@ class RedisCache(MutMap):
     # stats
     def hits(self):
         stats = self.info(section="stats")
-        return float(stats["keyspace_hits"]) / \
-            (stats["keyspace_hits"] + stats["keyspace_misses"])
+        return float(stats["keyspace_hits"]) / (
+            stats["keyspace_hits"] + stats["keyspace_misses"]
+        )
 
 
 class PrefixedRedisCache(RedisCache):
@@ -305,4 +313,5 @@ class PrefixedRedisCache(RedisCache):
 
 class StatsRedisCache(PrefixedRedisCache):
     """TTL-ed Redis wrapper class for cachetools."""
+
     pass
