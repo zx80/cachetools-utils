@@ -221,6 +221,10 @@ This code is public domain.
 
 ## Versions
 
+### 4.2 on 2022-08-05
+
+Fix minor typo in a badge.
+
 ### 4.1 on 2022-08-05
 
 Code reformating.
