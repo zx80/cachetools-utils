@@ -11,7 +11,7 @@ and other cache-related utils.
 ![Python](https://img.shields.io/badge/python-3-informational)
 ![Version](https://img.shields.io/pypi/v/CacheToolsUtils)
 ![Badges](https://img.shields.io/badge/badges-6-informational)
-![License](https//img.shields.io/pypi/l/cachetoolsutils?style=flat)
+![License](https://img.shields.io/pypi/l/cachetoolsutils?style=flat)
 
 ## Thoughts about Caching
 
