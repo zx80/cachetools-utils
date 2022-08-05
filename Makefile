@@ -7,24 +7,8 @@ MODULE	= CacheToolsUtils
 F.md	= $(wildcard *.md)
 F.pdf	= $(F.md:%.md=%.pdf)
 
-PYTHON	= python
-PIP		= venv/bin/pip
-PYTEST	= pytest --log-level=debug --capture=tee-sys
-PYTOPT	=
 
-.PHONY: check
-check: install
-	. venv/bin/activate
-	type $(PYTHON)
-	mypy $(MODULE).py
-	flake8 --ignore= $(MODULE).py
-	$(PYTEST) $(PYTOPT) test.py
-
-.PHONY: coverage
-coverage:
-	. venv/bin/activate
-	coverage run -m $(PYTEST) $(PYTOPT) test.py
-	coverage html $(MODULE).py
+# cleanup and environment
 
 .PHONY: clean clean-venv
 clean:
@@ -34,17 +18,57 @@ clean:
 clean-venv: clean
 	$(RM) -r venv
 
-.PHONY: install
-install: $(MODULE).egg-info
-
-$(MODULE).egg-info: venv
-	$(PIP) install -e .
+PYTHON	= python
+PIP		= venv/bin/pip
 
 # for local testing
 venv:
 	$(PYTHON) -m venv venv
-	$(PIP) install wheel mypy flake8 pytest coverage \
+	$(PIP) install wheel mypy flake8 black pytest coverage \
 		cachetools types-cachetools pymemcache redis types-redis
+
+#
+# Tests
+#
+PYTEST	= pytest --log-level=debug --capture=tee-sys
+PYTOPT	=
+
+.PHONY: check
+check: check.mypy check.flake8 check.black check.pytest check.coverage
+
+.PHONY: check.mypy
+check.mypy:
+	. venv/bin/activate
+	mypy $(MODULE).py
+
+.PHONY: check.flake8
+check.flake8:
+	. venv/bin/activate
+	flake8 --ignore=E501 $(MODULE).py
+
+.PHONY: check.black
+check.black:
+	. venv/bin/activate
+	black --check $(MODULE).py
+
+.PHONY: check.pytest
+check.pytest:
+	. venv/bin/activate
+	$(PYTEST) $(PYTOPT) test.py
+
+.PHONY: check.coverage
+check.coverage:
+	. venv/bin/activate
+	coverage run -m $(PYTEST) $(PYTOPT) test.py
+	coverage html $(MODULE).py
+	coverage report --fail-under=100 --include=CacheToolsUtils.py
+
+.PHONY: install
+install: $(MODULE).egg-info
+	type $(PYTHON)
+
+$(MODULE).egg-info: venv
+	$(PIP) install -e .
 
 # generate source and built distribution
 dist:
