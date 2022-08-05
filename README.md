@@ -221,9 +221,12 @@ This code is public domain.
 
 ## Versions
 
-### 5.0 on later
+### 4.1 on 2022-08-05
 
+Code reformating.
 Improved documentation.
+Improved checks.
+Improved Makefile.
 
 ### 4.0 on 2022-03-13
 
