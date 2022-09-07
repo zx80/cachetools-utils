@@ -26,6 +26,7 @@ venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install wheel mypy flake8 black pytest coverage \
 		cachetools types-cachetools pymemcache redis types-redis
+	$(PIP) install -e .
 
 #
 # Tests
