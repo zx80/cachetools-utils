@@ -212,6 +212,10 @@ def test_key_redis():
     assert c1[(1, "a", True)] == 111
     assert c1[(3, None, False)] == -17
     setgetdel(c1)
+    c1.set("Hello", "World!")
+    assert c1["Hello"] == c1.get("Hello")
+    c1.delete("Hello")
+    assert "Hello" not in c1
 
 
 @pytest.mark.skipif(
