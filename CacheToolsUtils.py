@@ -282,22 +282,23 @@ class RedisCache(MutMap):
     def __iter__(self):
         raise Exception("not implemented yet")
 
-    # also forward Redis set/get/delete
-    # FIXME should it pass through the key filter?
     def info(self, *args, **kwargs):
         return self._cache.info(*args, **kwargs)
 
     def dbsize(self, *args, **kwargs):
         return self._cache.dbsize(*args, **kwargs)
 
-    def set(self, *args, **kwargs):
-        return self._cache.set(*args, **kwargs)
+    # also forward Redis set/get/delete
+    def set(self, index, value, **kwargs):
+        if "ex" not in kwargs:  # pragma: no cover
+            kwargs["ex"] = self._ttl
+        return self._cache.set(self._key(index), self._serialize(value), **kwargs)
 
-    def get(self, *args, **kwargs):
-        return self._cache.get(*args, **kwargs)
+    def get(self, index, default=None):
+        return self[index]
 
-    def delete(self, *args, **kwargs):
-        return self._cache.delete(*args, **kwargs)
+    def delete(self, index):
+        del self[index]
 
     # stats
     def hits(self):
