@@ -221,6 +221,11 @@ This code is public domain.
 
 ## Versions
 
+### 4.3 on 2022-09-07
+
+Fix missing key filtering for `Redis`'s `get`, `set` and `delete`.
+Also forward `in` in Mixin.
+
 ### 4.2 on 2022-08-05
 
 Fix minor typo in a badge.
