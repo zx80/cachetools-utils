@@ -22,9 +22,14 @@ log = logging.getLogger(__name__)
 # UTILS
 #
 
+_NO_DEFAULT = object()
+
 
 class MutMapMix:
     """Convenient MutableMapping Mixin, forward to _cache."""
+
+    def __contains__(self, key):
+        return self._cache.__contains__(key)
 
     def __getitem__(self, key):
         return self._cache.__getitem__(key)
@@ -44,6 +49,9 @@ class MutMapMix:
 
 class KeyMutMapMix(MutMapMix):
     """Convenient MutableMapping Mixin with a key filter, forward to _cache."""
+
+    def __contains__(self, key):
+        return self._cache.__contains__(self._key(key))
 
     def __getitem__(self, key):
         return self._cache.__getitem__(self._key(key))

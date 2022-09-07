@@ -54,7 +54,7 @@ KEY, VAL = "hello-world!", "Hello World…"
 
 
 def setgetdel(cache):
-    # str value
+    # str keys and values
     cache[KEY] = VAL
     assert cache[KEY] == VAL
     del cache[KEY]
@@ -67,7 +67,24 @@ def setgetdel(cache):
     cache[KEY] = 65536
     assert cache[KEY] == 65536
     del cache[KEY]
+    # FIXME memcached error
     # assert KEY not in cache
+
+def setgetdel_bytes(cache):
+    key, val, cst = KEY.encode("UTF8"), VAL.encode("UTF8"), b"FOO"
+    cache.setdefault(key, val)
+    assert key in cache
+    assert cache.get(key) == val
+    assert cache.setdefault(key, cst) == val
+    assert cache.pop(key) == val
+    assert key not in cache
+    assert cache.get(key, cst) == cst
+    assert cache.pop(key, cst) == cst
+    try:
+       cache.pop(key)
+       assert False, "should raise KeyError"
+    except KeyError as e:
+       assert True, "KeyError was raised"
 
 
 def test_key_ct():
@@ -94,6 +111,10 @@ def test_key_ct():
         assert key[0] in ("f", "g") and key[1] == "."
     for key in c3:
         assert key[0] in ("f", "g") and key[1] == "."
+    setgetdel_bytes(c0)
+    setgetdel_bytes(c1)
+    setgetdel_bytes(c2)
+    setgetdel_bytes(c3)
 
 
 def test_stats_ct():
