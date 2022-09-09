@@ -18,15 +18,16 @@ clean:
 clean.venv: clean
 	$(RM) -r venv
 
+# venv for local testing
 PYTHON	= python
 PIP		= venv/bin/pip
 
-# for local testing
 venv:
 	$(PYTHON) -m venv venv
+	$(PIP) install --upgrade pip
+	$(PIP) install -e .
 	$(PIP) install wheel mypy flake8 black pytest coverage \
 		cachetools types-cachetools pymemcache redis types-redis
-	$(PIP) install -e .
 
 #
 # Tests
@@ -78,7 +79,7 @@ dist:
 .PHONY: publish
 publish: dist
 	# provide pypi login/pw or token somewhere…
-	twine upload --repository $(MODULE) dist/*
+	echo twine upload --repository $(MODULE) dist/*
 
 # generate pdf doc
 MD2PDF  = pandoc -f markdown -t latex -V papersize:a4 -V geometry:hmargin=2.5cm -V geometry:vmargin=3cm
