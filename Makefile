@@ -26,8 +26,7 @@ venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install --upgrade pip
 	$(PIP) install -e .
-	$(PIP) install wheel mypy flake8 black pytest coverage pymarkdownlnt \
-		cachetools types-cachetools pymemcache redis types-redis
+	$(PIP) install -r dev-requirements.txt
 
 #
 # Tests

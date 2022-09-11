@@ -1,0 +1,14 @@
+wheel
+# dependencies for tests
+pymemcache
+redis
+# tools
+mypy
+black
+flake8
+pytest
+coverage
+pymarkdownlnt
+# for mypy
+types-redis
+types-cachetools

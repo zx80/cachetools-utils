@@ -24,9 +24,8 @@ jobs:
     - name: Install Python Dependencies
       run: |
         pip install -U pip
-        pip install mypy black flake8 pytest coverage
-        pip install cachetools redis pymemcache types-cachetools types-redis
         pip install -e .
+        pip install -r dev-requirements.txt
     - name: Start Redis
       uses: supercharge/redis-github-action@1.4.0
     - name: Start MemCached
