@@ -26,7 +26,7 @@ venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install --upgrade pip
 	$(PIP) install -e .
-	$(PIP) install wheel mypy flake8 black pytest coverage \
+	$(PIP) install wheel mypy flake8 black pytest coverage pymarkdownlnt \
 		cachetools types-cachetools pymemcache redis types-redis
 
 #
@@ -36,7 +36,7 @@ PYTEST	= pytest --log-level=debug --capture=tee-sys
 PYTOPT	=
 
 .PHONY: check
-check: check.mypy check.flake8 check.black check.pytest check.coverage
+check: check.mypy check.flake8 check.black check.pytest check.coverage check.pymarkdown
 
 .PHONY: check.mypy
 check.mypy:
@@ -64,6 +64,11 @@ check.coverage:
 	coverage run -m $(PYTEST) $(PYTOPT) test.py
 	coverage html $(MODULE).py
 	coverage report --fail-under=100 --include=CacheToolsUtils.py
+
+.PHONY: check.pymarkdown
+check.pymarkdown:
+	. venv/bin/activate
+	pymarkdown scan README.md
 
 .PHONY: install
 install: $(MODULE).egg-info

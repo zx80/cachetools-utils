@@ -19,7 +19,7 @@ Caching is a key component of any significant Web or REST backend so as to avoid
 performance issues when accessing the storage tier, in term of latency,
 throughput and resource usage.
 
-- **Shared Cache**
+### Shared Cache
 
   A convenient setup is to have *one* shared cache storage tier at the
   application level, which is accessed through wrappers to avoid collisions
@@ -35,7 +35,7 @@ throughput and resource usage.
   of the application, including working around security by tampering with
   the application authentication and authorization guards.
 
-- **Latency**
+### Latency
 
   In order to reduce latency, as most time should be spent in network accesses,
   reducing the number of trips is a key strategy. This suggests combining
@@ -54,7 +54,7 @@ throughput and resource usage.
   so devops should want to avoid this path if possible, possibly by relying
   on a time-based cache expiration aka TTL (time-to-live).
 
-- **Throughput**
+### Throughput
 
   **Write** operations need to be sent to storage.
   Depending on transaction requirements, i.e. whether some rare data loss is
@@ -202,7 +202,6 @@ ctu.cacheMethods(cache, obj, get_data="1.", get_some="2.")
 ctu.cacheFunctions(cache, globals(), some_func="f.")
 ```
 
-
 ## Install
 
 Install with `pip`:
@@ -213,11 +212,9 @@ pip install CacheToolsUtils
 
 See above for example usage.
 
-
 ## License
 
 This code is public domain.
-
 
 ## Versions
 
@@ -271,7 +268,6 @@ classes can be stacked.
 ### 0.9.0 on 2022-01-29
 
 Initial version extracted from another project.
-
 
 ## TODO
 
