@@ -67,7 +67,7 @@ check.coverage:
 .PHONY: check.pymarkdown
 check.pymarkdown:
 	. venv/bin/activate
-	pymarkdown scan README.md
+	pymarkdown scan *.md
 
 .PHONY: install
 install: $(MODULE).egg-info

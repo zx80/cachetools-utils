@@ -12,7 +12,8 @@ jobs:
       fail-fast: false
       matrix:
         # broken: pypy3.7
-        python-version: [ "3.7", "3.8", "3.9", "3.10", "3.11-dev", "pypy3.8", "pypy3.9" ]
+        # broken: 3.7 (pymarkdownlnt)
+        python-version: [ "3.8", "3.9", "3.10", "3.11-dev", "pypy3.8", "pypy3.9" ]
     steps:
     # Setup
     - uses: actions/checkout@v3
@@ -43,3 +44,5 @@ jobs:
       run: |
         coverage run -m pytest --log-level=debug --capture=tee-sys test.py
         coverage report --fail-under=100 --include=CacheToolsUtils.py
+    - name: Check with pymarkdown
+      run: pymarkdown scan *.md
