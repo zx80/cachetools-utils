@@ -1,0 +1,45 @@
+name: CacheTools Utils Package
+
+on:
+  push:
+    branches: [ main ]
+  # push_request: ?
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.7", "3.8", "3.9", "3.10", "3.11-dev", "pypy3.7", "pypy3.8", "pypy3.9" ]
+    steps:
+    # Setup
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    # Dependencies
+    - name: Install Python Dependencies
+      run: |
+        pip install -U pip
+        pip install mypy black flake8 pytest coverage
+        pip install cachetools redis pymemcache types-cachetools types-redis
+        pip install -e .
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.4.0
+    - name: Start MemCached
+      uses: niden/actions-memcached@v7
+    # Checks
+    - name: Check with mypy
+      run: mypy CacheToolsUtils.py
+    - name: Check with black
+      run: black --check CacheToolsUtils.py
+    - name: Check with flake8
+      run: flake8 --ignore=E501 CacheToolsUtils.py
+    - name: Check with pytest
+      run: pytest test.py
+    - name: Check with coverage
+      run: |
+        coverage run -m pytest --log-level=debug --capture=tee-sys test.py
+        coverage report --fail-under=100 --include=CacheToolsUtils.py
