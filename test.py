@@ -70,6 +70,7 @@ def setgetdel(cache):
     # FIXME memcached error
     # assert KEY not in cache
 
+
 def setgetdel_bytes(cache):
     key, val, cst = KEY.encode("UTF8"), VAL.encode("UTF8"), b"FOO"
     cache.setdefault(key, val)
@@ -81,10 +82,10 @@ def setgetdel_bytes(cache):
     assert cache.get(key, cst) == cst
     assert cache.pop(key, cst) == cst
     try:
-       cache.pop(key)
-       assert False, "should raise KeyError"
+        cache.pop(key)
+        assert False, "should raise KeyError"
     except KeyError as e:
-       assert True, "KeyError was raised"
+        assert True, "KeyError was raised"
 
 
 def test_key_ct():
