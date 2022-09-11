@@ -219,6 +219,12 @@ This code is public domain.
 
 ## Versions
 
+### 5.0 on 2022-09-11
+
+Add `pymarkdown` check.
+Add GitHub CI configuration.
+Add a badge.
+
 ### 4.3 on 2022-09-07
 
 Fix missing key filtering for `Redis`'s `get`, `set` and `delete`.
