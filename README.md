@@ -219,6 +219,10 @@ This code is public domain.
 
 ## Versions
 
+### 5.1 on 2022-11-12
+
+Test with Python *3.12*.
+
 ### 5.0 on 2022-09-11
 
 Add `pymarkdown` check.
