@@ -89,11 +89,13 @@ This module provide the following cache wrappers suitable to use with
   a storage can be shared without collisions or keeping usage and efficiency
   statistics.
 
+Install with `pip install CacheToolsUtils` or any other relevant mean.
+
 ### PrefixedCache
 
 Add a key prefix to an underlying cache to avoid key collisions.
 
-```Python
+```python
 import cachetools
 import CacheToolsUtils as ctu
 
@@ -114,7 +116,7 @@ def bla(…):
 
 Keep stats, cache hit rate shown with `hits()`.
 
-```Python
+```python
 scache = ctu.StatsCache(cache)
 ```
 
@@ -125,7 +127,7 @@ level, and a larger shared `redis` or `memcached` distributed cache for the
 second level.
 Whether such setting can bring performance benefits is an open question.
 
-```Python
+```python
 cache = ctu.TwoLevelCache(TTLCache(…), RedisCache(…))
 ```
 
@@ -139,7 +141,7 @@ Basic wrapper, possibly with JSON key encoding thanks to the `JsonSerde` class.
 Also add a `hits()` method to compute the cache hit ratio with data taken from
 the memcached server.
 
-```Python
+```python
 import pymemcache as pmc
 
 mc_base = pmc.Client(server="localhost", serde=ctu.JsonSerde())
@@ -158,7 +160,7 @@ such as base64, further reducing the actual key size; value size is 1 MiB by def
 Wrapper with a prefix.
 A specific class is needed because of necessary key encoding.
 
-```Python
+```python
 pcache = ctu.PrefixedMemCached(mc_base, prefix="pic.")
 ```
 
@@ -168,7 +170,7 @@ TTL'ed Redis wrapper, default ttl is 10 minutes.
 Also adds a `hits()` method to compute the cache hit ratio with data taken
 from the Redis server.
 
-```Python
+```python
 import redis
 
 rd_base = redis.Redis(host="localhost")
@@ -184,7 +186,7 @@ Wrapper with a prefix *and* a ttl.
 A specific class is needed because of key encoding and value
 serialization and deserialization.
 
-```Python
+```python
 pcache = ctu.PrefixedRedisCache(rd_base, "pac.", ttl=3600)
 ```
 
@@ -195,7 +197,7 @@ or functions in the global scope.
 First parameter is the actual cache, second parameter is the object or scope,
 and finally a keyword mapping from function names to prefixes.
 
-```Python
+```python
 # add cache to obj.get_data and obj.get_some
 ctu.cacheMethods(cache, obj, get_data="1.", get_some="2.")
 
@@ -203,21 +205,22 @@ ctu.cacheMethods(cache, obj, get_data="1.", get_some="2.")
 ctu.cacheFunctions(cache, globals(), some_func="f.")
 ```
 
-## Install
-
-Install with `pip`:
-
-```Shell
-pip install CacheToolsUtils
-```
-
-See above for example usage.
-
 ## License
 
 This code is public domain.
 
 ## Versions
+
+[Sources](https://github.com/zx80/cachetools-utils),
+[documentation](https://zx80.github.io/cachetools-utils/) and
+[issues](https://github.com/zx80/cachetools-utils/issues)
+are hosted on [GitHub](https://github.com).
+Install [package](https://pypi.org/project/CacheToolsUtils/) from
+[PyPI](https://pypi.org/).
+
+### ? on ?
+
+Improved documentation for `github.io`.
 
 ### 5.1 on 2022-11-12
 
