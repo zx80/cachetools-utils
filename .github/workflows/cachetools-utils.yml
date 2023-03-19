@@ -28,21 +28,22 @@ jobs:
         pip install -e .
         pip install -r dev-requirements.txt
     - name: Start Redis
-      uses: supercharge/redis-github-action@1.4.0
+      uses: supercharge/redis-github-action@1.5.0
     - name: Start MemCached
       uses: niden/actions-memcached@v7
     # Checks
-    - name: Check with mypy
-      run: mypy CacheToolsUtils.py
     - name: Check with black
       run: black --check CacheToolsUtils.py
     - name: Check with flake8
       run: flake8 --ignore=E501 CacheToolsUtils.py
+    - name: Check with pymarkdown
+      run: pymarkdown scan *.md
     - name: Check with pytest
       run: pytest test.py
     - name: Check with coverage
       run: |
         coverage run -m pytest --log-level=debug --capture=tee-sys test.py
         coverage report --fail-under=100 --include=CacheToolsUtils.py
-    - name: Check with pymarkdown
-      run: pymarkdown scan *.md
+    - name: Check with mypy
+      # mypy is much too slow, this is a pain:-/
+      run: mypy CacheToolsUtils.py

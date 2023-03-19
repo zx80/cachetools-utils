@@ -218,9 +218,10 @@ are hosted on [GitHub](https://github.com).
 Install [package](https://pypi.org/project/CacheToolsUtils/) from
 [PyPI](https://pypi.org/).
 
-### ? on ?
+### 6.0 on 2023-03-19
 
 Improved documentation for `github.io`.
+Add a `pyproject.toml` (stupid) file.
 
 ### 5.1 on 2022-11-12
 
