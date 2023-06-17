@@ -109,9 +109,14 @@ class StatsCache(MutMapMix, MutMap):
 
 
 class TwoLevelCache(MutMapMix, MutMap):
-    """Two-Level Cache class for CacheTools."""
+    """Two-Level Cache class for CacheTools.
 
-    def __init__(self, cache: MutMap, cache2: MutMap):
+    - cache, cache2: the two caches, second is larger, longer TTL
+    - resilient: whether to ignore cache2 failures
+    """
+
+    def __init__(self, cache: MutMap, cache2: MutMap, resilient = False):
+        self._resilient = resilient
         self._cache = cache
         self._cache2 = cache2
 
@@ -119,12 +124,22 @@ class TwoLevelCache(MutMapMix, MutMap):
         try:
             return self._cache.__getitem__(key)
         except KeyError:
-            val = self._cache2.__getitem__(key)
+            try:
+                val = self._cache2.__getitem__(key)
+            except Exception as e:
+                log.error(e, exc_info=True)
+                if not self._resilient:
+                    raise
             self._cache.__setitem__(key, val)
             return val
 
     def __setitem__(self, key, val):
-        self._cache2.__setitem__(key, val)
+        try:
+            self._cache2.__setitem__(key, val)
+        except Exception as e:
+            log.error(e, exc_info=True)
+            if not self._resilient:
+                raise
         return self._cache.__setitem__(key, val)
 
     def __delitem__(self, key):
@@ -132,6 +147,10 @@ class TwoLevelCache(MutMapMix, MutMap):
             self._cache2.__delitem__(key)
         except KeyError:
             pass
+        except Exception as e:
+            log.error(e, exc_info=True)
+            if not self._resilient:
+                raise
         return self._cache.__delitem__(key)
 
     def clear(self):

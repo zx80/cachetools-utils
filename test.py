@@ -380,3 +380,34 @@ def test_corners():
         assert False, "exception must be raised"
     except Exception as e:
         assert "Unknown serialization format" in str(e)
+
+
+class BrokenCache():
+    """All Error Cache, for testing purposes."""
+
+    def __setitem__(self, key, val):
+        raise Exception("oops!")
+
+    def __getitem__(self, key):
+        raise Exception("oops!")
+
+    def __delitem__(self, key):
+        raise Exception("oops!")
+
+def test_resilience():
+    d = DictCache()
+    b = BrokenCache()
+
+    # no resilience (default)
+    c = ctu.TwoLevelCache(d, b, False)
+    try:
+        c["foo"] = "bla"
+        assert False, "must raise an exception"
+    except Exception:
+        assert True, "expecting exception"
+
+    # activate resilience
+    c._resilient = True
+    c["foo"] = "bla"
+    assert c["foo"] == "bla"
+    del c["foo"]
