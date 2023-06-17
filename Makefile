@@ -25,8 +25,7 @@ PIP		= venv/bin/pip
 venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install --upgrade pip
-	$(PIP) install -e .
-	$(PIP) install -r dev-requirements.txt
+	$(PIP) install -e .[dev,pub,tests]
 
 #
 # Tests
@@ -35,7 +34,7 @@ PYTEST	= pytest --log-level=debug --capture=tee-sys
 PYTOPT	=
 
 .PHONY: check
-check: check.mypy check.flake8 check.black check.pytest check.coverage check.pymarkdown
+check: check.mypy check.flake8 check.pytest check.coverage check.pymarkdown
 
 .PHONY: check.mypy
 check.mypy:
@@ -45,7 +44,7 @@ check.mypy:
 .PHONY: check.flake8
 check.flake8:
 	. venv/bin/activate
-	flake8 --ignore=E501 $(MODULE).py
+	flake8 --ignore=E227,E501 $(MODULE).py
 
 .PHONY: check.black
 check.black:
@@ -78,12 +77,12 @@ $(MODULE).egg-info: venv
 
 # generate source and built distribution
 dist:
-	$(PYTHON) setup.py sdist bdist_wheel
+	$(PYTHON) -m build
 
 .PHONY: publish
 publish: dist
 	# provide pypi login/pw or token somewhere…
-	echo twine upload --repository $(MODULE) dist/*
+	echo twine upload dist/*
 
 # generate pdf doc
 MD2PDF  = pandoc -f markdown -t latex -V papersize:a4 -V geometry:hmargin=2.5cm -V geometry:vmargin=3cm

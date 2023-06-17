@@ -13,7 +13,9 @@ jobs:
       matrix:
         # broken: pypy3.7
         # broken: 3.7 (pymarkdownlnt)
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12-dev", "pypy3.8", "pypy3.9"]
+        # drop 3.8 and 3.9 for easier typing
+        # 3.12-dev needs a fix for mypy
+        python-version: ["3.10", "3.11"]
     steps:
     # Setup
     - uses: actions/checkout@v3
@@ -25,8 +27,7 @@ jobs:
     - name: Install Python Dependencies
       run: |
         pip install -U pip
-        pip install -e .
-        pip install -r dev-requirements.txt
+        pip install -e .[dev,tests]
     - name: Start Redis
       uses: supercharge/redis-github-action@1.5.0
     - name: Start MemCached
@@ -35,7 +36,7 @@ jobs:
     - name: Check with black
       run: black --check CacheToolsUtils.py
     - name: Check with flake8
-      run: flake8 --ignore=E501 CacheToolsUtils.py
+      run: flake8 --ignore=E227,E501 CacheToolsUtils.py
     - name: Check with pymarkdown
       run: pymarkdown scan *.md
     - name: Check with pytest

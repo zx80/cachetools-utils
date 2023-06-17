@@ -4,17 +4,15 @@ CacheTools Utilities
 This code is public domain.
 """
 
-from typing import Any, Callable, Union, MutableMapping as MutMap
+from typing import Any, Callable, MutableMapping as MutMap
 
 import cachetools
 import json
 
-import pkg_resources as pkg  # type: ignore
-
-__version__ = pkg.require("CacheToolsUtils")[0].version
+from importlib.metadata import version as pkg_version
+__version__ = pkg_version("CacheToolsUtils")
 
 import logging
-
 log = logging.getLogger(__name__)
 
 
@@ -71,7 +69,7 @@ class KeyMutMapMix(MutMapMix):
 class PrefixedCache(KeyMutMapMix, MutMap):
     """Cache class to add a key prefix."""
 
-    def __init__(self, cache: MutMap, prefix: Union[str, bytes] = ""):
+    def __init__(self, cache: MutMap, prefix: str|bytes = ""):
         self._prefix = prefix
         self._cache = cache
 

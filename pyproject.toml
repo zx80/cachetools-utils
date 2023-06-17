@@ -1,6 +1,35 @@
-# for now, just specify "setuptools" as the build system
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-# it is unclear whether toml can support both "setup.cfg" and "setup.py"
+[project]
+name = "CacheToolsUtils"
+version = "7.0"
+authors = [ { name = "Fabien Coelho", email = "cachetools.utils@coelho.net" } ]
+description = "Cachetools Utilities"
+readme = "README.md"
+license = { text = "CC0" }
+requires-python = ">= 3.10"
+dependencies = [ "cachetools" ]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
+  "Programming Language :: Python",
+  "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+
+[project.urls]
+repository = "https://github.com/zx80/cachetools-utils"
+documentation = "https://zx80.github.io/cachetools-utils/"
+issues = "https://github.com/zx80/cachetools-utils/issues"
+package = "https://pypi.org/project/CacheToolsUtils/"
+
+[tool.setuptools]
+py-modules = [ "CacheToolsUtils" ]
+
+[project.optional-dependencies]
+dev = [ "mypy", "black", "flake8", "pytest", "coverage", "pymarkdownlnt", "types-redis", "types-cachetools" ]
+tests = [ "pymemcache", "redis" ]
+pub = [ "build", "wheel", "twine" ]
