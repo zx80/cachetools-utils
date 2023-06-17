@@ -135,6 +135,13 @@ There should be some consistency between the two level configurations
 so that it makes sense. For instance, having two TTL-ed stores would
 suggest that the secondary has a longer TTL than the primary.
 
+The is an additional `resilient` boolean option to the constructor to
+ignore errors on the second level cache, switching reliance on the first
+cache only if the second one fails. Note that this does not mean that
+the system would recover if the second level is back online later, because
+there is no provision to manage reconnections and the like at this level.
+The second level may manage that on its own, though.
+
 ### MemCached
 
 Basic wrapper, possibly with JSON key encoding thanks to the `JsonSerde` class.
@@ -298,3 +305,6 @@ Initial version extracted from another project.
 - add a `close`?
 - rename `hits`  `hit_rate`?
 - add other efficiency statistics?
+- add ability to reconnect if an external cache fails?
+  this could be for redis or memcache. Maybe the existing client
+  can do that with appropriate options?
