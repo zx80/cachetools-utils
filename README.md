@@ -218,6 +218,10 @@ are hosted on [GitHub](https://github.com).
 Install [package](https://pypi.org/project/CacheToolsUtils/) from
 [PyPI](https://pypi.org/).
 
+### ? on ?
+
+Add resiliency option to `TwoLevelCache`.
+
 ### 7.0 on 2023-06-17
 
 Switch to `pyproject.toml`.
