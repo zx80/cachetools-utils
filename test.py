@@ -405,6 +405,16 @@ def test_resilience():
         assert False, "must raise an exception"
     except Exception:
         assert True, "expecting exception"
+    try:
+        c["foo"]
+        assert False, "must raise an exception"
+    except Exception:
+        assert True, "expecting exception"
+    try:
+        del c["foo"]
+        assert False, "must raise an exception"
+    except Exception:
+        assert True, "expecting exception"
 
     # activate resilience
     c._resilient = True
