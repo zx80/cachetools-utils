@@ -115,7 +115,7 @@ class TwoLevelCache(MutMapMix, MutMap):
     - resilient: whether to ignore cache2 failures
     """
 
-    def __init__(self, cache: MutMap, cache2: MutMap, resilient = False):
+    def __init__(self, cache: MutMap, cache2: MutMap, resilient=False):
         self._resilient = resilient
         self._cache = cache
         self._cache2 = cache2
