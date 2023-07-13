@@ -135,7 +135,7 @@ There should be some consistency between the two level configurations
 so that it makes sense. For instance, having two TTL-ed stores would
 suggest that the secondary has a longer TTL than the primary.
 
-The is an additional `resilient` boolean option to the constructor to
+There is an additional `resilient` boolean option to the constructor to
 ignore errors on the second level cache, switching reliance on the first
 cache only if the second one fails. Note that this does not mean that
 the system would recover if the second level is back online later, because
