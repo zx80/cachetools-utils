@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-from typing import Optional
 import cachetools as ct
 import CacheToolsUtils as ctu
 import socket
@@ -30,7 +29,7 @@ def cached_fun(cache):
     """return a cached function with basic types."""
 
     @ct.cached(cache=cache)
-    def fun(i: int, s: Optional[str], b: bool) -> int:
+    def fun(i: int, s: str|None, b: bool) -> int:
         return i + (10 * len(s) if s is not None else -20) + (100 if b else 0)
 
     return fun
