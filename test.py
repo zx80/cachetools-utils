@@ -420,3 +420,22 @@ def test_resilience():
     c["foo"] = "bla"
     assert c["foo"] == "bla"
     del c["foo"]
+
+def test_locked():
+    import threading
+    c = ctu.LockedCache(DictCache(), threading.Lock())
+    c["hello"] = "world!"
+    assert "hello" in c
+    assert c["hello"] == "world!"
+    del c["hello"]
+    assert "hello" not in c
+
+def test_cached():
+    @ctu.cached(DictCache())
+    def cached(s: str, i: int):
+        return s[i]
+    assert not cached.cache_in("hello", 4)
+    assert cached("hello", 4) == "o"
+    assert cached.cache_in("hello", 4)
+    cached.cache_del("hello", 4)
+    assert not cached.cache_in("hello", 4)

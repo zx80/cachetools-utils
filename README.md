@@ -7,7 +7,7 @@ Classes to add key prefix and stats to
 and other cache-related utils.
 
 ![Status](https://github.com/zx80/cachetools-utils/actions/workflows/cachetools-utils.yml/badge.svg?branch=main&style=flat)
-![Tests](https://img.shields.io/badge/tests-15%20✓-success)
+![Tests](https://img.shields.io/badge/tests-17%20✓-success)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-success)
 ![Python](https://img.shields.io/badge/python-3-informational)
 ![Version](https://img.shields.io/pypi/v/CacheToolsUtils)
@@ -93,6 +93,21 @@ This module provide the following cache wrappers suitable to use with
   statistics.
 
 Install with `pip install CacheToolsUtils` or any other relevant mean.
+
+### LockedCache
+
+A cache with a lock, that can be shared between threads.
+Although there is `lock` option in `cachetools` `cached` decorator, it is at
+the function level thus does not work properly of a cache is shared between
+functions.
+
+```python
+import threading
+import cachetools
+import CacheToolsUtils as ctu
+
+lcache = LockedCache(cachetools.TTLCache(...), threading.Lock())
+```
 
 ### PrefixedCache
 
@@ -200,7 +215,7 @@ serialization and deserialization.
 pcache = ctu.PrefixedRedisCache(rd_base, "pac.", ttl=3600)
 ```
 
-### cacheMethods and cacheFunctions
+### Functions cacheMethods and cacheFunctions
 
 This utility function create a prefixed cache around methods of an object
 or functions in the global scope.
@@ -213,6 +228,29 @@ ctu.cacheMethods(cache, obj, get_data="1.", get_some="2.")
 
 # add cache to some_func
 ctu.cacheFunctions(cache, globals(), some_func="f.")
+```
+
+### Decorator cached
+
+This is an extension of `cachetools` `cached` decorator, with two additions:
+
+- `cache_in` tests whether these function parameters are in cache
+- `cache_del` removes the cache entry
+
+```python
+import CacheToolsUtils as ctu
+
+cache = ...
+
+@ctu.cached(cache=cache)
+def acme(what: str, count: int) -> str:
+    return ...
+
+print(acme("hello", 3))
+assert acme.cache_in("hello", 3)
+print(acme("hello", 3))
+acme.cache_del("hello", 3)
+assert not acme.cache_in("hello", 3)
 ```
 
 ## License
@@ -230,10 +268,12 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 
 ### 8.0 on ?
 
+Add `LockedCache` class for shared cache and threading.
 Add resiliency option to `TwoLevelCache`.
+Add extended `cached` decorator with `in` and `del` support.
 Use base85 instead of base64 for MemCached keys.
 Improved documentation.
-Hide private internals.
+Hide some private internals.
 
 ### 7.0 on 2023-06-17
 

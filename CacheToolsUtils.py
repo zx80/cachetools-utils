@@ -66,6 +66,30 @@ class _KeyMutMapMix(_MutMapMix):
 #
 
 
+class LockedCache(_MutMapMix, MutMap):
+    """Cache class with a lock."""
+
+    def __init__(self, cache: MutMap, lock):
+        self._cache = cache
+        self._lock = lock
+
+    def __contains__(self, key):
+        with self._lock:
+            return self._cache.__contains__(key)
+
+    def __getitem__(self, key):
+        with self._lock:
+            return self._cache.__getitem__(key)
+
+    def __setitem__(self, key, val):
+        with self._lock:
+            return self._cache.__setitem__(key, val)
+
+    def __delitem__(self, key):
+        with self._lock:
+            return self._cache.__delitem__(key)
+
+
 class PrefixedCache(_KeyMutMapMix, MutMap):
     """Cache class to add a key prefix."""
 
@@ -188,11 +212,37 @@ def cacheFunctions(
         globs[fun] = cachetools.cached(cache=gen(cache, prefix))(f)
 
 
+def cached(cache, *args, **kwargs):
+    """Extended decorator with delete and exists."""
+
+    def decorate(fun: Callable):
+
+        # use cachetools
+        fun = cachetools.cached(cache, *args, **kwargs)(fun)
+
+        # extend
+        def cache_in(*args, **kwargs):
+            key = fun.cache_key(*args, **kwargs)
+            return key in fun.cache
+
+        def cache_del(*args, **kwargs):
+            key = fun.cache_key(*args, **kwargs)
+            key_in = key in fun.cache
+            if key_in:
+                del fun.cache[key]
+            return key_in
+
+        fun.cache_in = cache_in    # type: ignore
+        fun.cache_del = cache_del  # type: ignore
+
+        return fun
+
+    return decorate
+
+
 #
 # MEMCACHED
 #
-
-
 class JsonSerde:
     """JSON serialize/deserialize for MemCached."""
 
