@@ -231,6 +231,9 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 ### 8.0 on ?
 
 Add resiliency option to `TwoLevelCache`.
+Use base85 instead of base64 for MemCached keys.
+Improved documentation.
+Hide private internals.
 
 ### 7.0 on 2023-06-17
 

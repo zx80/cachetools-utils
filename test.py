@@ -357,13 +357,13 @@ def test_functions():
     assert cs.hits() > 0.7
 
 
-class DictCache(ctu.MutMapMix):
+class DictCache(ctu._MutMapMix):
     def __init__(self):
         self._cache = dict()
 
 
 def test_corners():
-    # MutMapMix coverage
+    # _MutMapMix coverage
     c = DictCache()
     cs = ctu.StatsCache(c)
     run_cached(cs)

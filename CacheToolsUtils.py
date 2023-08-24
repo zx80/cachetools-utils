@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 _NO_DEFAULT = object()
 
 
-class MutMapMix:
+class _MutMapMix:
     """Convenient MutableMapping Mixin, forward to _cache."""
 
     def __contains__(self, key):
@@ -45,7 +45,7 @@ class MutMapMix:
         return self._cache.__iter__()
 
 
-class KeyMutMapMix(MutMapMix):
+class _KeyMutMapMix(_MutMapMix):
     """Convenient MutableMapping Mixin with a key filter, forward to _cache."""
 
     def __contains__(self, key):
@@ -66,7 +66,7 @@ class KeyMutMapMix(MutMapMix):
 #
 
 
-class PrefixedCache(KeyMutMapMix, MutMap):
+class PrefixedCache(_KeyMutMapMix, MutMap):
     """Cache class to add a key prefix."""
 
     def __init__(self, cache: MutMap, prefix: str|bytes = ""):
@@ -77,8 +77,13 @@ class PrefixedCache(KeyMutMapMix, MutMap):
         return self._prefix + str(key)
 
 
-class StatsCache(MutMapMix, MutMap):
-    """Cache class to keep stats."""
+class StatsCache(_MutMapMix, MutMap):
+    """Cache class to keep stats.
+
+    Note that CacheTools ``cached`` decorator with ``info=True`` provides
+    hits, misses, maxsize and currsize information.
+    However, this only works for its own classes.
+    """
 
     def __init__(self, cache: MutMap):
         self._cache = cache
@@ -108,7 +113,7 @@ class StatsCache(MutMapMix, MutMap):
         return self._cache.clear()
 
 
-class TwoLevelCache(MutMapMix, MutMap):
+class TwoLevelCache(_MutMapMix, MutMap):
     """Two-Level Cache class for CacheTools.
 
     - cache, cache2: the two caches, second is larger, longer TTL
@@ -208,7 +213,7 @@ class JsonSerde:
             raise Exception("Unknown serialization format")
 
 
-class MemCached(KeyMutMapMix, MutMap):
+class MemCached(_KeyMutMapMix, MutMap):
     """MemCached-compatible wrapper class for cachetools with key encoding."""
 
     def __init__(self, cache):
@@ -220,7 +225,7 @@ class MemCached(KeyMutMapMix, MutMap):
     def _key(self, key):
         import base64
 
-        return base64.b64encode(str(key).encode("utf-8"))
+        return base64.b85encode(str(key).encode("utf-8"))
 
     def __len__(self):
         return self._cache.stats()[b"curr_items"]
