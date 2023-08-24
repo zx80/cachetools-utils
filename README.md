@@ -36,6 +36,9 @@ hold sensitive data and its manipulation may allow to change the behavior
 of the application, including working around security by tampering with
 the application authentication and authorization guards.
 
+Although a cache may allow to improve performance, an important side effect is
+that it reduces the query load on the actual database backend.
+
 ### Latency
 
 In order to reduce latency, as most time should be spent in network accesses,
