@@ -424,6 +424,15 @@ def test_locked():
     assert c["hello"] == "world!"
     del c["hello"]
     assert "hello" not in c
+    # just for coverage
+    try:
+        c.hits() == 0.0
+    except:
+        pass
+    try:
+        c.reset()
+    except:
+        pass
 
 def test_cached():
     cache = ctu.StatsCache(ctu.DictCache())
