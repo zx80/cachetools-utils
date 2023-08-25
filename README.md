@@ -28,6 +28,7 @@ Cache classes:
 - `MemCached` does the same for a Memcached server.
   The utility class `JsonSerde` is a convenient JSON serializer-deserializer
   class for Memcached.
+- `DictCache` a `dict` cache.
 
 Other wrappers to extend cache capabilities:
 

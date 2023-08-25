@@ -357,14 +357,9 @@ def test_functions():
     assert cs.hits() > 0.7
 
 
-class DictCache(ctu._MutMapMix):
-    def __init__(self):
-        self._cache = dict()
-
-
 def test_corners():
     # _MutMapMix coverage
-    c = DictCache()
+    c = ctu.DictCache()
     cs = ctu.StatsCache(c)
     run_cached(cs)
     assert len(cs) > 0
@@ -394,7 +389,7 @@ class BrokenCache():
         raise Exception("oops!")
 
 def test_resilience():
-    d = DictCache()
+    d = ctu.DictCache()
     b = BrokenCache()
 
     # no resilience (default)
@@ -423,7 +418,7 @@ def test_resilience():
 
 def test_locked():
     import threading
-    c = ctu.LockedCache(DictCache(), threading.Lock())
+    c = ctu.LockedCache(ctu.DictCache(), threading.Lock())
     c["hello"] = "world!"
     assert "hello" in c
     assert c["hello"] == "world!"
@@ -431,11 +426,14 @@ def test_locked():
     assert "hello" not in c
 
 def test_cached():
-    @ctu.cached(DictCache())
+    cache = ctu.StatsCache(ctu.DictCache())
+    @ctu.cached(cache)
     def cached(s: str, i: int):
         return s[i]
     assert not cached.cache_in("hello", 4)
     assert cached("hello", 4) == "o"
+    cached("hello", 4)
     assert cached.cache_in("hello", 4)
+    assert cache.hits() == 0.5
     cached.cache_del("hello", 4)
     assert not cached.cache_in("hello", 4)

@@ -73,6 +73,12 @@ class _StatsMix:
 # CACHETOOLS EXTENSIONS
 #
 
+class DictCache(_MutMapMix):
+    """Cache class based on dict."""
+
+    def __init__(self):
+        self._cache = dict()
+
 
 class LockedCache(_MutMapMix, _StatsMix, MutMap):
     """Cache class with a lock."""
