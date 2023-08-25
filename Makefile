@@ -38,35 +38,35 @@ PYTOPT	=
 check: check.mypy check.flake8 check.pytest check.coverage check.docs
 
 .PHONY: check.mypy
-check.mypy:
-	. venv/bin/activate
+check.mypy: venv
+	source venv/bin/activate
 	mypy $(MODULE).py
 
 .PHONY: check.flake8
-check.flake8:
-	. venv/bin/activate
+check.flake8: venv
+	source venv/bin/activate
 	flake8 --ignore=E227,E501 $(MODULE).py
 
 .PHONY: check.black
-check.black:
-	. venv/bin/activate
+check.black: venv
+	source venv/bin/activate
 	black --check $(MODULE).py
 
 .PHONY: check.pytest
-check.pytest:
-	. venv/bin/activate
+check.pytest: venv
+	source venv/bin/activate
 	$(PYTEST) $(PYTOPT) test.py
 
 .PHONY: check.coverage
-check.coverage:
-	. venv/bin/activate
+check.coverage: venv
+	source venv/bin/activate
 	coverage run -m $(PYTEST) $(PYTOPT) test.py
 	coverage html $(MODULE).py
 	coverage report --fail-under=100 --include=CacheToolsUtils.py
 
 .PHONY: check.docs
-check.docs:
-	. venv/bin/activate
+check.docs: venv
+	source venv/bin/activate
 	pymarkdown -d MD013 scan *.md */*.md
 	sphinx-lint docs/
 

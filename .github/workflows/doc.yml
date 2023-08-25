@@ -11,9 +11,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
       - name: Install dependencies
-        run: |
-          python -m pip install -U pip
-          python -m pip install .[doc]
+        run: make venv
       - name: Check documentation syntax
         run: make check.docs
       - name: Generate documentation
