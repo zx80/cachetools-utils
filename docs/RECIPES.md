@@ -2,7 +2,7 @@
 
 ## How-to install?
 
-The module is available on pypi, install it with `pip`:
+The module is available on PyPI, and can be installed with `pip`:
 
 ```shell
 pip install CacheToolsUtils
