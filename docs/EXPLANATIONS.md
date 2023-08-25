@@ -53,7 +53,7 @@ of the time.
 
 **Read** operations can be cached, at the price of possibly having
 inconsistent data shown to users.
-LFU/LRU cache strategies mean that inconsistent data can be kept in cache
+LRU/LFU/ARC cache strategies mean that inconsistent data can be kept in cache
 for indefinite time, which is annoying. A TLL expiration on top of that
 makes such discrepancies bounded in time, so that after some time the data
 shown are eventually up to date.
