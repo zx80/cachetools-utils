@@ -21,7 +21,7 @@ some constraints on keys (type, size) and values (size, serialization).
 Thi module provide new caches, wrappers and other utilities suitable to use
 with `cachetools`.
 
-Cache classes:
+### Cache classes
 
 - `RedisCache` allows to see a Redis server as a python cache
   by wrapping a `redis.Redis` instance.
@@ -30,7 +30,7 @@ Cache classes:
   class for Memcached.
 - `DictCache` a `dict` cache.
 
-Other wrappers to extend cache capabilities:
+### Other wrappers to extend cache capabilities
 
 - `PrefixedCache`, `PrefixedMemCached` and `PrefixedRedisCache` add a prefix to
   distinguish sources on a shared cache.
@@ -39,7 +39,7 @@ Other wrappers to extend cache capabilities:
 - `LockedCache` use a (thread) lock to control cache accesses.
 - `TwoLevelCache` allows to combine two caches.
 
-Cache utilities:
+### Cache utilities
 
 - `cached` decorator: a cachetools replacement which allows to test e if a
   function result is in cache, and to delete such an entry.
