@@ -70,6 +70,10 @@ check.docs: venv
 	pymarkdown -d MD013 scan *.md */*.md
 	sphinx-lint docs/
 
+.PHONY: docs
+docs: venv
+	source venv/bin/activate
+	make -C docs html
 
 .PHONY: install
 install: $(MODULE).egg-info

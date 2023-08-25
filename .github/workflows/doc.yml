@@ -16,7 +16,7 @@ jobs:
         run: make check.docs
       - name: Generate documentation
         run: |
-          make -C docs html
+          make docs
           ln -s docs/_build/html _site
       - name: Fix permissions
         run: |
