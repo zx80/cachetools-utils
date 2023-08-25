@@ -61,12 +61,22 @@ class _KeyMutMapMix(_MutMapMix):
         return self._cache.__delitem__(self._key(key))
 
 
+class _StatsMix:
+    """Convenient Mixin to forward stats methods to _cache."""
+
+    def hits(self):
+        return self._cache.hits()
+
+    def reset(self):
+        return self._cache.reset()
+
+
 #
 # CACHETOOLS EXTENSIONS
 #
 
 
-class LockedCache(_MutMapMix, MutMap):
+class LockedCache(_MutMapMix, _StatsMix, MutMap):
     """Cache class with a lock."""
 
     def __init__(self, cache: MutMap, lock):
@@ -90,7 +100,7 @@ class LockedCache(_MutMapMix, MutMap):
             return self._cache.__delitem__(key)
 
 
-class PrefixedCache(_KeyMutMapMix, MutMap):
+class PrefixedCache(_KeyMutMapMix, _StatsMix, MutMap):
     """Cache class to add a key prefix."""
 
     def __init__(self, cache: MutMap, prefix: str|bytes = ""):
