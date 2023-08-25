@@ -37,8 +37,8 @@ jobs:
     #  run: black --check CacheToolsUtils.py
     - name: Check with flake8
       run: flake8 --ignore=E227,E501 CacheToolsUtils.py
-    - name: Check with pymarkdown
-      run: pymarkdown scan *.md
+    - name: Check the docs
+      run: make check.docs
     - name: Check with pytest
       run: pytest test.py
     - name: Check with coverage

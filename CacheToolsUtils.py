@@ -1,7 +1,5 @@
 """
-CacheTools Utilities
-
-This code is public domain.
+CacheTools Utilities. This code is public domain.
 """
 
 from typing import Any, Callable, MutableMapping as MutMap

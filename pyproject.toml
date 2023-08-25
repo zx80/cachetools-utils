@@ -31,5 +31,6 @@ py-modules = [ "CacheToolsUtils" ]
 
 [project.optional-dependencies]
 dev = [ "mypy", "black", "flake8", "pytest", "coverage", "pymarkdownlnt", "types-redis", "types-cachetools" ]
+doc = [ "sphinx", "sphinx_rtd_theme", "sphinx-autoapi", "sphinx-lint", "myst_parser" ]
 tests = [ "pymemcache", "redis" ]
 pub = [ "build", "wheel", "twine" ]

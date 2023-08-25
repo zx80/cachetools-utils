@@ -1,1 +1,1 @@
-include Makefile
+exclude docs/*

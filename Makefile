@@ -14,6 +14,7 @@ F.pdf	= $(F.md:%.md=%.pdf)
 clean:
 	$(RM) -r __pycache__ *.egg-info dist build .mypy_cache .pytest_cache htmlcov
 	$(RM) .coverage $(F.pdf)
+	$(MAKE) -C docs clean
 
 clean.venv: clean
 	$(RM) -r venv
@@ -25,7 +26,7 @@ PIP		= venv/bin/pip
 venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install --upgrade pip
-	$(PIP) install -e .[dev,pub,tests]
+	$(PIP) install -e .[doc,dev,pub,tests]
 
 #
 # Tests
@@ -34,7 +35,7 @@ PYTEST	= pytest --log-level=debug --capture=tee-sys
 PYTOPT	=
 
 .PHONY: check
-check: check.mypy check.flake8 check.pytest check.coverage check.pymarkdown
+check: check.mypy check.flake8 check.pytest check.coverage check.docs
 
 .PHONY: check.mypy
 check.mypy:
@@ -63,10 +64,12 @@ check.coverage:
 	coverage html $(MODULE).py
 	coverage report --fail-under=100 --include=CacheToolsUtils.py
 
-.PHONY: check.pymarkdown
-check.pymarkdown:
+.PHONY: check.docs
+check.docs:
 	. venv/bin/activate
-	pymarkdown scan *.md
+	pymarkdown -d MD013 scan *.md */*.md
+	sphinx-lint docs/
+
 
 .PHONY: install
 install: $(MODULE).egg-info

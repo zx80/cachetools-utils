@@ -1,0 +1,38 @@
+name: CacheToolsUtils documentation publication on GitHub
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install .[doc]
+      - name: Check documentation syntax
+        run: make check.docs
+      - name: Generate documentation
+        run: |
+          make -C docs html
+          ln -s docs/_build/html _site
+      - name: Fix permissions
+        run: |
+          find docs/_build -type d -print | xargs chmod a+rx
+          find docs/_build -type f -print | xargs chmod a+r
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v2
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
