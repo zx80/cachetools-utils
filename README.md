@@ -45,6 +45,15 @@ with `cachetools`.
   function result is in cache, and to delete such an entry.
 - `cacheFunctions` and `cacheMethods`: add caching to functions or methods.
 
+## More
+
+See the
+[documentation](https://zx80.github.io/cachetools-utils/),
+[sources](https://github.com/zx80/cachetools-utils) and
+[issues](https://github.com/zx80/cachetools-utils/issues) on GitHub.
+
+See [packages](https://pypi.org/project/CacheToolsUtils/) on PyPI.
+
 ## License
 
 This code is public domain.
