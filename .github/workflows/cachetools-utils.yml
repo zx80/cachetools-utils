@@ -24,10 +24,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     # Dependencies
-    - name: Install Python Dependencies
-      run: |
-        pip install -U pip
-        pip install -e .[dev,tests]
+    - name: Install Python dependencies and module
+      run: make venv
     - name: Start Redis
       uses: supercharge/redis-github-action@1.5.0
     - name: Start MemCached
@@ -36,15 +34,13 @@ jobs:
     # - name: Check with black
     #  run: black --check CacheToolsUtils.py
     - name: Check with flake8
-      run: flake8 --ignore=E227,E501 CacheToolsUtils.py
+      run: make check.flake8
     - name: Check the docs
       run: make check.docs
     - name: Check with pytest
-      run: pytest test.py
+      run: make check.pytest
     - name: Check with coverage
-      run: |
-        coverage run -m pytest --log-level=debug --capture=tee-sys test.py
-        coverage report --fail-under=100 --include=CacheToolsUtils.py
+      run: make check.coverage
     - name: Check with mypy
       # mypy is much too slow, this is a pain:-/
-      run: mypy CacheToolsUtils.py
+      run: make check.mypy
