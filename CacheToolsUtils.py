@@ -105,7 +105,11 @@ class LockedCache(_MutMapMix, _StatsMix, MutMap):
 
 
 class PrefixedCache(_KeyMutMapMix, _StatsMix, MutMap):
-    """Cache class to add a key prefix."""
+    """Cache class to add a key prefix.
+
+    :param cache: actual cache.
+    :param prefix: prefix to prepend to keys.
+    """
 
     def __init__(self, cache: MutMap, prefix: str|bytes = ""):
         self._prefix = prefix
@@ -118,6 +122,15 @@ class PrefixedCache(_KeyMutMapMix, _StatsMix, MutMap):
 class StatsCache(_MutMapMix, MutMap):
     """Cache class to keep stats.
 
+    :param cache: actual cache.
+
+    .. code-block: python
+
+       import cachetools as ct
+       import CacheToolsUtils as ctu
+       cache = ctu.StatsCache(ct.LRUCache())
+       ...
+
     Note that CacheTools ``cached`` decorator with ``info=True`` provides
     hits, misses, maxsize and currsize information.
     However, this only works for its own classes.
@@ -128,9 +141,11 @@ class StatsCache(_MutMapMix, MutMap):
         self.reset()
 
     def hits(self):
+        """Return the cache hit ratio."""
         return float(self._hits) / float(max(self._reads, 1))
 
     def reset(self):
+        """Reset internal stats data."""
         self._reads, self._writes, self._dels, self._hits = 0, 0, 0, 0
 
     def __getitem__(self, key):
@@ -154,8 +169,9 @@ class StatsCache(_MutMapMix, MutMap):
 class TwoLevelCache(_MutMapMix, MutMap):
     """Two-Level Cache class for CacheTools.
 
-    - cache, cache2: the two caches, second is larger, longer TTL
-    - resilient: whether to ignore cache2 failures
+    :param cache: first (smaller, shorter TTL) cache
+    :param cache2: second (larger, longer TTL) cache
+    :param resilient: whether to ignore cache2 failures
     """
 
     def __init__(self, cache: MutMap, cache2: MutMap, resilient=False):
@@ -205,7 +221,17 @@ MapGen = Callable[[MutMap, str], MutMap]
 
 
 def cacheMethods(cache: MutMap, obj: Any, gen: MapGen = PrefixedCache, **funs):
-    """Cache some object methods."""
+    """Cache some object methods.
+
+    :param cache: cache to use.
+    :param obj: object instance to be cached.
+    :param gen: generator of PrefixedCache.
+    :param funs: name of methods and corresponding prefix
+
+    .. code-block:: python
+
+       cacheMethods(cache, item, PrefixedCache, compute1="c1.", compute2="c2.")
+    """
     for fun, prefix in funs.items():
         assert hasattr(obj, fun), f"cannot cache missing method {fun} on {obj}"
         f = getattr(obj, fun)
@@ -217,7 +243,17 @@ def cacheMethods(cache: MutMap, obj: Any, gen: MapGen = PrefixedCache, **funs):
 def cacheFunctions(
     cache: MutMap, globs: MutMap[str, Any], gen: MapGen = PrefixedCache, **funs
 ):
-    """Cache some global functions."""
+    """Cache some global functions, with a prefix.
+
+    :param cache: cache to use.
+    :param globs: global object dictionary.
+    :param gen: generator of PrefixedCache.
+    :param funs: name of functions and corresponding prefix
+
+    .. code-block:: python
+
+       cacheFunctions(cache, globals(), PrefixedCache, fun1="f1.", fun2="f2.")
+    """
     for fun, prefix in funs.items():
         assert fun in globs, "caching functions: {fun} not found"
         f = globs[fun]
@@ -227,7 +263,12 @@ def cacheFunctions(
 
 
 def cached(cache, *args, **kwargs):
-    """Extended decorator with delete and exists."""
+    """Extended decorator with delete and exists.
+
+    If *f(\*args, \*\*kwargs)* is the ``cached`` function, then:
+    - ``f.cache_in(*args, **kwargs)`` tells whether the result is cached.
+    - ``f.cache_del(*args, **kwargs)`` deletes (invalidates) the cached result.
+    """
 
     def decorate(fun: Callable):
 
@@ -258,7 +299,14 @@ def cached(cache, *args, **kwargs):
 # MEMCACHED
 #
 class JsonSerde:
-    """JSON serialize/deserialize for MemCached."""
+    """JSON serialize/deserialize class for MemCached (``pymemcached``).
+
+    .. code-block:: python
+
+       import pymemcached as pmc
+       import CacheToolsUtils as ctu
+       pmc_cache = pmc.Client(server="localhost", serde=ctu.JsonSerde())
+    """
 
     # keep strings, else json
     def serialize(self, key, value):
@@ -278,7 +326,17 @@ class JsonSerde:
 
 
 class MemCached(_KeyMutMapMix, MutMap):
-    """MemCached-compatible wrapper class for cachetools with key encoding."""
+    """MemCached-compatible wrapper class for cachetools with key encoding.
+
+    .. code-block:: python
+
+       import pymemcached as pmc
+       import CacheToolsUtils as ctu
+       cache = ctu.MemCached(pmc.Client(server="localhost", serde=ctu.JsonSerde()))
+
+       @ctu.cached(cache=cache)
+       def whatever(...):
+    """
 
     def __init__(self, cache):
         self._cache = cache
@@ -295,19 +353,32 @@ class MemCached(_KeyMutMapMix, MutMap):
         return self._cache.stats()[b"curr_items"]
 
     def stats(self):
+        """Return MemCached stats."""
         return self._cache.stats()
 
     def clear(self):  # pragma: no cover
+        """Flush MemCached contents."""
         return self._cache.flush_all()
 
     def hits(self):
-        """Return overall cache hit rate."""
+        """Return overall cache hit ratio."""
         stats = self._cache.stats()
         return float(stats[b"get_hits"]) / max(stats[b"cmd_get"], 1)
 
 
 class PrefixedMemCached(MemCached):
-    """MemCached-compatible wrapper class for cachetools with a key prefix."""
+    """MemCached-compatible wrapper class for cachetools with a key prefix.
+
+    :param cache: actual memcached cache.
+    :param prefix: post key-encoding prefix.
+
+    .. code-block:: python
+
+       import pymemcached as pmc
+       import CacheToolsUtils as ctu
+       # add a "app." prefix to keys, after serialization
+       cache = ctu.PrefixedMemCached(pmc.Client(server="localhost", serde=ctu.JsonSerde()), "app.")
+    """
 
     def __init__(self, cache, prefix: str = ""):
         super().__init__(cache=cache)
@@ -316,11 +387,14 @@ class PrefixedMemCached(MemCached):
     def _key(self, key):
         import base64
 
-        return self._prefix + base64.b64encode(str(key).encode("utf-8"))
+        return self._prefix + base64.b85encode(str(key).encode("utf-8"))
 
 
 class StatsMemCached(MemCached):
-    """Cache MemCached-compatible class with stats."""
+    """Cache MemCached-compatible class with stats.
+
+    This class is empty and only kept for compatibility.
+    """
 
     pass
 
@@ -331,13 +405,27 @@ class StatsMemCached(MemCached):
 
 
 class RedisCache(MutMap):
-    """Redis wrapper for cachetools."""
+    """Redis TTL-ed wrapper for cachetools (``redis``).
+
+    :param cache: Actual redis cache.
+    :param ttl: time-to-live in seconds, used as default expiration (``ex``).
+
+    Keys and values are serialized in *JSON*.
+
+    .. code-block:: python
+
+       import redis
+       import CacheToolsUtils as ctu
+       # redis with 1 hour expiration
+       cache = ctu.RedisCache(redis.Redis(host="localhost"), 3600)
+    """
 
     def __init__(self, cache, ttl=600):
         self._cache = cache
         self._ttl = ttl
 
     def clear(self):  # pragma: no cover
+        """Flush Redis contents."""
         return self._cache.flushdb()
 
     def _serialize(self, s):
@@ -369,25 +457,31 @@ class RedisCache(MutMap):
         raise Exception("not implemented yet")
 
     def info(self, *args, **kwargs):
+        """Return redis informations."""
         return self._cache.info(*args, **kwargs)
 
     def dbsize(self, *args, **kwargs):
+        """Return redis database size."""
         return self._cache.dbsize(*args, **kwargs)
 
     # also forward Redis set/get/delete
     def set(self, index, value, **kwargs):
+        """Set cache contents."""
         if "ex" not in kwargs:  # pragma: no cover
             kwargs["ex"] = self._ttl
         return self._cache.set(self._key(index), self._serialize(value), **kwargs)
 
     def get(self, index, default=None):
+        """Get cache contents."""
         return self[index]
 
     def delete(self, index):
+        """Delete cache contents."""
         del self[index]
 
     # stats
     def hits(self):
+        """Return cache hits."""
         stats = self.info(section="stats")
         return float(stats["keyspace_hits"]) / (
             stats["keyspace_hits"] + stats["keyspace_misses"]
@@ -395,7 +489,19 @@ class RedisCache(MutMap):
 
 
 class PrefixedRedisCache(RedisCache):
-    """Prefixed Redis wrapper class for cachetools."""
+    """Prefixed Redis wrapper class for cachetools.
+
+    :param cache: actual redis cache.
+    :param prefix: post key encoding prefix.
+    :param ttl: time-to-live in seconds, used as default expiration (``ex``).
+
+    .. code-block:: python
+
+       import redis
+       import CacheToolsUtils as ctu
+       # redis with "app." prefix and 1 hour expiration
+       cache = ctu.PrefixedRedisCache(redis.Redis(host="localhost"), "app.", 3600)
+    """
 
     def __init__(self, cache, prefix: str = "", ttl=600):
         super().__init__(cache, ttl)
@@ -407,6 +513,9 @@ class PrefixedRedisCache(RedisCache):
 
 
 class StatsRedisCache(PrefixedRedisCache):
-    """TTL-ed Redis wrapper class for cachetools."""
+    """TTL-ed Redis wrapper class for cachetools.
+
+    This class is empty and only kept for compatibility.
+    """
 
     pass
