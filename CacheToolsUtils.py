@@ -278,6 +278,10 @@ def cacheFunctions(
 def cached(cache, *args, **kwargs):
     """Extended decorator with delete and exists.
 
+    All parameters are forwarded to ``cachetools.cached``.
+
+    :param cache: actual cache.
+
     If *f(\\*args, \\*\\*kwargs)* is the ``cached`` function, then:
 
     - ``f.cache_in(*args, **kwargs)`` tells whether the result is cached.
