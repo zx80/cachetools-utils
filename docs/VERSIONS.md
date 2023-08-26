@@ -18,7 +18,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   this could be for redis or memcached?
   Maybe the existing client can do that with appropriate options?
 
-## 8.0 on ?
+## 8.0 on 2023-08-26
 
 Add `LockedCache` class for shared cache and threading.
 Add `DictCache` class for dict-based cache.
