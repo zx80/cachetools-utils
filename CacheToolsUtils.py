@@ -278,7 +278,7 @@ def cacheFunctions(
 def cached(cache, *args, **kwargs):
     """Extended decorator with delete and exists.
 
-    If *f(\*args, \*\*kwargs)* is the ``cached`` function, then:
+    If *f(\\*args, \\*\\*kwargs)* is the ``cached`` function, then:
 
     - ``f.cache_in(*args, **kwargs)`` tells whether the result is cached.
     - ``f.cache_del(*args, **kwargs)`` deletes (invalidates) the cached result.
