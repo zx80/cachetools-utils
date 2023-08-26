@@ -427,7 +427,7 @@ class StatsMemCached(MemCached):
 class RedisCache(MutMap):
     """Redis TTL-ed wrapper for cachetools (``redis``).
 
-    :param cache: Actual redis cache.
+    :param cache: actual redis cache.
     :param ttl: time-to-live in seconds, used as default expiration (``ex``).
 
     Keys and values are serialized in *JSON*.
