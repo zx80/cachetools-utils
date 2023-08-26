@@ -81,7 +81,20 @@ class DictCache(_MutMapMix):
 
 
 class LockedCache(_MutMapMix, _StatsMix, MutMap):
-    """Cache class with a lock."""
+    """Cache class with a lock.
+
+    :param cache: actual cache.
+    :param lock: lock (context manager) to use
+
+    The locked layer should be the last one before the actual cache.
+
+    .. code-block: python
+
+       import threading
+       import cachetools as ct
+       import CacheToolsUtils as ctu
+       cache = ctu.LockedCache(ct.LFUCache(), threading.RLock())
+    """
 
     def __init__(self, cache: MutMap, lock):
         self._cache = cache
@@ -266,6 +279,7 @@ def cached(cache, *args, **kwargs):
     """Extended decorator with delete and exists.
 
     If *f(\*args, \*\*kwargs)* is the ``cached`` function, then:
+
     - ``f.cache_in(*args, **kwargs)`` tells whether the result is cached.
     - ``f.cache_del(*args, **kwargs)`` deletes (invalidates) the cached result.
     """
@@ -328,6 +342,8 @@ class JsonSerde:
 class MemCached(_KeyMutMapMix, MutMap):
     """MemCached-compatible wrapper class for cachetools with key encoding.
 
+    :param cache: actual memcached cache.
+
     .. code-block:: python
 
        import pymemcached as pmc
@@ -370,7 +386,7 @@ class PrefixedMemCached(MemCached):
     """MemCached-compatible wrapper class for cachetools with a key prefix.
 
     :param cache: actual memcached cache.
-    :param prefix: post key-encoding prefix.
+    :param prefix: post key-encoding prepended prefix.
 
     .. code-block:: python
 
