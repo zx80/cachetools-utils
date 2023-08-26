@@ -1,7 +1,7 @@
 # Versions
 
-[Sources](https://github.com/zx80/cachetools-utils),
-[documentation](https://zx80.github.io/cachetools-utils/) and
+[Documentation](https://zx80.github.io/cachetools-utils/),
+[sources](https://github.com/zx80/cachetools-utils) and
 [issues](https://github.com/zx80/cachetools-utils/issues)
 are hosted on [GitHub](https://github.com).
 Install [package](https://pypi.org/project/CacheToolsUtils/) from
@@ -15,16 +15,17 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 - rename `hits`  `hit_rate`?
 - add other efficiency statistics?
 - add ability to reconnect if an external cache fails?
-  this could be for redis or memcache.
+  this could be for redis or memcached?
   Maybe the existing client can do that with appropriate options?
 
 ## 8.0 on ?
 
 Add `LockedCache` class for shared cache and threading.
+Add `DictCache` class for dict-based cache.
 Add resiliency option to `TwoLevelCache`.
 Add extended `cached` decorator with `in` and `del` support.
 Use base85 instead of base64 for MemCached keys.
-Improved documentation.
+Improved documentation following diátaxis advices.
 Hide some private internals.
 
 ## 7.0 on 2023-06-17
