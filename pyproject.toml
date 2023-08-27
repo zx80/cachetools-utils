@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "CacheToolsUtils"
-version = "8.0"
+version = "8.1"
 authors = [ { name = "Fabien Coelho", email = "cachetools.utils@coelho.net" } ]
 description = "Cachetools Utilities"
 readme = "README.md"

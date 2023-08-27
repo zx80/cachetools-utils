@@ -229,52 +229,6 @@ class TwoLevelCache(_MutMapMix, MutMap):
         return self._cache.clear()
 
 
-# short generator type name
-MapGen = Callable[[MutMap, str], MutMap]
-
-
-def cacheMethods(cache: MutMap, obj: Any, gen: MapGen = PrefixedCache, **funs):
-    """Cache some object methods.
-
-    :param cache: cache to use.
-    :param obj: object instance to be cached.
-    :param gen: generator of PrefixedCache.
-    :param funs: name of methods and corresponding prefix
-
-    .. code-block:: python
-
-       cacheMethods(cache, item, PrefixedCache, compute1="c1.", compute2="c2.")
-    """
-    for fun, prefix in funs.items():
-        assert hasattr(obj, fun), f"cannot cache missing method {fun} on {obj}"
-        f = getattr(obj, fun)
-        while hasattr(f, "__wrapped__"):
-            f = f.__wrapped__
-        setattr(obj, fun, cachetools.cached(cache=gen(cache, prefix))(f))
-
-
-def cacheFunctions(
-    cache: MutMap, globs: MutMap[str, Any], gen: MapGen = PrefixedCache, **funs
-):
-    """Cache some global functions, with a prefix.
-
-    :param cache: cache to use.
-    :param globs: global object dictionary.
-    :param gen: generator of PrefixedCache.
-    :param funs: name of functions and corresponding prefix
-
-    .. code-block:: python
-
-       cacheFunctions(cache, globals(), PrefixedCache, fun1="f1.", fun2="f2.")
-    """
-    for fun, prefix in funs.items():
-        assert fun in globs, "caching functions: {fun} not found"
-        f = globs[fun]
-        while hasattr(f, "__wrapped__"):
-            f = f.__wrapped__
-        globs[fun] = cachetools.cached(cache=gen(cache, prefix))(f)
-
-
 def cached(cache, *args, **kwargs):
     """Extended decorator with delete and exists.
 
@@ -311,6 +265,52 @@ def cached(cache, *args, **kwargs):
         return fun
 
     return decorate
+
+
+# short generator type name
+MapGen = Callable[[MutMap, str], MutMap]
+
+
+def cacheMethods(cache: MutMap, obj: Any, gen: MapGen = PrefixedCache, **funs):
+    """Cache some object methods.
+
+    :param cache: cache to use.
+    :param obj: object instance to be cached.
+    :param gen: generator of PrefixedCache.
+    :param funs: name of methods and corresponding prefix
+
+    .. code-block:: python
+
+       cacheMethods(cache, item, PrefixedCache, compute1="c1.", compute2="c2.")
+    """
+    for fun, prefix in funs.items():
+        assert hasattr(obj, fun), f"cannot cache missing method {fun} on {obj}"
+        f = getattr(obj, fun)
+        while hasattr(f, "__wrapped__"):
+            f = f.__wrapped__
+        setattr(obj, fun, cached(cache=gen(cache, prefix))(f))
+
+
+def cacheFunctions(
+    cache: MutMap, globs: MutMap[str, Any], gen: MapGen = PrefixedCache, **funs
+):
+    """Cache some global functions, with a prefix.
+
+    :param cache: cache to use.
+    :param globs: global object dictionary.
+    :param gen: generator of PrefixedCache.
+    :param funs: name of functions and corresponding prefix
+
+    .. code-block:: python
+
+       cacheFunctions(cache, globals(), PrefixedCache, fun1="f1.", fun2="f2.")
+    """
+    for fun, prefix in funs.items():
+        assert fun in globs, "caching functions: {fun} not found"
+        f = globs[fun]
+        while hasattr(f, "__wrapped__"):
+            f = f.__wrapped__
+        globs[fun] = cached(cache=gen(cache, prefix))(f)
 
 
 #
