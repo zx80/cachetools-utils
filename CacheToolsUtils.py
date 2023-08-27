@@ -69,6 +69,24 @@ class _StatsMix:
         return self._cache.reset()
 
 
+class _RedisMix:
+    """Convenient mixin to forward redis methods."""
+
+    def set(self, *args, **kwargs):
+        return self._cache.set(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self._cache.get(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        return self._cache.delete(*args, **kwargs)
+
+    def info(self, *args, **kwargs):
+        return self._cache.info(*args, **kwargs)
+
+    def dbsize(self, *args, **kwargs):
+        return self._cache.dbsize(*args, **kwargs)
+
 #
 # CACHETOOLS EXTENSIONS
 #
@@ -80,7 +98,7 @@ class DictCache(_MutMapMix):
         self._cache = dict()
 
 
-class LockedCache(_MutMapMix, _StatsMix, MutMap):
+class LockedCache(_MutMapMix, _StatsMix, _RedisMix, MutMap):
     """Cache class with a lock.
 
     :param cache: actual cache.
@@ -359,6 +377,8 @@ class MemCached(_KeyMutMapMix, MutMap):
     """
 
     def __init__(self, cache):
+        import pymemcached as pmc
+        assert isinstance(cache, pmc.Client)
         self._cache = cache
 
     # memcached keys are constrained bytes, we need some encoding…
@@ -441,6 +461,8 @@ class RedisCache(MutMap):
     """
 
     def __init__(self, cache, ttl=600):
+        import redis
+        assert isinstance(cache, redis.Redis)
         self._cache = cache
         self._ttl = ttl
 
