@@ -378,8 +378,8 @@ class MemCached(_KeyMutMapMix, MutMap):
     """
 
     def __init__(self, cache):
-        import pymemcache as pmc
-        assert isinstance(cache, pmc.Client)
+        # import pymemcache as pmc
+        # assert isinstance(cache, pmc.Client)
         self._cache = cache
 
     # memcached keys are constrained bytes, we need some encoding…
@@ -462,8 +462,8 @@ class RedisCache(MutMap):
     """
 
     def __init__(self, cache, ttl=600):
-        import redis
-        assert isinstance(cache, redis.Redis)
+        # import redis
+        # assert isinstance(cache, redis.Redis)
         self._cache = cache
         self._ttl = ttl
 
