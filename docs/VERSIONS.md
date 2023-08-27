@@ -18,9 +18,10 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   this could be for redis or memcached?
   Maybe the existing client can do that with appropriate options?
 
-## 8.2 on ?
+## 8.2 on 2023-08-27
 
-Add type assertion in Redis and MemCached wrappers.
+Add more method forwarding to `LockedCache`, for `Redis`.
+Fix `pymemcache` package name in documentation.
 
 ## 8.1 on 2023-08-27
 
