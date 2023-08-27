@@ -184,16 +184,18 @@ def test_stats_memcached():
 )
 def test_redis():
     import redis
+    import threading
 
     c0 = redis.Redis(host="localhost")
     c1 = ctu.RedisCache(c0)
-    run_cached(c1)
-    assert len(c1) >= 50
-    assert c1[(1, "a", True)] == 111
-    assert c1[(3, None, False)] == -17
-    setgetdel(c1)
+    c2 = ctu.LockedCache(c1, threading.RLock())
+    run_cached(c2)
+    assert len(c2) >= 50
+    assert c2[(1, "a", True)] == 111
+    assert c2[(3, None, False)] == -17
+    setgetdel(c2)
     try:
-        c1.__iter__()
+        c2.__iter__()
         assert False, "should raise an Exception"
     except Exception as e:
         assert "not implemented yet" in str(e)
