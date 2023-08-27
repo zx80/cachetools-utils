@@ -91,6 +91,7 @@ class _RedisMix:
 # CACHETOOLS EXTENSIONS
 #
 
+
 class DictCache(_MutMapMix):
     """Cache class based on dict."""
 
