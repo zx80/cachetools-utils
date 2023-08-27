@@ -336,11 +336,11 @@ def cacheFunctions(
 # MEMCACHED
 #
 class JsonSerde:
-    """JSON serialize/deserialize class for MemCached (``pymemcached``).
+    """JSON serialize/deserialize class for MemCached (``pymemcache``).
 
     .. code-block:: python
 
-       import pymemcached as pmc
+       import pymemcache as pmc
        import CacheToolsUtils as ctu
        pmc_cache = pmc.Client(server="localhost", serde=ctu.JsonSerde())
     """
@@ -369,7 +369,7 @@ class MemCached(_KeyMutMapMix, MutMap):
 
     .. code-block:: python
 
-       import pymemcached as pmc
+       import pymemcache as pmc
        import CacheToolsUtils as ctu
        cache = ctu.MemCached(pmc.Client(server="localhost", serde=ctu.JsonSerde()))
 
@@ -378,7 +378,7 @@ class MemCached(_KeyMutMapMix, MutMap):
     """
 
     def __init__(self, cache):
-        import pymemcached as pmc
+        import pymemcache as pmc
         assert isinstance(cache, pmc.Client)
         self._cache = cache
 
@@ -415,7 +415,7 @@ class PrefixedMemCached(MemCached):
 
     .. code-block:: python
 
-       import pymemcached as pmc
+       import pymemcache as pmc
        import CacheToolsUtils as ctu
        # add a "app." prefix to keys, after serialization
        cache = ctu.PrefixedMemCached(pmc.Client(server="localhost", serde=ctu.JsonSerde()), "app.")
