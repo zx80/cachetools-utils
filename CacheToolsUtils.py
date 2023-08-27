@@ -69,7 +69,7 @@ class _StatsMix:
         return self._cache.reset()
 
 
-class _RedisMix:
+class _RedisMix:  # pragma: no cover
     """Convenient mixin to forward redis methods."""
 
     def set(self, *args, **kwargs):
