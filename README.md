@@ -18,7 +18,7 @@ and other cache-related utils.
 
 For our purpose, a cache is a key-value store, aka a dictionary, possibly with
 some constraints on keys (type, size) and values (size, serialization).
-Thi module provide new caches, wrappers and other utilities suitable to use
+This module provides new caches, wrappers and other utilities suitable to use
 with `cachetools`.
 
 ### Cache classes
