@@ -14,8 +14,7 @@ jobs:
         # broken: pypy3.7
         # broken: 3.7 (pymarkdownlnt)
         # drop 3.8 and 3.9 for easier typing
-        # 3.12-dev needs a fix for mypy
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
     # Setup
     - uses: actions/checkout@v3
