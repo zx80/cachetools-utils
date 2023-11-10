@@ -92,6 +92,48 @@ class _RedisMix:  # pragma: no cover
 #
 
 
+class DebugCache:
+    """Debug class.
+
+    :param cache: actual cache
+    :param log: logging instance
+    :param name: name of instance for output
+    """
+
+    def __init__(self, cache, log, name="cache"):
+        self._cache = cache
+        self._log = log
+        self._name = name
+        self._log.info(f"DebugCache {name}: init")
+
+    def _debug(self, msg):
+        self._log.debug(f"DebugCache {self._name}: {msg}")
+
+    def __contains__(self, key):
+        self._debug(f"in {key}")
+        return self._cache.__contains__(key)
+
+    def __getitem__(self, key):
+        self._debug(f"get {key}")
+        return self._cache.__getitem__(key)
+
+    def __setitem__(self, key, val):
+        self._debug(f"set {key} {val}")
+        return self._cache.__setitem__(key, val)
+
+    def __delitem__(self, key):
+        self._debug(f"del {key}")
+        return self._cache.__delitem__(key)
+
+    def __len__(self):
+        self._debug("len")
+        return self._cache.__len__()
+
+    def __iter__(self):
+        self._debug("iter")
+        return self._cache.__iter__()
+
+
 class DictCache(_MutMapMix):
     """Cache class based on dict."""
 

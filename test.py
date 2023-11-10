@@ -448,3 +448,19 @@ def test_cached():
     assert cache.hits() == 0.5
     cached.cache_del("hello", 4)
     assert not cached.cache_in("hello", 4)
+
+def test_debug():
+    log = logging.getLogger("test")
+    log.setLevel(logging.DEBUG)
+    cache = ctu.DebugCache(ctu.DictCache(), log, "test_debug")
+    run_cached(cache)
+    cache["Hello"] = "World!"
+    assert "Hello" in cache
+    assert len(cache) > 0
+    has_hello = False
+    for k in iter(cache):
+        if k == "Hello":
+            has_hello = True
+    assert has_hello
+    del cache["Hello"]
+    assert "Hello" not in cache
