@@ -491,7 +491,7 @@ class RedisCache(MutMap):
     """Redis TTL-ed wrapper for cachetools (``redis``).
 
     :param cache: actual redis cache.
-    :param ttl: time-to-live in seconds, used as default expiration (``ex``).
+    :param ttl: time-to-live in seconds, used as default expiration (``ex``), default is 600.
 
     Keys and values are serialized in *JSON*.
 
@@ -577,8 +577,8 @@ class PrefixedRedisCache(RedisCache):
     """Prefixed Redis wrapper class for cachetools.
 
     :param cache: actual redis cache.
-    :param prefix: post key encoding prefix.
-    :param ttl: time-to-live in seconds, used as default expiration (``ex``).
+    :param prefix: post key encoding prefix, default is empty.
+    :param ttl: time-to-live in seconds, used as default expiration (``ex``), default is 600.
 
     .. code-block:: python
 
