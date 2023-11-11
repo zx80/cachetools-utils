@@ -7,7 +7,7 @@ import pytest
 import logging
 
 logging.basicConfig()
-log = logging.getLogger()
+log = logging.getLogger("ctu-test")
 # log.setLevel(logging.DEBUG)
 
 
@@ -452,7 +452,7 @@ def test_cached():
     assert not cached.cache_in("hello", 4)
 
 def test_debug():
-    log = logging.getLogger("test")
+    log = logging.getLogger("debug-test")
     log.setLevel(logging.DEBUG)
     cache = ctu.DebugCache(ctu.DictCache(), log, "test_debug")
     run_cached(cache)
