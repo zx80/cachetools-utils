@@ -303,6 +303,8 @@ def test_two_level_ok():
 
 
 class Stuff:
+    """Test class with cacheable methods."""
+
     def __init__(self, name):
         self._name = name
 
