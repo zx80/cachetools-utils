@@ -17,6 +17,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 - add ability to reconnect if an external cache fails?
   this could be for redis or memcached?
   Maybe the existing client can do that with appropriate options?
+- `cached`: add `contains` and `delete` parameters to change names?
 
 ## 8.2 on 2023-08-27
 
