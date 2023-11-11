@@ -393,7 +393,7 @@ class JsonSerde:
         if isinstance(value, str):
             return value.encode("utf-8"), 1
         else:
-            return json.dumps(value).encode("utf-8"), 2
+            return json.dumps(value, sort_keys=True).encode("utf-8"), 2
 
     # reverse previous serialization
     def deserialize(self, key, value, flag):
@@ -515,13 +515,13 @@ class RedisCache(MutMap):
         return self._cache.flushdb()
 
     def _serialize(self, s):
-        return json.dumps(s)
+        return json.dumps(s, sort_keys=True)
 
     def _deserialize(self, s):
         return json.loads(s)
 
     def _key(self, key):
-        return json.dumps(key)
+        return json.dumps(key, sort_keys=True)
 
     def __getitem__(self, index):
         val = self._cache.get(self._key(index))
