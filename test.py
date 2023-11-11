@@ -55,8 +55,10 @@ KEY, VAL = "hello-world!", "Hello World…"
 def setgetdel(cache):
     # str keys and values
     cache[KEY] = VAL
+    # assert KEY in cache
     assert cache[KEY] == VAL
     del cache[KEY]
+    # assert KEY not in cache
     try:
         val = cache[KEY]
         assert False, "should raise KeyError"
@@ -64,6 +66,7 @@ def setgetdel(cache):
         assert isinstance(e, KeyError)
     # int value
     cache[KEY] = 65536
+    # assert KEY in cache
     assert cache[KEY] == 65536
     del cache[KEY]
     # FIXME memcached error
