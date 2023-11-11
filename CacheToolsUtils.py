@@ -287,6 +287,7 @@ class TwoLevelCache(_MutMapMix, MutMap):
         return self._cache.__delitem__(key)
 
     def clear(self):
+        # NOTE not passed to 2nd level cache…
         return self._cache.clear()
 
 
