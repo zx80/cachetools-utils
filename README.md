@@ -38,6 +38,7 @@ with `cachetools`.
   to report the cache hit rate.
 - `LockedCache` use a (thread) lock to control cache accesses.
 - `TwoLevelCache` allows to combine two caches.
+- `DebugCache` to trace cache calls using `logging`.
 
 ### Cache utilities
 
