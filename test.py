@@ -40,7 +40,10 @@ def run_cached(cache):
 
     for cached in (ct.cached, ctu.cached):
         # reset cache contents and stats
-        cache.clear()
+        try:
+            cache.clear()
+        except:  # fails on redis
+            pass
         if hasattr(cache._cache, "reset"):
             cache._cache.reset()
         if hasattr(cache, "_cache2") and hasattr(cache._cache2, "reset"):
