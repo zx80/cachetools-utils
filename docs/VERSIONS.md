@@ -23,6 +23,9 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 
 Fix `TwoLevelCache` verbosity.
 Add `DebugCache` for helping debug.
+Sort keys on JSON dumps.
+Upgrade GitHub actions.
+Test with Python *3.12*.
 
 ## 8.2 on 2023-08-27
 
