@@ -137,6 +137,10 @@ class DebugCache:
         self._debug("clear")
         return self._cache.clear()
 
+    def reset(self):
+        self._debug("reset")
+        return self._cache.reset()
+
 
 class DictCache(_MutMapMix):
     """Cache class based on dict."""
@@ -263,13 +267,18 @@ class TwoLevelCache(_MutMapMix, MutMap):
     def __getitem__(self, key):
         try:
             return self._cache.__getitem__(key)
-        except KeyError:
+        except KeyError as ke:
             try:
                 val = self._cache2.__getitem__(key)
+            except KeyError:
+                raise ke  # initial error
             except Exception as e:
-                log.error(e, exc_info=True)
-                if not self._resilient:
+                if self._resilient:
+                    log.debug(e, exc_info=True)
+                    raise ke
+                else:
                     raise
+            # put cache2 value into cache
             self._cache.__setitem__(key, val)
             return val
 
@@ -277,8 +286,9 @@ class TwoLevelCache(_MutMapMix, MutMap):
         try:
             self._cache2.__setitem__(key, val)
         except Exception as e:
-            log.error(e, exc_info=True)
-            if not self._resilient:
+            if self._resilient:
+                log.debug(e, exc_info=True)
+            else:
                 raise
         return self._cache.__setitem__(key, val)
 
@@ -288,14 +298,19 @@ class TwoLevelCache(_MutMapMix, MutMap):
         except KeyError:
             pass
         except Exception as e:
-            log.error(e, exc_info=True)
-            if not self._resilient:
+            if self._resilient:
+                log.debug(e, exc_info=True)
+            else:
                 raise
         return self._cache.__delitem__(key)
 
     def clear(self):
-        # NOTE not passed to 2nd level cache…
+        # NOTE not passed on cache2…
         return self._cache.clear()
+
+    def reset(self):
+        self._cache.reset()
+        self._cache2.reset()
 
 
 def cached(cache, *args, **kwargs):

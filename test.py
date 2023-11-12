@@ -25,10 +25,10 @@ def has_service(host="localhost", port=22):
         tcp_ip.close()
 
 
-def cached_fun(cache):
+def cached_fun(cache, cached=ct.cached):
     """return a cached function with basic types."""
 
-    @ct.cached(cache=cache)
+    @cached(cache=cache)
     def fun(i: int, s: str|None, b: bool) -> int:
         return i + (10 * len(s) if s is not None else -20) + (100 if b else 0)
 
@@ -37,16 +37,24 @@ def cached_fun(cache):
 
 def run_cached(cache):
     """run something on a cached function."""
-    fun = cached_fun(cache)
-    x = 0
-    for n in range(10):
-        for i in range(5):
-            for s in ["a", "bb", "ccc", "", None]:
-                for b in [False, True]:
-                    v = fun(i, s, b)
-                    # log.debug(f"fun{(i, s, b)} = {v} {type(v)}")
-                    x += v
-    assert x == 30000
+
+    for cached in (ct.cached, ctu.cached):
+        # reset cache contents and stats
+        cache.clear()
+        if hasattr(cache._cache, "reset"):
+            cache._cache.reset()
+        if hasattr(cache, "_cache2") and hasattr(cache._cache2, "reset"):
+            cache._cache2.reset()
+        fun = cached_fun(cache, cached)
+        x = 0
+        for n in range(10):
+            for i in range(5):
+                for s in ["a", "bb", "ccc", "", None]:
+                    for b in [False, True]:
+                        v = fun(i, s, b)
+                        # log.debug(f"fun{(i, s, b)} = {v} {type(v)}")
+                        x += v
+        assert x == 30000
 
 
 KEY, VAL = "hello-world!", "Hello World…"
@@ -289,10 +297,11 @@ def test_two_level_ok():
     assert len(c1s) == 50
     assert len(c0s) == 50
     assert c0s._reads == 50
-    assert c0s._writes == 50
+    # assert c0s._writes == 50
+    assert c0s._writes == 0
     assert c1s._reads == 500
     assert c1s.hits() == 0.9
-    assert c0s.hits() == 0.0
+    assert c0s.hits() == 1.0
     c2.clear()
     setgetdel(c0)
     setgetdel(c1)
