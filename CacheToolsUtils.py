@@ -137,7 +137,7 @@ class DebugCache:
         self._debug("clear")
         return self._cache.clear()
 
-    def reset(self):
+    def reset(self):  # pragma: no cover
         self._debug("reset")
         return self._cache.reset()
 
@@ -273,7 +273,7 @@ class TwoLevelCache(_MutMapMix, MutMap):
             except KeyError:
                 raise ke  # initial error
             except Exception as e:
-                if self._resilient:
+                if self._resilient:  # pragma: no cover
                     log.debug(e, exc_info=True)
                     raise ke
                 else:
@@ -308,7 +308,7 @@ class TwoLevelCache(_MutMapMix, MutMap):
         # NOTE not passed on cache2…
         return self._cache.clear()
 
-    def reset(self):
+    def reset(self):  # pragma: no cover
         self._cache.reset()
         self._cache2.reset()
 
