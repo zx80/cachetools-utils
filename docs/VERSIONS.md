@@ -26,6 +26,7 @@ Add `DebugCache` for helping debug.
 Sort keys on JSON dumps.
 Upgrade GitHub actions.
 Test with Python *3.12*.
+Improved documentation.
 
 ## 8.2 on 2023-08-27
 
