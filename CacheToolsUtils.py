@@ -133,12 +133,19 @@ class DebugCache:
         self._debug("iter")
         return self._cache.__iter__()
 
+    def clear(self):
+        self._debug("clear")
+        return self._cache.clear()
+
 
 class DictCache(_MutMapMix):
     """Cache class based on dict."""
 
     def __init__(self):
         self._cache = dict()
+
+    def clear(self):
+        self._cache.clear()
 
 
 class LockedCache(_MutMapMix, _StatsMix, _RedisMix, MutMap):
@@ -311,10 +318,12 @@ def cached(cache, *args, **kwargs):
 
         # extend
         def cache_in(*args, **kwargs):
+            """Tell whether key is already in cache."""
             key = fun.cache_key(*args, **kwargs)
             return key in fun.cache
 
         def cache_del(*args, **kwargs):
+            """Delete key from cache, return if it was there."""
             key = fun.cache_key(*args, **kwargs)
             key_in = key in fun.cache
             if key_in:
