@@ -628,4 +628,7 @@ class StatsRedisCache(PrefixedRedisCache):
     This class is empty and only kept for compatibility.
     """
 
+    def flushdb(self):
+        self._cache.clear()
+
     pass
