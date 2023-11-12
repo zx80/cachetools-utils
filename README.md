@@ -29,7 +29,7 @@ with `cachetools`.
 - `MemCached` does the same for a Memcached server.
   The utility class `JsonSerde` is a convenient JSON serializer-deserializer
   class for Memcached.
-- `DictCache` a `dict` cache.
+- `DictCache` a very simple `dict` cache.
 
 ### Other wrappers to extend cache capabilities
 
@@ -43,7 +43,7 @@ with `cachetools`.
 
 ### Cache utilities
 
-- `cached` decorator: a cachetools replacement which allows to test e if a
+- `cached` decorator: a cachetools replacement which allows to test if a
   function result is in cache, and to delete such an entry.
 - `cacheFunctions` and `cacheMethods`: add caching to functions or methods.
 
