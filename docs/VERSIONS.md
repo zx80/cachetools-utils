@@ -19,6 +19,11 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
 
+## 8.3 on 2023-11-12
+
+Fix `TwoLevelCache` verbosity.
+Add `DebugCache` for helping debug.
+
 ## 8.2 on 2023-08-27
 
 Add more method forwarding to `LockedCache`, for `Redis`.
