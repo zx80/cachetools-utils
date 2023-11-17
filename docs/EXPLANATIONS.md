@@ -41,6 +41,9 @@ Invalidating data from the cache requires a detailed knowledge of internal
 cache operations and are not very easy to manage at the application level,
 so devops should want to avoid this path if possible, possibly by relying
 on a time-based cache expiration aka TTL (time-to-live).
+Note that the extended [`cached`](autoapi/CacheToolsUtils/index.html#CacheToolsUtils.cached)
+decorator provided with this module includes a the convenient `cached_del`
+method to help implement cache invalidation at the application level.
 
 ## Throughput
 
