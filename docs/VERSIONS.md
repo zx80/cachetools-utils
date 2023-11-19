@@ -19,6 +19,10 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
 
+## ? on ?
+
+Improved documentation.
+
 ## 8.3 on 2023-11-12
 
 Fix `TwoLevelCache` verbosity.
