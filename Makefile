@@ -42,6 +42,11 @@ check.mypy: venv
 	source venv/bin/activate
 	mypy $(MODULE).py
 
+.PHONY: check.pyright
+check.pyright: venv
+	source venv/bin/activate
+	pyright $(MODULE).py
+
 .PHONY: check.flake8
 check.flake8: venv
 	source venv/bin/activate
