@@ -19,10 +19,10 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
 
-## ? on ?
+## 8.4 on ?
 
 Improved documentation.
-Improved type declarations with `pyright`.
+Improved type declarations with `pyright`, added to CI.
 
 ## 8.3 on 2023-11-12
 
