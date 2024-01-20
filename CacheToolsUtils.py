@@ -210,6 +210,7 @@ class PrefixedCache(_KeyMutMapMix, _StatsMix, MutMap):
         self._prefix = prefix
         self._cache = cache
         # dynamic cast
+        self._cast: Callable[[Any], str]|Callable[[Any], bytes]
         if isinstance(prefix, str):
             self._cast = lambda v: str(v)
         else:  # pragma: no cover
