@@ -50,7 +50,7 @@ class _KeyMutMapMix(_MutMapMix):
     """Convenient MutableMapping Mixin with a key filter, forward to _cache."""
 
     @abc.abstractmethod
-    def _key(self, key: Any) -> Any:
+    def _key(self, key: Any) -> Any:  # pragma: no cover
         return None
 
     def __contains__(self, key: Any):
