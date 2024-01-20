@@ -40,6 +40,8 @@ jobs:
       run: make check.pytest
     - name: Check with coverage
       run: make check.coverage
+    - name: Check with pyright
+      run: make check.pyright
     - name: Check with mypy
       # mypy is much too slow, this is a pain:-/
       run: make check.mypy
