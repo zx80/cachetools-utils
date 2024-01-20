@@ -88,7 +88,8 @@ $(MODULE).egg-info: venv
 	$(PIP) install -e .
 
 # generate source and built distribution
-dist:
+dist: venv
+	source venv/bin/activate
 	$(PYTHON) -m build
 
 .PHONY: publish
