@@ -212,7 +212,7 @@ class PrefixedCache(_KeyMutMapMix, _StatsMix, MutMap):
         # dynamic cast
         if isinstance(prefix, str):
             self._cast = lambda v: str(v)
-        else:
+        else:  # pragma: no cover
             self._cast = lambda v: bytes(v)
 
     def _key(self, key: Any) -> Any:
