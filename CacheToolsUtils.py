@@ -3,6 +3,7 @@ CacheTools Utilities. This code is public domain.
 """
 
 from typing import Any, Callable, MutableMapping as MutMap
+import abc
 
 import cachetools
 import json
@@ -15,7 +16,7 @@ log = logging.getLogger(__name__)
 
 
 #
-# UTILS
+# UTILS: Abstract Classes and Mixins
 #
 
 _NO_DEFAULT = object()
@@ -23,6 +24,8 @@ _NO_DEFAULT = object()
 
 class _MutMapMix:
     """Convenient MutableMapping Mixin, forward to _cache."""
+
+    _cache: MutMap
 
     def __contains__(self, key):
         return self._cache.__contains__(key)
@@ -46,16 +49,20 @@ class _MutMapMix:
 class _KeyMutMapMix(_MutMapMix):
     """Convenient MutableMapping Mixin with a key filter, forward to _cache."""
 
-    def __contains__(self, key):
+    @abc.abstractmethod
+    def _key(self, key: Any) -> Any:
+        return None
+
+    def __contains__(self, key: Any):
         return self._cache.__contains__(self._key(key))
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: Any):
         return self._cache.__getitem__(self._key(key))
 
-    def __setitem__(self, key, val):
+    def __setitem__(self, key: Any, val: Any):
         return self._cache.__setitem__(self._key(key), val)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: Any):
         return self._cache.__delitem__(self._key(key))
 
 
@@ -63,34 +70,37 @@ class _StatsMix:
     """Convenient Mixin to forward stats methods to _cache."""
 
     def hits(self):
-        return self._cache.hits()
+        return self._cache.hits()  # type: ignore
 
     def reset(self):
-        return self._cache.reset()
+        return self._cache.reset()  # type: ignore
 
 
 class _RedisMix:  # pragma: no cover
     """Convenient mixin to forward redis methods."""
 
+    # NOTE declaring _cache would conflict with _MutMapMix
+    # probably there is a clever way to do that, let us not bother
+
     def set(self, *args, **kwargs):
-        return self._cache.set(*args, **kwargs)
+        return self._cache.set(*args, **kwargs)  # type: ignore
 
     def get(self, *args, **kwargs):
-        return self._cache.get(*args, **kwargs)
+        return self._cache.get(*args, **kwargs)  # type: ignore
 
     def delete(self, *args, **kwargs):
-        return self._cache.delete(*args, **kwargs)
+        return self._cache.delete(*args, **kwargs)  # type: ignore
 
     def info(self, *args, **kwargs):
-        return self._cache.info(*args, **kwargs)
+        return self._cache.info(*args, **kwargs)  # type: ignore
 
     def dbsize(self, *args, **kwargs):
-        return self._cache.dbsize(*args, **kwargs)
+        return self._cache.dbsize(*args, **kwargs)  # type: ignore
+
 
 #
 # CACHETOOLS EXTENSIONS
 #
-
 
 class DebugCache:
     """Debug class.
@@ -100,7 +110,7 @@ class DebugCache:
     :param name: name of instance for output
     """
 
-    def __init__(self, cache, log, name="cache"):
+    def __init__(self, cache: MutMap, log: logging.Logger, name="cache"):
         self._cache = cache
         self._log = log
         self._name = name
@@ -139,7 +149,7 @@ class DebugCache:
 
     def reset(self):  # pragma: no cover
         self._debug("reset")
-        return self._cache.reset()
+        return self._cache.reset()  # type: ignore
 
 
 class DictCache(_MutMapMix):
@@ -199,9 +209,14 @@ class PrefixedCache(_KeyMutMapMix, _StatsMix, MutMap):
     def __init__(self, cache: MutMap, prefix: str|bytes = ""):
         self._prefix = prefix
         self._cache = cache
+        # dynamic cast
+        if isinstance(prefix, str):
+            self._cast = lambda v: str(v)
+        else:
+            self._cast = lambda v: bytes(v)
 
-    def _key(self, key):
-        return self._prefix + str(key)
+    def _key(self, key: Any) -> Any:
+        return self._prefix + self._cast(key)  # type: ignore
 
 
 class StatsCache(_MutMapMix, MutMap):
@@ -309,8 +324,8 @@ class TwoLevelCache(_MutMapMix, MutMap):
         return self._cache.clear()
 
     def reset(self):  # pragma: no cover
-        self._cache.reset()
-        self._cache2.reset()
+        self._cache.reset()  # type: ignore
+        self._cache2.reset()  # type: ignore
 
 
 def cached(cache, *args, **kwargs):
@@ -332,17 +347,17 @@ def cached(cache, *args, **kwargs):
         fun = cachetools.cached(cache, *args, **kwargs)(fun)
 
         # extend
-        def cache_in(*args, **kwargs):
+        def cache_in(*args, **kwargs) -> bool:
             """Tell whether key is already in cache."""
-            key = fun.cache_key(*args, **kwargs)
-            return key in fun.cache
+            key = fun.cache_key(*args, **kwargs)  # type: ignore
+            return key in fun.cache  # type: ignore
 
         def cache_del(*args, **kwargs):
             """Delete key from cache, return if it was there."""
-            key = fun.cache_key(*args, **kwargs)
-            key_in = key in fun.cache
+            key = fun.cache_key(*args, **kwargs)  # type: ignore
+            key_in = key in fun.cache  # type: ignore
             if key_in:
-                del fun.cache[key]
+                del fun.cache[key]  # type: ignore
             return key_in
 
         fun.cache_in = cache_in    # type: ignore
@@ -451,26 +466,26 @@ class MemCached(_KeyMutMapMix, MutMap):
 
     # memcached keys are constrained bytes, we need some encoding…
     # short (250 bytes) ASCII without control chars nor spaces
-    # we do not use hashing which might be costly and induce collisions
+    # we do not use hashing which might be costly or induce collisions
     def _key(self, key):
         import base64
 
         return base64.b85encode(str(key).encode("utf-8"))
 
     def __len__(self):
-        return self._cache.stats()[b"curr_items"]
+        return self._cache.stats()[b"curr_items"]  # type: ignore
 
-    def stats(self):
+    def stats(self) -> dict[str, Any]:
         """Return MemCached stats."""
-        return self._cache.stats()
+        return self._cache.stats()  # type: ignore
 
     def clear(self):  # pragma: no cover
         """Flush MemCached contents."""
-        return self._cache.flush_all()
+        return self._cache.flush_all()  # type: ignore
 
-    def hits(self):
+    def hits(self) -> float:
         """Return overall cache hit ratio."""
-        stats = self._cache.stats()
+        stats = self._cache.stats()  # type: ignore
         return float(stats[b"get_hits"]) / max(stats[b"cmd_get"], 1)
 
 

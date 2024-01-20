@@ -22,6 +22,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 ## ? on ?
 
 Improved documentation.
+Improved type declarations with `pyright`.
 
 ## 8.3 on 2023-11-12
 
