@@ -26,7 +26,7 @@ import threading
 import cachetools
 import CacheToolsUtils as ctu
 
-lcache = LockedCache(cachetools.TTLCache(...), threading.Lock())
+lcache = ctu.LockedCache(cachetools.TTLCache(...), threading.Lock())
 ```
 
 ## PrefixedCache
@@ -34,9 +34,6 @@ lcache = LockedCache(cachetools.TTLCache(...), threading.Lock())
 Add a key prefix to an underlying cache to avoid key collisions.
 
 ```python
-import cachetools
-import CacheToolsUtils as ctu
-
 ct_base = cachetools.TTLCache(maxsize=1048576, ttl=600)
 foo_cache = ctu.PrefixedCache(ct_base, "foo.")
 bla_cache = ctu.PrefixedCache(ct_base, "bla.")
