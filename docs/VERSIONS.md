@@ -23,6 +23,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 
 Add missing MutableMapping inheritance.
 Update GitHub action versions.
+Drop type alias.
 
 ## 8.4 on 2024-01-20
 
