@@ -2,7 +2,7 @@
 CacheTools Utilities. This code is public domain.
 """
 
-from typing import Any, Callable, MutableMapping as MutMap
+from typing import Any, Callable, MutableMapping
 import abc
 
 import cachetools
@@ -25,7 +25,7 @@ _NO_DEFAULT = object()
 class _MutMapMix:
     """Convenient MutableMapping Mixin, forward to _cache."""
 
-    _cache: MutMap
+    _cache: MutableMapping
 
     def __contains__(self, key):
         return self._cache.__contains__(key)
@@ -102,7 +102,7 @@ class _RedisMix:  # pragma: no cover
 # CACHETOOLS EXTENSIONS
 #
 
-class DebugCache(MutMap):
+class DebugCache(MutableMapping):
     """Debug class.
 
     :param cache: actual cache
@@ -110,7 +110,7 @@ class DebugCache(MutMap):
     :param name: name of instance for output
     """
 
-    def __init__(self, cache: MutMap, log: logging.Logger, name="cache"):
+    def __init__(self, cache: MutableMapping, log: logging.Logger, name="cache"):
         self._cache = cache
         self._log = log
         self._name = name
@@ -152,7 +152,7 @@ class DebugCache(MutMap):
         return self._cache.reset()  # type: ignore
 
 
-class DictCache(_MutMapMix, MutMap):
+class DictCache(_MutMapMix, MutableMapping):
     """Cache class based on dict."""
 
     def __init__(self):
@@ -162,7 +162,7 @@ class DictCache(_MutMapMix, MutMap):
         self._cache.clear()
 
 
-class LockedCache(_MutMapMix, _StatsMix, _RedisMix, MutMap):
+class LockedCache(_MutMapMix, _StatsMix, _RedisMix, MutableMapping):
     """Cache class with a lock.
 
     :param cache: actual cache.
@@ -178,7 +178,7 @@ class LockedCache(_MutMapMix, _StatsMix, _RedisMix, MutMap):
        cache = ctu.LockedCache(ct.LFUCache(), threading.RLock())
     """
 
-    def __init__(self, cache: MutMap, lock):
+    def __init__(self, cache: MutableMapping, lock):
         self._cache = cache
         self._lock = lock
 
@@ -199,14 +199,14 @@ class LockedCache(_MutMapMix, _StatsMix, _RedisMix, MutMap):
             return self._cache.__delitem__(key)
 
 
-class PrefixedCache(_KeyMutMapMix, _StatsMix, MutMap):
+class PrefixedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
     """Cache class to add a key prefix.
 
     :param cache: actual cache.
     :param prefix: prefix to prepend to keys.
     """
 
-    def __init__(self, cache: MutMap, prefix: str|bytes = ""):
+    def __init__(self, cache: MutableMapping, prefix: str|bytes = ""):
         self._prefix = prefix
         self._cache = cache
         # dynamic cast
@@ -220,7 +220,7 @@ class PrefixedCache(_KeyMutMapMix, _StatsMix, MutMap):
         return self._prefix + self._cast(key)  # type: ignore
 
 
-class StatsCache(_MutMapMix, MutMap):
+class StatsCache(_MutMapMix, MutableMapping):
     """Cache class to keep stats.
 
     :param cache: actual cache.
@@ -237,7 +237,7 @@ class StatsCache(_MutMapMix, MutMap):
     However, this only works for its own classes.
     """
 
-    def __init__(self, cache: MutMap):
+    def __init__(self, cache: MutableMapping):
         self._cache = cache
         self.reset()
 
@@ -267,7 +267,7 @@ class StatsCache(_MutMapMix, MutMap):
         return self._cache.clear()
 
 
-class TwoLevelCache(_MutMapMix, MutMap):
+class TwoLevelCache(_MutMapMix, MutableMapping):
     """Two-Level Cache class for CacheTools.
 
     :param cache: first (smaller, shorter TTL) cache
@@ -275,7 +275,7 @@ class TwoLevelCache(_MutMapMix, MutMap):
     :param resilient: whether to ignore cache2 failures
     """
 
-    def __init__(self, cache: MutMap, cache2: MutMap, resilient=False):
+    def __init__(self, cache: MutableMapping, cache2: MutableMapping, resilient=False):
         self._resilient = resilient
         self._cache = cache
         self._cache2 = cache2
@@ -370,10 +370,10 @@ def cached(cache, *args, **kwargs):
 
 
 # short generator type name
-MapGen = Callable[[MutMap, str], MutMap]
+MapGen = Callable[[MutableMapping, str], MutableMapping]
 
 
-def cacheMethods(cache: MutMap, obj: Any, gen: MapGen = PrefixedCache, **funs):
+def cacheMethods(cache: MutableMapping, obj: Any, gen: MapGen = PrefixedCache, **funs):
     """Cache some object methods.
 
     :param cache: cache to use.
@@ -394,7 +394,7 @@ def cacheMethods(cache: MutMap, obj: Any, gen: MapGen = PrefixedCache, **funs):
 
 
 def cacheFunctions(
-    cache: MutMap, globs: MutMap[str, Any], gen: MapGen = PrefixedCache, **funs
+    cache: MutableMapping, globs: MutableMapping[str, Any], gen: MapGen = PrefixedCache, **funs
 ):
     """Cache some global functions, with a prefix.
 
@@ -445,7 +445,7 @@ class JsonSerde:
             raise Exception("Unknown serialization format")
 
 
-class MemCached(_KeyMutMapMix, MutMap):
+class MemCached(_KeyMutMapMix, MutableMapping):
     """MemCached-compatible wrapper class for cachetools with key encoding.
 
     :param cache: actual memcached cache.
@@ -528,7 +528,7 @@ class StatsMemCached(MemCached):
 #
 
 
-class RedisCache(MutMap):
+class RedisCache(MutableMapping):
     """Redis TTL-ed wrapper for cachetools (``redis``).
 
     :param cache: actual redis cache.

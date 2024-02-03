@@ -35,7 +35,7 @@ PYTEST	= pytest --log-level=debug --capture=tee-sys
 PYTOPT	=
 
 .PHONY: check
-check: check.mypy check.flake8 check.pytest check.coverage check.docs
+check: check.mypy check.pyright check.flake8 check.pytest check.coverage check.docs
 
 .PHONY: check.mypy
 check.mypy: venv
