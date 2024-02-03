@@ -19,6 +19,11 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
 
+## 8.5 on ?
+
+Add missing MutableMapping inheritance.
+Update GitHub action versions.
+
 ## 8.4 on 2024-01-20
 
 Improved documentation.

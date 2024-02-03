@@ -102,7 +102,7 @@ class _RedisMix:  # pragma: no cover
 # CACHETOOLS EXTENSIONS
 #
 
-class DebugCache:
+class DebugCache(MutMap):
     """Debug class.
 
     :param cache: actual cache
@@ -152,7 +152,7 @@ class DebugCache:
         return self._cache.reset()  # type: ignore
 
 
-class DictCache(_MutMapMix):
+class DictCache(_MutMapMix, MutMap):
     """Cache class based on dict."""
 
     def __init__(self):
