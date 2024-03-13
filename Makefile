@@ -12,7 +12,7 @@ F.pdf	= $(F.md:%.md=%.pdf)
 
 .PHONY: clean clean-venv
 clean:
-	$(RM) -r __pycache__ *.egg-info dist build .mypy_cache .pytest_cache htmlcov
+	$(RM) -r __pycache__ *.egg-info dist build .mypy_cache .pytest_cache htmlcov .ruff_cache
 	$(RM) .coverage $(F.pdf)
 	$(MAKE) -C docs clean
 
@@ -47,10 +47,17 @@ check.pyright: venv
 	source venv/bin/activate
 	pyright $(MODULE).py
 
+IGNORE  = E227,E501
+
 .PHONY: check.flake8
 check.flake8: venv
 	source venv/bin/activate
-	flake8 --ignore=E227,E501 $(MODULE).py
+	flake8 --ignore=$(IGNORE) $(MODULE).py
+
+.PHONY: check.ruff
+check.ruff: venv
+	source venv/bin/activate
+	ruff check --ignore=$(IGNORE) $(MODULE).py
 
 .PHONY: check.black
 check.black: venv
