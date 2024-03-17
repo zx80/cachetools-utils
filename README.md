@@ -47,6 +47,14 @@ with `cachetools`.
   function result is in cache, and to delete such an entry.
 - `cacheFunctions` and `cacheMethods`: add caching to functions or methods.
 
+## License
+
+This code is [Public Domain](https://creativecommons.org/publicdomain/zero/1.0/).
+
+All software has bug, this is software, hence… Beware that you may lose your
+hairs or your friends because of it. If you like it, feel free to send a
+postcard to the author.
+
 ## More
 
 See the
@@ -55,7 +63,3 @@ See the
 [issues](https://github.com/zx80/cachetools-utils/issues) on GitHub.
 
 See [packages](https://pypi.org/project/CacheToolsUtils/) on PyPI.
-
-## License
-
-This code is public domain.
