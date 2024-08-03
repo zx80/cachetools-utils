@@ -19,7 +19,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
 
-## 8.6 on ?
+## 8.6 on 2024-08-03
 
 Add license section to README.
 Add `ruff` pass.
