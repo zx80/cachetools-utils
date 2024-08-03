@@ -2,7 +2,7 @@ name: CacheTools Utils Package
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   # push_request: ?
 
 jobs:
@@ -11,10 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # broken: pypy3.7
-        # broken: 3.7 (pymarkdownlnt)
-        # drop 3.8 and 3.9 for easier typing
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "pypy3.10"]
     steps:
     # Setup
     - uses: actions/checkout@v4
