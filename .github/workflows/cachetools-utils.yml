@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "pypy3.10"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "pypy3.10"]
     steps:
     # Setup
     - uses: actions/checkout@v4
@@ -19,6 +19,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
     # Dependencies
     - name: Install Python dependencies and module
       run: make venv
