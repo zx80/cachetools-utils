@@ -8,7 +8,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "CacheToolsUtils"
-copyright = "2022-2023, Calvin"
+copyright = "2022-2024, Calvin"
 author = "Calvin"
 
 from importlib.metadata import version as pkg_version
