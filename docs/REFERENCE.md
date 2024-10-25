@@ -18,7 +18,7 @@ Install with `pip install CacheToolsUtils` or any other relevant mean.
 
 A cache with a lock, that can be shared between threads.
 Although there is `lock` option in `cachetools` `cached` decorator, it is at
-the function level thus does not work properly of a cache is shared between
+the function level thus does not work properly if a cache is shared between
 functions.
 
 ```python
