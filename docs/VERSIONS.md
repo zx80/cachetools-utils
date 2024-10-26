@@ -21,6 +21,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 
 ## ? on ?
 
+Add `stats` method to return a convenient `dict` of statistics.
 Fix doc typo.
 
 ## 8.6 on 2024-08-03

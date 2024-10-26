@@ -139,6 +139,7 @@ def test_stats_ct():
     assert cache[(4, "a", True)] == 114
     assert cache[(0, None, False)] == -20
     assert cache.hits() > 0.8
+    assert isinstance(cache.stats(), dict)
     cache.clear()
     setgetdel(c0)
     setgetdel(cache)
@@ -189,6 +190,7 @@ def test_stats_memcached():
     assert c1["(1, 'a', True)"] == 111
     assert c1["(3, None, False)"] == -17
     assert c1.hits() > 0.0
+    assert isinstance(c1.stats(), dict)
     setgetdel(c0)
     setgetdel(c1)
 
@@ -247,6 +249,7 @@ def test_stats_redis():
     assert c1[(1, "a", True)] == 111
     assert c1[(3, None, False)] == -17
     assert c1.hits() > 0.0
+    assert isinstance(c1.stats(), dict)
     setgetdel(c1)
 
 
@@ -263,6 +266,7 @@ def test_stacked_redis():
     run_cached(c3)
     assert len(c3) >= 50
     assert c2.hits() > 0.0
+    assert isinstance(c2.stats(), dict)
     setgetdel(c1)
     setgetdel(c2)
     setgetdel(c3)
@@ -280,7 +284,11 @@ def test_two_level_small():
     assert len(c0s) == 50
     assert c0s._reads == c1s._reads
     assert c1s.hits() == 0.0
+    assert isinstance(c1s.stats(), dict)
     assert c0s.hits() > 0.8
+    assert isinstance(c0s.stats(), dict)
+    assert c2.hits() > 0.0
+    assert isinstance(c2.stats(), dict)
     c2.clear()
     setgetdel(c0)
     setgetdel(c1)
@@ -292,7 +300,7 @@ def test_two_level_small():
 def test_two_level_ok():
     # front cache is too small, always fallback
     c0 = ct.LRUCache(200)
-    c1 = ct.MRUCache(100)
+    c1 = ct.LFUCache(100)
     c0s = ctu.StatsCache(c0)
     c1s = ctu.StatsCache(c1)
     c2 = ctu.TwoLevelCache(c1s, c0s)
@@ -304,7 +312,11 @@ def test_two_level_ok():
     assert c0s._writes == 0
     assert c1s._reads == 500
     assert c1s.hits() == 0.9
+    assert isinstance(c1s.stats(), dict)
     assert c0s.hits() == 1.0
+    assert isinstance(c0s.stats(), dict)
+    assert c2.hits() > 0.0
+    assert isinstance(c2.stats(), dict)
     c2.clear()
     setgetdel(c0)
     setgetdel(c1)
@@ -351,6 +363,7 @@ def test_methods():
         n = s.sum_n2(i) + s.sum_n1(i)
     assert len(c) == 259
     assert cs.hits() > 0.6
+    assert isinstance(cs.stats(), dict)
     ctu.cacheMethods(cs, s, sum_n1="x.")
     try:
         ctu.cacheMethods(cs, s, no_such_method="?.")
@@ -374,6 +387,7 @@ def test_functions():
         n = sum_n2(i) + sum_n2(i) + sum_n2(i)
     assert len(c) == 129
     assert cs.hits() > 0.7
+    assert isinstance(cs.stats(), dict)
 
 
 def test_corners():
@@ -463,17 +477,20 @@ def test_cached():
     cached("hello", 4)
     assert cached.cache_in("hello", 4)
     assert cache.hits() == 0.5
+    assert isinstance(cache.stats(), dict)
     cached.cache_del("hello", 4)
     assert not cached.cache_in("hello", 4)
 
 def test_debug():
     log = logging.getLogger("debug-test")
     log.setLevel(logging.DEBUG)
-    cache = ctu.DebugCache(ctu.DictCache(), log, "test_debug")
+    cache = ctu.DebugCache(ctu.StatsCache(ctu.DictCache()), log, "test_debug")
     run_cached(cache)
     cache["Hello"] = "World!"
     assert "Hello" in cache
     assert len(cache) > 0
+    assert cache.hits() > 0.0
+    assert isinstance(cache.stats(), dict)
     has_hello = False
     for k in iter(cache):
         if k == "Hello":

@@ -31,12 +31,13 @@ with `cachetools`.
   class for Memcached.
 - `DictCache` a very simple `dict` cache.
 
-### Other wrappers to extend cache capabilities
+### Wrappers to extend cache capabilities
 
 - `PrefixedCache`, `PrefixedMemCached` and `PrefixedRedisCache` add a prefix to
   distinguish sources on a shared cache.
-- `StatsCache`, `StatsMemCached` and `StatsRedisCache` add a `hits()` method
-  to report the cache hit rate.
+- `StatsCache`, `MemCached` and `RedisCache` add a `hits` method
+  to report the cache hit rate, `stats` to report statistics and
+  `reset` to reset statistics.
 - `LockedCache` use a (thread) lock to control cache accesses.
 - `TwoLevelCache` allows to combine two caches.
 - `DebugCache` to trace cache calls using `logging`.

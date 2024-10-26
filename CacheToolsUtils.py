@@ -72,6 +72,9 @@ class _StatsMix:
     def hits(self):
         return self._cache.hits()  # type: ignore
 
+    def stats(self):
+        return self._cache.stats()  # type: ignore
+
     def reset(self):
         return self._cache.reset()  # type: ignore
 
@@ -102,7 +105,7 @@ class _RedisMix:  # pragma: no cover
 # CACHETOOLS EXTENSIONS
 #
 
-class DebugCache(MutableMapping):
+class DebugCache(_StatsMix, MutableMapping):
     """Debug class.
 
     :param cache: actual cache
@@ -243,11 +246,22 @@ class StatsCache(_MutMapMix, MutableMapping):
 
     def hits(self):
         """Return the cache hit ratio."""
-        return float(self._hits) / float(max(self._reads, 1))
+        return float(self._hits) / max(self._reads, 1)
 
     def reset(self):
         """Reset internal stats data."""
         self._reads, self._writes, self._dels, self._hits = 0, 0, 0, 0
+
+    def stats(self):
+        """Return available stats data as dict."""
+        return {
+            "type": 1,
+            "reads": self._reads,
+            "writes": self._writes,
+            "dels": self._dels,
+            "hits": self.hits(),
+            "size": self._cache.__len__()
+        }
 
     def __getitem__(self, key):
         self._reads += 1
@@ -323,6 +337,20 @@ class TwoLevelCache(_MutMapMix, MutableMapping):
     def clear(self):
         # NOTE not passed on cache2…
         return self._cache.clear()
+
+    def stats(self):
+        return {
+            "type": 2,
+            "cache1": self._cache.stats(),  # type: ignore
+            "cache2": self._cache2.stats()  # type: ignore
+        }
+
+    def hits(self):
+        data = self.stats()
+        c1, c2 = data["cache1"], data["cache2"]
+        if c1["type"] == 1 and c2["type"] == 1:
+            return float(c1["hits"] + c2["hits"]) / max(c1["reads"] + c2["reads"], 1)
+        # else None
 
     def reset(self):  # pragma: no cover
         self._cache.reset()  # type: ignore
@@ -484,7 +512,7 @@ class MemCached(_KeyMutMapMix, MutableMapping):
         """Flush MemCached contents."""
         return self._cache.flush_all()  # type: ignore
 
-    def hits(self) -> float:
+    def hits(self):
         """Return overall cache hit ratio."""
         stats = self._cache.stats()  # type: ignore
         return float(stats[b"get_hits"]) / max(stats[b"cmd_get"], 1)
@@ -586,6 +614,9 @@ class RedisCache(MutableMapping):
         """Return redis informations."""
         return self._cache.info(*args, **kwargs)
 
+    def stats(self):
+        return self.info(section="stats")
+
     def dbsize(self, *args, **kwargs):
         """Return redis database size."""
         return self._cache.dbsize(*args, **kwargs)
@@ -608,7 +639,7 @@ class RedisCache(MutableMapping):
     # stats
     def hits(self):
         """Return cache hits."""
-        stats = self.info(section="stats")
+        stats = self.stats()
         return float(stats["keyspace_hits"]) / (
             stats["keyspace_hits"] + stats["keyspace_misses"]
         )
