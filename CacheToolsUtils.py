@@ -69,10 +69,10 @@ class _KeyMutMapMix(_MutMapMix):
 class _StatsMix:
     """Convenient Mixin to forward stats methods to _cache."""
 
-    def hits(self):
+    def hits(self) -> float|None:
         return self._cache.hits()  # type: ignore
 
-    def stats(self):
+    def stats(self) -> dict[str, Any]:
         return self._cache.stats()  # type: ignore
 
     def reset(self):
@@ -244,7 +244,7 @@ class StatsCache(_MutMapMix, MutableMapping):
         self._cache = cache
         self.reset()
 
-    def hits(self):
+    def hits(self) -> float:
         """Return the cache hit ratio."""
         return float(self._hits) / max(self._reads, 1)
 
@@ -252,7 +252,7 @@ class StatsCache(_MutMapMix, MutableMapping):
         """Reset internal stats data."""
         self._reads, self._writes, self._dels, self._hits = 0, 0, 0, 0
 
-    def stats(self):
+    def stats(self) -> dict[str, Any]:
         """Return available stats data as dict."""
         return {
             "type": 1,
@@ -338,17 +338,23 @@ class TwoLevelCache(_MutMapMix, MutableMapping):
         # NOTE not passed on cache2…
         return self._cache.clear()
 
-    def stats(self):
-        return {
-            "type": 2,
-            "cache1": self._cache.stats(),  # type: ignore
-            "cache2": self._cache2.stats()  # type: ignore
-        }
+    def stats(self) -> dict[str, Any]:
+        data = { "type": 2 }
+        try:
+            data["cache1"] = self._cache.stats()  # type: ignore
+        except Exception:
+            data["cache1"] = {}  # type: ignore
+        try:
+            data["cache2"] = self._cache2.stats()  # type: ignore
+        except Exception:
+            data["cache2"] = {}  # type: ignore
+        return data
 
-    def hits(self):
+    def hits(self) -> float|None:
         data = self.stats()
         c1, c2 = data["cache1"], data["cache2"]
-        if c1["type"] == 1 and c2["type"] == 1:
+        if (c1 and "type" in c1 and c1["type"] == 1 and
+            c2 and "type" in c2 and c2["type"] == 1):
             return float(c1["hits"] + c2["hits"]) / max(c1["reads"] + c2["reads"], 1)
         # else None
 
@@ -512,7 +518,7 @@ class MemCached(_KeyMutMapMix, MutableMapping):
         """Flush MemCached contents."""
         return self._cache.flush_all()  # type: ignore
 
-    def hits(self):
+    def hits(self) -> float:
         """Return overall cache hit ratio."""
         stats = self._cache.stats()  # type: ignore
         return float(stats[b"get_hits"]) / max(stats[b"cmd_get"], 1)
@@ -614,7 +620,7 @@ class RedisCache(MutableMapping):
         """Return redis informations."""
         return self._cache.info(*args, **kwargs)
 
-    def stats(self):
+    def stats(self) -> dict[str, Any]:
         return self.info(section="stats")
 
     def dbsize(self, *args, **kwargs):
@@ -637,7 +643,7 @@ class RedisCache(MutableMapping):
         del self[index]
 
     # stats
-    def hits(self):
+    def hits(self) -> float:
         """Return cache hits."""
         stats = self.stats()
         return float(stats["keyspace_hits"]) / (

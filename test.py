@@ -329,6 +329,14 @@ def test_two_level_ok():
     del c2[KEY]
 
 
+def test_twolevel_bad_stats():
+    c0 = ctu.DictCache()
+    c1 = ctu.DictCache()
+    c2 = ctu.TwoLevelCache(c0, c1)
+    assert isinstance(c2.stats(), dict)
+    assert c2.hits() is None
+
+
 class Stuff:
     """Test class with cacheable methods."""
 
