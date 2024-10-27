@@ -10,14 +10,18 @@ F.pdf	= $(F.md:%.md=%.pdf)
 
 # cleanup and environment
 
-.PHONY: clean clean-venv
+.PHONY: clean
 clean:
 	$(RM) -r __pycache__ *.egg-info dist build .mypy_cache .pytest_cache htmlcov .ruff_cache
 	$(RM) .coverage $(F.pdf)
 	$(MAKE) -C docs clean
 
+.PHONY: clean.venv
 clean.venv: clean
 	$(RM) -r venv
+
+.PHONY: clean.dev
+clean.dev: clean.venv
 
 # venv for local testing
 PYTHON	= python
@@ -27,6 +31,9 @@ venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install --upgrade pip
 	$(PIP) install -e .[doc,dev,pub,tests]
+
+.PHONY: dev
+dev: venv
 
 #
 # Tests
