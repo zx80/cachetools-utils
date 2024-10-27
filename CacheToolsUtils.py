@@ -25,7 +25,8 @@ _NO_DEFAULT = object()
 class _MutMapMix:
     """Convenient MutableMapping Mixin, forward to _cache."""
 
-    _cache: MutableMapping
+    # FIXME coverage reports this as missing with Python 3.14
+    _cache: MutableMapping  # pragma: no cover
 
     def __contains__(self, key):
         return self._cache.__contains__(key)
