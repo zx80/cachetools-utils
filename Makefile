@@ -52,7 +52,7 @@ IGNORE  = E227,E501
 .PHONY: check.flake8
 check.flake8: venv
 	source venv/bin/activate
-	flake8 --ignore=$(IGNORE) $(MODULE).py
+	flake8 --ignore=E129,W504,$(IGNORE) $(MODULE).py
 
 .PHONY: check.ruff
 check.ruff: venv

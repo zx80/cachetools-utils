@@ -339,7 +339,7 @@ class TwoLevelCache(_MutMapMix, MutableMapping):
         return self._cache.clear()
 
     def stats(self) -> dict[str, Any]:
-        data = { "type": 2 }
+        data = {"type": 2}
         try:
             data["cache1"] = self._cache.stats()  # type: ignore
         except Exception:
