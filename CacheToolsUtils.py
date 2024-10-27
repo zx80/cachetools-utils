@@ -356,7 +356,8 @@ class TwoLevelCache(_MutMapMix, MutableMapping):
         if (c1 and "type" in c1 and c1["type"] == 1 and
             c2 and "type" in c2 and c2["type"] == 1):
             return float(c1["hits"] + c2["hits"]) / max(c1["reads"] + c2["reads"], 1)
-        # else None
+        # else
+        return None
 
     def reset(self):  # pragma: no cover
         self._cache.reset()  # type: ignore
