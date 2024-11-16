@@ -4,6 +4,32 @@ Caching is a key component of any significant Web or REST backend so as to avoid
 performance issues when accessing the storage tier, in term of latency,
 throughput and resource usage.
 
+## Cache Hierarchy
+
+In a modern web or mobile application, caching may take place at multiple
+levels to hide the fundamental sluggishness of network and database/disk
+accesses to permanent, reliable and transactional storage, mostly due to
+latency:
+
+- at the web application level, `SWR` and `redux` are libraries designed
+  to hide the latency of accessing remote datai, et by providing _stale_
+  data while waiting for updates or keeping a local state.
+- at the web browser level, honoring HTTP `Cache-Control` headers helps
+  the application avoiding actual HTTP request.
+- at the HTTP server/proxy level, response may be cached with specific
+  modules, such as `mod_cache` for Apache.
+- at the server application level, say a Python Flask back-end in Python,
+  CacheTools and CacheToolsUtils can help maintain efficient data accesses,
+  possibly using multilevel in-memory distributed caches such as Redis or
+  Memcached.
+- at the application architectural level, services such as elasticache
+  can hide data accesses and indexing, in effect replicating the entire
+  underlying database.
+- within the database itself, accesses to raw data are cached in shared
+  memory, both at the OS and database level.
+- at the the hardware level, storage can benefit from différent
+  levels of caches.
+
 ## Shared Cache
 
 A convenient setup is to have *one* shared cache storage tier at the
