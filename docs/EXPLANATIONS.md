@@ -12,12 +12,13 @@ accesses to permanent, reliable and transactional storage, mostly due to
 latency:
 
 - at the web application level, `SWR` and `redux` are libraries designed
-  to hide the latency of accessing remote datai, et by providing _stale_
-  data while waiting for updates or keeping a local state.
+  to hide the latency of accessing remote data, eg by providing _stale_
+  data while waiting for updates, or keeping a local state.
 - at the web browser level, honoring HTTP `Cache-Control` headers helps
   the application avoiding actual HTTP request.
 - at the HTTP server/proxy level, response may be cached with specific
-  modules, such as `mod_cache` for Apache.
+  modules, such as `mod_cache` for Apache; If the web server handles
+  authentication it may also use caches to avoid data traffic.
 - at the server application level, say a Python Flask back-end in Python,
   CacheTools and CacheToolsUtils can help maintain efficient data accesses,
   possibly using multilevel in-memory distributed caches such as Redis or
@@ -27,8 +28,8 @@ latency:
   underlying database.
 - within the database itself, accesses to raw data are cached in shared
   memory, both at the OS and database level.
-- at the the hardware level, storage can benefit from différent
-  levels of caches.
+- at the the hardware level, storage can benefit from different levels of
+  caches.
 
 ## Shared Cache
 
