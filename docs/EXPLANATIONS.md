@@ -23,7 +23,7 @@ latency:
   CacheTools and CacheToolsUtils can help maintain efficient data accesses,
   possibly using multilevel in-memory distributed caches such as Redis or
   Memcached.
-- at the application architectural level, services such as elasticache
+- at the application architectural level, services such as ElasticSearch
   can hide data accesses and indexing, in effect replicating the entire
   underlying database.
 - within the database itself, accesses to raw data are cached in shared
