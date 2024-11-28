@@ -47,6 +47,7 @@ with `cachetools`.
 - `cached` decorator: a cachetools replacement which allows to test if a
   function result is in cache, and to delete such an entry.
 - `cacheFunctions` and `cacheMethods`: add caching to functions or methods.
+- `json_key` and `hash_json_key`: JSON-based cache key serialization functions
 
 ## License
 
