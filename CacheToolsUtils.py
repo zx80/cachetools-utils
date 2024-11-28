@@ -451,6 +451,38 @@ def cacheFunctions(
         globs[fun] = cached(cache=gen(cache, prefix))(f)
 
 
+# JSON-based key function
+# NOTE obviously this only works if parameters are json-serializable…
+def json_key(*args, **kwargs):
+    if kwargs:
+        return json.dumps({"*": args, "**": kwargs}, sort_keys=True)
+    else:  # array
+        return json.dumps(args)
+
+
+# Hmmm…
+class _HashJsonKey:
+    """A cache key with a persistant hash value."""
+
+    def __init__(self, *args, **kwargs):
+        self._hashed = None
+        self._args = args
+        self._kwargs = kwargs
+        self._key = json_key(*args, **kwargs)
+
+    def __hash__(self):
+        if self._hashed is None:
+            self._hashed = self._key.__hash__()
+        return self._hashed
+
+    def __str__(self):
+        return self._key
+
+
+def hash_json_key(*args, **kwargs):
+    return _HashJsonKey(*args, **kwargs)
+
+
 #
 # MEMCACHED
 #

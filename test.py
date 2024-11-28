@@ -25,14 +25,42 @@ def has_service(host="localhost", port=22):
         tcp_ip.close()
 
 
-def cached_fun(cache, cached=ct.cached):
+def cached_fun(cache, cached=ct.cached, key=ct.keys.hashkey):
     """return a cached function with basic types."""
 
-    @cached(cache=cache)
+    @cached(cache=cache, key=key)
     def fun(i: int, s: str|None, b: bool) -> int:
         return i + (10 * len(s) if s is not None else -20) + (100 if b else 0)
 
     return fun
+
+# reset cache contents and stats
+def reset_cache(cache):
+    try:
+        cache.clear()
+    except:  # fails on redis
+        pass
+    if hasattr(cache, "_cache") and hasattr(cache._cache, "reset"):
+        cache._cache.reset()
+    if hasattr(cache, "_cache2") and hasattr(cache._cache2, "reset"):
+        cache._cache2.reset()
+
+
+def run_cached_keys(cache):
+
+    for cached in (ct.cached, ctu.cached):
+        for keyfun in (ct.keys.hashkey, ct.keys.typedkey, ctu.hash_json_key, ctu.json_key):
+            reset_cache(cache)
+            fun = cached_fun(cache, cached, key=keyfun)
+            x = 0
+            for n in range(10):
+                for i in range(5):
+                    for s in ["a", "bb", "ccc", "", None]:
+                        for b in [False, True]:
+                            v = fun(i, s, b)
+                            # log.debug(f"fun{(i, s, b)} = {v} {type(v)}")
+                            x += v
+            assert x == 30000
 
 
 def run_cached(cache):
@@ -40,14 +68,7 @@ def run_cached(cache):
 
     for cached in (ct.cached, ctu.cached):
         # reset cache contents and stats
-        try:
-            cache.clear()
-        except:  # fails on redis
-            pass
-        if hasattr(cache._cache, "reset"):
-            cache._cache.reset()
-        if hasattr(cache, "_cache2") and hasattr(cache._cache2, "reset"):
-            cache._cache2.reset()
+        reset_cache(cache)
         fun = cached_fun(cache, cached)
         x = 0
         for n in range(10):
@@ -144,6 +165,14 @@ def test_stats_ct():
     setgetdel(c0)
     setgetdel(cache)
 
+
+def test_caches():
+    n = 0
+    for Cache in (ct.LRUCache, ct.FIFOCache, ct.LFUCache, ct.RRCache):
+        n += 1
+        cache = Cache(maxsize=1024)
+        run_cached_keys(cache)
+    assert n == 4
 
 @pytest.mark.skipif(
     not has_service(port=11211),
