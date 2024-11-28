@@ -57,7 +57,7 @@ def run_cached_keys(cache):
                 for i in range(5):
                     for s in ["a", "bb", "ccc", "", None]:
                         for b in [False, True]:
-                            v = fun(i, s, b)
+                            v = fun(i, s, b=b)
                             # log.debug(f"fun{(i, s, b)} = {v} {type(v)}")
                             x += v
             assert x == 30000
@@ -535,3 +535,9 @@ def test_debug():
     assert has_hello
     del cache["Hello"]
     assert "Hello" not in cache
+
+
+def test_cache_key():
+    assert ctu.json_key(1, "hi") == '[1, "hi"]'
+    assert str(ctu.hash_json_key(1, "hi")) == '[1, "hi"]'
+    assert ctu.json_key(1, hi="hello") == '{"*": [1], "**": {"hi": "hello"}}'

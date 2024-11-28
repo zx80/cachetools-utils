@@ -7,7 +7,7 @@ Classes to add key prefix and stats to
 and other cache-related utils.
 
 ![Status](https://github.com/zx80/cachetools-utils/actions/workflows/cachetools-utils.yml/badge.svg?branch=main&style=flat)
-![Tests](https://img.shields.io/badge/tests-20%20✓-success)
+![Tests](https://img.shields.io/badge/tests-21%20✓-success)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-success)
 ![Issues](https://img.shields.io/github/issues/zx80/cachetools-utils?style=flat)
 ![Python](https://img.shields.io/badge/python-3-informational)
