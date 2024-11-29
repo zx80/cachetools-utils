@@ -538,6 +538,7 @@ def test_debug():
 
 
 def test_cache_key():
-    assert ctu.json_key(1, "hi") == '[1, "hi"]'
-    assert str(ctu.hash_json_key(1, "hi")) == '[1, "hi"]'
-    assert ctu.json_key(1, hi="hello") == '{"*": [1], "**": {"hi": "hello"}}'
+    assert ctu.json_key(1, "hi") == '[1,"hi"]'
+    assert str(ctu.hash_json_key(1, "hi")) == '[1,"hi"]'
+    assert ctu.json_key(1, hi="hello") == '{"*":[1],"**":{"hi":"hello"}}'
+    assert ctu.json_key(hi="bj") == '{"**":{"hi":"bj"}}'

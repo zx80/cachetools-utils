@@ -454,10 +454,14 @@ def cacheFunctions(
 # JSON-based key function
 # NOTE obviously this only works if parameters are json-serializable…
 def json_key(*args, **kwargs):
-    if kwargs:
-        return json.dumps({"*": args, "**": kwargs}, sort_keys=True)
+    if kwargs:  # object
+        if args:
+            val = {"*": args, "**": kwargs}
+        else:
+            val = {"**": kwargs}
     else:  # array
-        return json.dumps(args)
+        val = args
+    return json.dumps(val, sort_keys=True, separators=(",", ":"))
 
 
 # Hmmm…

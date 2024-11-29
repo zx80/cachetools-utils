@@ -19,6 +19,10 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
 
+## ? on ?
+
+Simpler and more compact json cache key function.
+
 ## 9.1 on 2024-11-28
 
 Improve documentation.
