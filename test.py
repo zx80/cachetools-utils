@@ -392,7 +392,7 @@ def test_methods():
     s = Stuff("test_methods")
     c = ct.TTLCache(1024, ttl=60)
     cs = ctu.StatsCache(c)
-    ctu.cacheMethods(cs, s, sum_n1="1.", sum_n2="2.")
+    ctu.cacheMethods(cs, s, opts={"key": ctu.json_key}, sum_n1="1.", sum_n2="2.")
     n2 = s.sum_n2(128)
     n1 = s.sum_n1(128)
     for i in range(1, 128):

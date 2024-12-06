@@ -137,6 +137,7 @@ pcache = ctu.PrefixedRedisCache(rd_base, "pac.", ttl=3600)
 This utility function create a prefixed cache around methods of an object
 or functions in the global scope.
 First parameter is the actual cache, second parameter is the object or scope,
+`opts` named-parameter allows additional options to `cached`,
 and finally a keyword mapping from function names to prefixes.
 
 ```python
@@ -144,7 +145,7 @@ and finally a keyword mapping from function names to prefixes.
 ctu.cacheMethods(cache, obj, get_data="1.", get_some="2.")
 
 # add cache to some_func
-ctu.cacheFunctions(cache, globals(), some_func="f.")
+ctu.cacheFunctions(cache, globals(), opts={"key": ctu.json_key}, some_func="f.")
 ```
 
 ## Decorator cached

@@ -19,6 +19,11 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
 
+## 9.3 on 2024-12-06
+
+Add `opts` to provide additional parameters to cached when wrapping methods
+and functions.
+
 ## 9.2 on 2024-11-29
 
 Simpler and more compact json cache key function.

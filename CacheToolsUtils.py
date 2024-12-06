@@ -380,10 +380,10 @@ def cached(cache, *args, **kwargs):
 
     def decorate(fun: Callable):
 
-        # use cachetools
+        # use cachetools "cached" decorator
         fun = cachetools.cached(cache, *args, **kwargs)(fun)
 
-        # extend
+        # extend it with two functions
         def cache_in(*args, **kwargs) -> bool:
             """Tell whether key is already in cache."""
             key = fun.cache_key(*args, **kwargs)  # type: ignore
@@ -409,12 +409,19 @@ def cached(cache, *args, **kwargs):
 MapGen = Callable[[MutableMapping, str], MutableMapping]
 
 
-def cacheMethods(cache: MutableMapping, obj: Any, gen: MapGen = PrefixedCache, **funs):
+def cacheMethods(
+    cache: MutableMapping,
+    obj: Any,
+    gen: MapGen = PrefixedCache,
+    opts: dict[str, Any] = {},
+    **funs
+):
     """Cache some object methods.
 
     :param cache: cache to use.
     :param obj: object instance to be cached.
     :param gen: generator of PrefixedCache.
+    :param opts: additional parameters when calling `cached`.
     :param funs: name of methods and corresponding prefix
 
     .. code-block:: python
@@ -426,17 +433,22 @@ def cacheMethods(cache: MutableMapping, obj: Any, gen: MapGen = PrefixedCache, *
         f = getattr(obj, fun)
         while hasattr(f, "__wrapped__"):
             f = f.__wrapped__
-        setattr(obj, fun, cached(cache=gen(cache, prefix))(f))
+        setattr(obj, fun, cached(cache=gen(cache, prefix), **opts)(f))
 
 
 def cacheFunctions(
-    cache: MutableMapping, globs: MutableMapping[str, Any], gen: MapGen = PrefixedCache, **funs
+    cache: MutableMapping,
+    globs: MutableMapping[str, Any],
+    gen: MapGen = PrefixedCache,
+    opts: dict[str, Any] = {},
+    **funs
 ):
     """Cache some global functions, with a prefix.
 
     :param cache: cache to use.
     :param globs: global object dictionary.
     :param gen: generator of PrefixedCache.
+    :param opts: additional parameters when calling `cached`.
     :param funs: name of functions and corresponding prefix
 
     .. code-block:: python
@@ -448,7 +460,7 @@ def cacheFunctions(
         f = globs[fun]
         while hasattr(f, "__wrapped__"):
             f = f.__wrapped__
-        globs[fun] = cached(cache=gen(cache, prefix))(f)
+        globs[fun] = cached(cache=gen(cache, prefix), **opts)(f)
 
 
 # JSON-based key function
