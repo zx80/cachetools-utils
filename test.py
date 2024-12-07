@@ -76,6 +76,7 @@ def run_cached(cache):
     for cached in (ct.cached, ctu.cached):
         # reset cache contents and stats
         reset_cache(cache)
+        # NOTE we probably trigger a double json encoding in some tests.
         fun = cached_fun(cache, cached, key=ctu.json_key)
         x = 0
         for n in range(10):
@@ -567,6 +568,7 @@ def test_encrypted_cache():
     assert cache[b"Hello"] == b"World!"
     del cache[b"Hello"]
     assert b"Hello" not in cache
+    # strings
     scache = ctu.ToBytesCache(cache)
     scache["Hello"] = "World!"
     assert "Hello" in scache
