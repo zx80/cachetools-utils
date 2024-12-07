@@ -213,7 +213,7 @@ def test_stats_memcached():
     import pymemcache as pmc
 
     c0 = pmc.Client(server="localhost", serde=ctu.JsonSerde(), key_prefix=b"ctu.")
-    c1 = ctu.StatsMemCached(c0)
+    c1 = ctu.MemCached(c0)
     run_cached(c1)
     assert len(c1) >= 50
     assert c1["(1, 'a', True)"] == 111

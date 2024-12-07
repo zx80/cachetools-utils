@@ -606,20 +606,9 @@ class PrefixedMemCached(MemCached):
         return self._prefix + base64.b85encode(str(key).encode("utf-8"))
 
 
-class StatsMemCached(MemCached):
-    """Cache MemCached-compatible class with stats.
-
-    This class is empty and only kept for compatibility.
-    """
-
-    pass
-
-
 #
 # REDIS
 #
-
-
 class RedisCache(MutableMapping):
     """Redis TTL-ed wrapper for cachetools (``redis``).
 
@@ -733,10 +722,11 @@ class PrefixedRedisCache(RedisCache):
         return self._prefix + str(key)
 
 
+# FIXME should it be removed?
 class StatsRedisCache(PrefixedRedisCache):
     """TTL-ed Redis wrapper class for cachetools.
 
-    This class is empty and only kept for compatibility.
+    This class is nearly empty.
     """
 
     def flushdb(self):
