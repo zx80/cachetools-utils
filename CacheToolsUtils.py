@@ -569,7 +569,7 @@ class BytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):
         self._cache.__setitem__(self._key(key), self._key(val))
 
     def __getitem__(self, key):
-        return base64.b85decode(self.__getitem__(self._key(key)).encode("ASCII"))
+        return base64.b85decode(self._cache.__getitem__(self._key(key)).encode("ASCII"))
 
 
 class StringCache(_KeyMutMapMix, _StatsMix, MutableMapping):
