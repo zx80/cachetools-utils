@@ -469,6 +469,7 @@ def cacheFunctions(
 # NOTE obviously this only works if parameters are json-serializable…
 def json_key(*args, **kwargs) -> str:
     """JSON serialization of arguments."""
+    val: Any
     if kwargs:  # object
         if args:
             val = {"*": args, "**": kwargs}
