@@ -609,6 +609,8 @@ class JsonSerde:
     def serialize(self, key, value):
         if isinstance(value, str):
             return value.encode("utf-8"), 1
+        elif isinstance(value, bytes):
+            return value, 3
         else:
             return json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8"), 2
 
@@ -618,6 +620,8 @@ class JsonSerde:
             return value.decode("utf-8")
         elif flag == 2:
             return json.loads(value.decode("utf-8"))
+        elif flag == 3:
+            return value
         else:
             raise Exception("Unknown serialization format")
 
