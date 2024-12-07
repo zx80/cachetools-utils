@@ -70,14 +70,14 @@ def run_cached_keys(cache):
             assert x == 30000
 
 
-def run_cached(cache):
+def run_cached(cache, key=ct.keys.hashkey):
     """run something on a cached function."""
 
     for cached in (ct.cached, ctu.cached):
         # reset cache contents and stats
         reset_cache(cache)
         # NOTE we probably trigger a double json encoding in some tests.
-        fun = cached_fun(cache, cached, key=ctu.json_key)
+        fun = cached_fun(cache, cached, key=key)
         x = 0
         for n in range(10):
             for i in range(5):
@@ -138,13 +138,13 @@ def test_key_ct():
     run_cached(c1)
     run_cached(c2)
     assert len(c0) == 50
-    assert 'f.[0,"a",false]' in c0
-    assert c1['[3,"bb",true]'] == 123
-    assert 'f.[4,null,true]' in c0
-    assert c2['[4,"ccc",true]'] == 134
+    assert "f.(0, 'a', False)" in c0
+    assert c1["(3, 'bb', True)"] == 123
+    assert "f.(4, None, True)" in c0
+    assert c2["(4, 'ccc', True)"] == 134
     run_cached(c3)
     assert len(c0) == 100
-    assert c3['[2,"",true]'] == 102
+    assert c3["(2, '', True)"] == 102
     c0.clear()
     setgetdel(c0)
     setgetdel(c1)
@@ -163,7 +163,7 @@ def test_key_ct():
 def test_stats_ct():
     c0 = ct.TTLCache(maxsize=100, ttl=100)
     cache = ctu.StatsCache(c0)
-    run_cached(cache)
+    run_cached(cache, key=ctu.json_key)
     assert len(cache) == 50
     # NOTE keys are jsonified in run_cached
     assert cache['[4,"a",true]'] == 114
@@ -194,8 +194,8 @@ def test_memcached():
     c1 = ctu.MemCached(c0)
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1['[1,"a",true]'] == 111
-    assert c1['[3,null,false]'] == -17
+    assert c1["(1, 'a', True)"] == 111
+    assert c1["(3, None, False)"] == -17
     assert isinstance(c1.stats(), dict)
 
 
@@ -208,7 +208,7 @@ def test_key_memcached():
 
     c0 = pmc.Client(server="localhost", serde=ctu.JsonSerde())
     c1 = ctu.PrefixedMemCached(c0, "CacheToolsUtils.")
-    run_cached(c1)
+    run_cached(c1, key=ctu.json_key)
     assert len(c1) >= 50
     assert c1['[1,"a",true]'] == 111
     assert c1['[3,null,false]'] == -17
@@ -223,7 +223,7 @@ def test_stats_memcached():
 
     c0 = pmc.Client(server="localhost", serde=ctu.JsonSerde(), key_prefix=b"ctu.")
     c1 = ctu.MemCached(c0)
-    run_cached(c1)
+    run_cached(c1, key=ctu.json_key)
     assert len(c1) >= 50
     assert c1['[1,"a",true]'] == 111
     assert c1['[3,null,false]'] == -17
@@ -251,8 +251,8 @@ def test_redis():
     cache = ctu.LockedCache(c5, threading.RLock())
     run_cached(cache)
     assert len(cache) >= 50
-    assert cache['[1,"a",true]'] == 111
-    assert cache['[3,null,false]'] == -17
+    assert cache[(1, 'a', True)] == 111
+    assert cache[(3, None, False)] == -17
     setgetdel(cache)
     try:
         cache.__iter__()
