@@ -193,8 +193,8 @@ def test_memcached():
     c1 = ctu.MemCached(c0)
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1["(1, 'a', True)"] == 111
-    assert c1["(3, None, False)"] == -17
+    assert c1['[1,"a",true]'] == 111
+    assert c1['[3,null,false]'] == -17
     assert isinstance(c1.stats(), dict)
 
 
@@ -209,8 +209,8 @@ def test_key_memcached():
     c1 = ctu.PrefixedMemCached(c0, "CacheToolsUtils.")
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1["(1, 'a', True)"] == 111
-    assert c1["(3, None, False)"] == -17
+    assert c1['[1,"a",true]'] == 111
+    assert c1['[3,null,false]'] == -17
 
 
 @pytest.mark.skipif(
@@ -224,8 +224,8 @@ def test_stats_memcached():
     c1 = ctu.MemCached(c0)
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1["(1, 'a', True)"] == 111
-    assert c1["(3, None, False)"] == -17
+    assert c1['[1,"a",true]'] == 111
+    assert c1['[3,null,false]'] == -17
     assert c1.hits() > 0.0
     assert isinstance(c1.stats(), dict)
     setgetdel(c0)
@@ -245,8 +245,8 @@ def test_redis():
     c3 = ctu.LockedCache(c2, threading.RLock())
     run_cached(c3)
     assert len(c3) >= 50
-    assert c3[(1, "a", True)] == 111
-    assert c3[(3, None, False)] == -17
+    assert c3['[1,"a",true]'] == 111
+    assert c3['[3,null,false]'] == -17
     setgetdel(c3)
     try:
         c3.__iter__()
@@ -265,8 +265,8 @@ def test_key_redis():
     c1 = ctu.PrefixedRedisCache(c0, "CacheToolsUtils.")
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1[(1, "a", True)] == 111
-    assert c1[(3, None, False)] == -17
+    assert c1['[1,"a",true]'] == 111
+    assert c1['[3,null,false]'] == -17
     setgetdel(c1)
     c1.set("Hello", "World!")
     assert c1["Hello"] == c1.get("Hello")
