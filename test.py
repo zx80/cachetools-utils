@@ -271,8 +271,8 @@ def test_key_redis():
     c1 = ctu.PrefixedRedisCache(c0, "CacheToolsUtils.")
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1['[1,"a",true]'] == 111
-    assert c1['[3,null,false]'] == -17
+    assert c1["(1, 'a', True)"] == 111
+    assert c1["(3, None, False)"] == -17
     setgetdel(c1)
     c1.set("Hello", "World!")
     assert c1["Hello"] == c1.get("Hello")
@@ -288,7 +288,7 @@ def test_stats_redis():
 
     c0 = redis.Redis(host="localhost")
     c1 = ctu.StatsRedisCache(c0)
-    run_cached(c1)
+    run_cached(c1, key=ctu.json_key)
     assert len(c1) >= 50
     assert c1['[1,"a",true]'] == 111
     assert c1['[3,null,false]'] == -17
