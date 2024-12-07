@@ -650,8 +650,6 @@ class MemCached(_KeyMutMapMix, MutableMapping):
     # short (250 bytes) ASCII without control chars nor spaces
     # we do not use hashing which might be costly or induce collisions
     def _key(self, key):
-        import base64
-
         return base64.b85encode(str(key).encode("utf-8"))
 
     def __len__(self):
@@ -690,8 +688,6 @@ class PrefixedMemCached(MemCached):
         self._prefix = bytes(prefix, "utf-8")
 
     def _key(self, key):
-        import base64
-
         return self._prefix + base64.b85encode(str(key).encode("utf-8"))
 
 
