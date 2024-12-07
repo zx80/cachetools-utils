@@ -97,6 +97,10 @@ Hash size $s$ can be extended up to _24_, key collision probability is $2^{-4 s}
 
 The point of this class is to bring security to cached data on distributed systems such as Redis.
 
+## StringCache
+
+Map key and value strings to bytes.
+
 ## MemCached
 
 Basic wrapper, possibly with JSON key encoding thanks to the `JsonSerde` class.
