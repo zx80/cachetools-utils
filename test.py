@@ -76,7 +76,7 @@ def run_cached(cache):
     for cached in (ct.cached, ctu.cached):
         # reset cache contents and stats
         reset_cache(cache)
-        fun = cached_fun(cache, cached)
+        fun = cached_fun(cache, cached, key=ctu.json_key)
         x = 0
         for n in range(10):
             for i in range(5):
@@ -137,13 +137,13 @@ def test_key_ct():
     run_cached(c1)
     run_cached(c2)
     assert len(c0) == 50
-    assert "f.(0, 'a', False)" in c0
-    assert c1[(3, "bb", True)] == 123
-    assert "f.(4, None, True)" in c0
-    assert c2[(4, "ccc", True)] == 134
+    assert 'f.[0,"a",false]' in c0
+    assert c1['[3,"bb",true]'] == 123
+    assert 'f.[4,null,true]' in c0
+    assert c2['[4,"ccc",true]'] == 134
     run_cached(c3)
     assert len(c0) == 100
-    assert c3[(2, "", True)] == 102
+    assert c3['[2,"",true]'] == 102
     c0.clear()
     setgetdel(c0)
     setgetdel(c1)
@@ -164,8 +164,9 @@ def test_stats_ct():
     cache = ctu.StatsCache(c0)
     run_cached(cache)
     assert len(cache) == 50
-    assert cache[(4, "a", True)] == 114
-    assert cache[(0, None, False)] == -20
+    # NOTE keys are jsonified in run_cached
+    assert cache['[4,"a",true]'] == 114
+    assert cache['[0,null,false]'] == -20
     assert cache.hits() > 0.8
     assert isinstance(cache.stats(), dict)
     cache.clear()
