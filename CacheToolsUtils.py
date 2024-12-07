@@ -568,7 +568,7 @@ class StringCache(_KeyMutMapMix, _StatsMix, MutableMapping):
         self._cache.__setitem__(self._key(key), val.encode("UTF-8"))
 
     def __getitem__(self, key):
-        return self._cache.__getitem__(key).decode("UTF-8")
+        return self._cache.__getitem__(self._key(key)).decode("UTF-8")
 
 
 #
