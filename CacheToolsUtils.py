@@ -727,7 +727,7 @@ class RedisCache(MutableMapping):
         return json.loads(s)
 
     def _key(self, key):
-        return json_key(key)
+        return json.dumps(key, sort_keys=True, separators=(",", ":"))
 
     def __getitem__(self, index):
         val = self._cache.get(self._key(index))
