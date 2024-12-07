@@ -556,7 +556,24 @@ class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
         return self._cipher.new(key=vkey, nonce=vnonce).decrypt(self._cache[hkey])
 
 
+class BytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):
+    """Map bytes to strings."""
+
+    def __init__(self, cache):
+        self._cache = cache
+
+    def _key(self, key):
+        return base64.b85encode(key).decode("ASCII")
+
+    def __setitem__(self, key, val):
+        self._cache.__setitem__(self._key(key), self._key(val))
+
+    def __getitem__(self, key):
+        return base64.b85decode(self.__getitem__(self._key(key)).encode("ASCII"))
+
+
 class StringCache(_KeyMutMapMix, _StatsMix, MutableMapping):
+    """Map strings to bytes."""
 
     def __init__(self, cache):
         self._cache = cache

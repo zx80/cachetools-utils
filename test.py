@@ -241,16 +241,17 @@ def test_redis():
 
     c0 = redis.Redis(host="localhost")
     c1 = ctu.RedisCache(c0)
-    c2 = ctu.EncryptedCache(c1, SECRET)
-    c3 = ctu.StringCache(c2)
-    c4 = ctu.LockedCache(c3, threading.RLock())
-    run_cached(c4)
-    assert len(c4) >= 50
-    assert c4['[1,"a",true]'] == 111
-    assert c4['[3,null,false]'] == -17
-    setgetdel(c4)
+    c2 = ctu.BytesCache(c1)
+    c3 = ctu.EncryptedCache(c2, SECRET)
+    c4 = ctu.StringCache(c3)
+    cache = ctu.LockedCache(c4, threading.RLock())
+    run_cached(cache)
+    assert len(cache) >= 50
+    assert cache['[1,"a",true]'] == 111
+    assert cache['[3,null,false]'] == -17
+    setgetdel(cache)
     try:
-        c4.__iter__()
+        cache.__iter__()
         pytest.fail("not supported")
     except Exception as e:
         assert "not implemented yet" in str(e)
