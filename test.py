@@ -41,10 +41,16 @@ def reset_cache(cache):
         cache.clear()
     except:  # fails on redis
         pass
-    if hasattr(cache, "_cache") and hasattr(cache._cache, "reset"):
-        cache._cache.reset()
-    if hasattr(cache, "_cache2") and hasattr(cache._cache2, "reset"):
-        cache._cache2.reset()
+    try:
+        if hasattr(cache, "_cache") and hasattr(cache._cache, "reset"):
+            cache._cache.reset()
+    except:  # fails on redis
+        pass
+    try:
+        if hasattr(cache, "_cache2") and hasattr(cache._cache2, "reset"):
+            cache._cache2.reset()
+    except:  # fails on redis
+        pass
 
 
 def run_cached_keys(cache):
