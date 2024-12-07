@@ -196,8 +196,8 @@ def test_memcached():
     cache = ctu.ToBytesCache(ec)
     run_cached(cache)
     assert len(cache) >= 50
-    assert ec[b'[1,"a",true]'] == 111
-    assert ec[b'[3,null,false]'] == -17
+    assert ec[b'[1,"a",true]'] == b"111"
+    assert ec[b'[3,null,false]'] == b"-17"
     assert isinstance(cache.stats(), dict)
 
 
