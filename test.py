@@ -93,7 +93,7 @@ def setgetdel(cache):
     # assert KEY not in cache
     try:
         val = cache[KEY]
-        assert False, "should raise KeyError"
+        pytest.fail("should raise KeyError")
     except Exception as e:
         assert isinstance(e, KeyError)
     # int value
@@ -117,7 +117,7 @@ def setgetdel_bytes(cache):
     assert cache.pop(key, cst) == cst
     try:
         cache.pop(key)
-        assert False, "should raise KeyError"
+        pytest.fail("should raise KeyError")
     except KeyError as e:
         assert True, "KeyError was raised"
 
@@ -241,7 +241,7 @@ def test_redis():
     setgetdel(c2)
     try:
         c2.__iter__()
-        assert False, "should raise an Exception"
+        pytest.fail("not supported")
     except Exception as e:
         assert "not implemented yet" in str(e)
 
@@ -404,7 +404,7 @@ def test_methods():
     ctu.cacheMethods(cs, s, sum_n1="x.")
     try:
         ctu.cacheMethods(cs, s, no_such_method="?.")
-        assert False, "exception must be raised"
+        pytest.fail("exception must be raised")
     except Exception as e:
         assert "missing method" in str(e)
 
@@ -441,7 +441,7 @@ def test_corners():
     try:
         js = ctu.JsonSerde()
         js.deserialize("foo", "bla", 42)
-        assert False, "exception must be raised"
+        pytest.fail("exception must be raised")
     except Exception as e:
         assert "Unknown serialization format" in str(e)
 
@@ -466,17 +466,17 @@ def test_resilience():
     c = ctu.TwoLevelCache(d, b, False)
     try:
         c["foo"] = "bla"
-        assert False, "must raise an exception"
+        pytest.fail("must raise an exception")
     except Exception:
         assert True, "expecting exception"
     try:
         c["foo"]
-        assert False, "must raise an exception"
+        pytest.fail("must raise an exception")
     except Exception:
         assert True, "expecting exception"
     try:
         del c["foo"]
-        assert False, "must raise an exception"
+        pytest.fail("must raise an exception")
     except Exception:
         assert True, "expecting exception"
 
