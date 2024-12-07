@@ -510,12 +510,6 @@ def full_hash_key(*args, **kwargs) -> str:
 #
 # Encrypted Cache
 #
-try:
-    from Crypto.Cipher import Salsa20
-except ModuleNotFoundError:
-    pass
-
-
 class EncryptedCache(_KeyMutMapMix):
     """Encrypted Bytes Key-Value Cache.
 
@@ -541,6 +535,8 @@ class EncryptedCache(_KeyMutMapMix):
         self._secret = secret
         assert 8 <= hsize <= 24
         self._hsize = hsize
+        from Crypto.Cipher import Salsa20
+        self._cipher = Salsa20
 
     def _keydev(self, key):
         hkey = hashlib.sha3_512(key + self._secret).digest()
@@ -552,11 +548,11 @@ class EncryptedCache(_KeyMutMapMix):
 
     def __setitem__(self, key, val):
         hkey, vkey, vnonce = self._keydev(key)
-        self._cache[hkey] = Salsa20.new(key=vkey, nonce=vnonce).encrypt(val)
+        self._cache[hkey] = self._cipher.new(key=vkey, nonce=vnonce).encrypt(val)
 
     def __getitem__(self, key):
         hkey, vkey, vnonce = self._keydev(key)
-        return Salsa20.new(key=vkey, nonce=vnonce).decrypt(self._cache[hkey])
+        return self._cipher.new(key=vkey, nonce=vnonce).decrypt(self._cache[hkey])
 
 
 #
