@@ -245,7 +245,7 @@ def test_redis():
 
     c1 = ctu.RedisCache(c0)
     c2 = ctu.BytesCache(c1)
-    c3 = ctu.EncryptedCache(c2, SECRET)
+    c3 = ctu.EncryptedCache(c2, SECRET, hsize=24)
     c4 = ctu.ToBytesCache(c3)
     c5 = ctu.DebugCache(c4, log)
     cache = ctu.LockedCache(c5, threading.RLock())
