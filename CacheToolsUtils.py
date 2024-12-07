@@ -610,7 +610,7 @@ class JsonSerde:
         if isinstance(value, str):
             return value.encode("utf-8"), 1
         else:
-            return json.dumps(value, sort_keys=True, separatos=(",", ":")).encode("utf-8"), 2
+            return json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8"), 2
 
     # reverse previous serialization
     def deserialize(self, key, value, flag):
