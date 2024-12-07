@@ -97,13 +97,32 @@ Hash size $s$ can be extended up to _24_, key collision probability is $2^{-4 s}
 
 The point of this class is to bring security to cached data on distributed
 systems such as Redis.  There is no much point to encrypting in-memory caches.
+All of this is very nice, but it costs cycles thus money, do you really want to
+pay for them?
 
 When used with `cached`, the key is expected to be simple bytes for encryption.
 Consider `ToBytesCache` to trigger byte conversions.
+The output is also bytes, which may or may not suit the underlying cache, consider
+`BytesCache` if necessary.
+
+```python
+actual = redis.Redis(…)
+c0 = ctu.BytesCache(actual)
+c1 = ctu.EncryptedCache(c0, b"…")
+cache = ctu.ToBytesCache(c1)
+
+@cached(cache=PrefixedCache(cache, "foo."))
+def foo(what, ever):
+    return …
+```
 
 ## ToBytesCache
 
 Map keys and values to bytes.
+
+## BytesCache
+
+Handle bytes keys and values and map them to strings.
 
 ## MemCached
 
