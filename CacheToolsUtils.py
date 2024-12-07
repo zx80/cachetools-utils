@@ -367,6 +367,92 @@ class TwoLevelCache(_MutMapMix, MutableMapping):
         self._cache2.reset()  # type: ignore
 
 
+#
+# Encrypted Cache
+#
+class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
+    """Encrypted Bytes Key-Value Cache.
+
+    :param secret: bytes of secret, at least 16 bytes.
+    :param hsize: size of hashed key, default is 16.
+
+    The key is *not* encrypted but simply hashed, thus they are
+    fixed size with a very low collision probability.
+
+    By design, the clear-text key is needed to recover the value,
+    as each value is encrypted with its own key.
+
+    There is no integrity check on the value.
+
+    Algorithms:
+    - SHA3: hash/key/nonce derivation.
+    - Salsa20: value encryption.
+    """
+
+    def __init__(self, cache: MutableMapping, secret: bytes, hsize: int = 16):
+        self._cache = cache
+        assert len(secret) >= 16
+        self._secret = secret
+        assert 8 <= hsize <= 24
+        self._hsize = hsize
+        from Crypto.Cipher import Salsa20
+        self._cipher = Salsa20
+
+    def _keydev(self, key):
+        hkey = hashlib.sha3_512(key + self._secret).digest()
+        sz = self._hsize
+        return (hkey[:sz], hkey[sz:sz+32], hkey[sz+32:sz+40])
+
+    def _key(self, key):
+        return self._keydev(key)[0]
+
+    def __setitem__(self, key, val):
+        hkey, vkey, vnonce = self._keydev(key)
+        self._cache[hkey] = self._cipher.new(key=vkey, nonce=vnonce).encrypt(val)
+
+    def __getitem__(self, key):
+        hkey, vkey, vnonce = self._keydev(key)
+        return self._cipher.new(key=vkey, nonce=vnonce).decrypt(self._cache[hkey])
+
+
+class BytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):
+    """Map bytes to strings."""
+
+    def __init__(self, cache):
+        self._cache = cache
+
+    def _key(self, key):
+        # assert isinstance(key, bytes)
+        return base64.b85encode(key).decode("ASCII")
+
+    def __setitem__(self, key, val):
+        self._cache.__setitem__(self._key(key), self._key(val))
+
+    def __getitem__(self, key):
+        val = self._cache.__getitem__(self._key(key))
+        # assert isinstance(val, str)
+        return base64.b85decode(val)
+
+
+class ToBytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):
+    """Map (JSON-serializable) cache keys and values to bytes."""
+
+    def __init__(self, cache):
+        self._cache = cache
+
+    def _key(self, key):
+        return json.dumps(key, sort_keys=True, separators=(",", ":")).encode("UTF-8")
+
+    def __setitem__(self, key, val):
+        self._cache.__setitem__(self._key(key), self._key(val))
+
+    def __getitem__(self, key):
+        return json.loads(self._cache.__getitem__(self._key(key)).decode("UTF-8"))
+
+
+#
+# CACHED DECORATOR AND HELPERS
+#
 def cached(cache, *args, **kwargs):
     """Extended decorator with delete and exists.
 
@@ -509,92 +595,8 @@ def full_hash_key(*args, **kwargs) -> str:
 
 
 #
-# Encrypted Cache
-#
-class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
-    """Encrypted Bytes Key-Value Cache.
-
-    :param secret: bytes of secret, at least 16 bytes.
-    :param hsize: size of hashed key, default is 16.
-
-    The key is *not* encrypted but simply hashed, thus they are
-    fixed size with a very low collision probability.
-
-    By design, the clear-text key is needed to recover the value,
-    as each value is encrypted with its own key.
-
-    There is no integrity check on the value.
-
-    Algorithms:
-    - SHA3: hash/key/nonce derivation.
-    - Salsa20: value encryption.
-    """
-
-    def __init__(self, cache: MutableMapping, secret: bytes, hsize: int = 16):
-        self._cache = cache
-        assert len(secret) >= 16
-        self._secret = secret
-        assert 8 <= hsize <= 24
-        self._hsize = hsize
-        from Crypto.Cipher import Salsa20
-        self._cipher = Salsa20
-
-    def _keydev(self, key):
-        hkey = hashlib.sha3_512(key + self._secret).digest()
-        sz = self._hsize
-        return (hkey[:sz], hkey[sz:sz+32], hkey[sz+32:sz+40])
-
-    def _key(self, key):
-        return self._keydev(key)[0]
-
-    def __setitem__(self, key, val):
-        hkey, vkey, vnonce = self._keydev(key)
-        self._cache[hkey] = self._cipher.new(key=vkey, nonce=vnonce).encrypt(val)
-
-    def __getitem__(self, key):
-        hkey, vkey, vnonce = self._keydev(key)
-        return self._cipher.new(key=vkey, nonce=vnonce).decrypt(self._cache[hkey])
-
-
-class BytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):
-    """Map bytes to strings."""
-
-    def __init__(self, cache):
-        self._cache = cache
-
-    def _key(self, key):
-        # assert isinstance(key, bytes)
-        return base64.b85encode(key).decode("ASCII")
-
-    def __setitem__(self, key, val):
-        self._cache.__setitem__(self._key(key), self._key(val))
-
-    def __getitem__(self, key):
-        val = self._cache.__getitem__(self._key(key))
-        # assert isinstance(val, str)
-        return base64.b85decode(val)
-
-
-class ToBytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):
-    """Map (JSON-serializable) cache keys and values to bytes."""
-
-    def __init__(self, cache):
-        self._cache = cache
-
-    def _key(self, key):
-        return json.dumps(key, sort_keys=True, separators=(",", ":")).encode("UTF-8")
-
-    def __setitem__(self, key, val):
-        self._cache.__setitem__(self._key(key), self._key(val))
-
-    def __getitem__(self, key):
-        return json.loads(self._cache.__getitem__(self._key(key)).decode("UTF-8"))
-
-
-#
 # MEMCACHED
 #
-# FIXME what about bytes?
 class JsonSerde:
     """JSON serialize/deserialize class for MemCached (``pymemcache``).
 
