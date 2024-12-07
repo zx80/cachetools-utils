@@ -699,6 +699,7 @@ class RedisCache(MutableMapping):
 
     :param cache: actual redis cache.
     :param ttl: time-to-live in seconds, used as default expiration (``ex``), default is 600.
+    :param raw: whether to serialize keys and values, default is *False*.
 
     Keys and values are serialized in *JSON*.
 
@@ -710,24 +711,25 @@ class RedisCache(MutableMapping):
        cache = ctu.RedisCache(redis.Redis(host="localhost"), 3600)
     """
 
-    def __init__(self, cache, ttl=600):
+    def __init__(self, cache, ttl=600, raw=False):
         # import redis
         # assert isinstance(cache, redis.Redis)
         self._cache = cache
         self._ttl = ttl
+        self._raw = raw
 
     def clear(self):  # pragma: no cover
         """Flush Redis contents."""
         return self._cache.flushdb()
 
-    def _serialize(self, s) -> str:
-        return json.dumps(s, sort_keys=True, separators=(",", ":"))
+    def _serialize(self, s):
+        return s if self._raw else json.dumps(s, sort_keys=True, separators=(",", ":"))
 
-    def _deserialize(self, s: str):
-        return json.loads(s)
+    def _deserialize(self, s):
+        return s if self._raw else json.loads(s)
 
     def _key(self, key):
-        return json.dumps(key, sort_keys=True, separators=(",", ":"))
+        return key if self._raw else json.dumps(key, sort_keys=True, separators=(",", ":"))
 
     def __getitem__(self, index):
         val = self._cache.get(self._key(index))

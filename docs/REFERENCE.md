@@ -103,13 +103,13 @@ pay for them?
 When used with `cached`, the key is expected to be simple bytes for encryption.
 Consider `ToBytesCache` to trigger byte conversions.
 The output is also bytes, which may or may not suit the underlying cache, consider
-`BytesCache` if necessary.
+`BytesCache` if necessary, or using the `raw` option on `RedisCache`.
 
 ```python
 actual = redis.Redis(…)
-c0 = ctu.BytesCache(actual)
-c1 = ctu.EncryptedCache(c0, b"…")
-cache = ctu.ToBytesCache(c1)
+red = ctu.RedisCache(actual, raw=True)
+enc = ctu.EncryptedCache(red, b"…")
+cache = ctu.ToBytesCache(enc)
 
 @cached(cache=PrefixedCache(cache, "foo."))
 def foo(what, ever):
@@ -155,7 +155,7 @@ pcache = ctu.PrefixedMemCached(mc_base, prefix="pic.")
 
 ## RedisCache
 
-TTL'ed Redis wrapper, default ttl is 10 minutes.
+TTL'ed Redis wrapper, default ttl is 10 minutes and key/value JSON serialization.
 Also adds a `hits()` method to compute the cache hit ratio with data taken
 from the Redis server.
 
@@ -168,6 +168,8 @@ cache = ctu.RedisCache(rd_base, ttl=60)
 
 Redis stores arbitrary bytes. Key and values can be up to 512 MiB.
 Keeping keys under 1 KiB seems reasonable.
+Option `raw` allows to skip the serialization step, if you know that
+keys and values are scalars.
 
 ## PrefixedRedisCache
 
