@@ -95,8 +95,13 @@ cache = EncryptedCache(actual_cache, secret=b"super secret stuff you cannot gues
 
 Hash size $s$ can be extended up to _24_, key collision probability is $2^{-4 s}$.
 
-The point of this class is to bring security to cached data on distributed systems such as Redis.
-There is no much point to encrypting in-memory caches.
+The point of this class is to bring security to cached data on distributed
+systems such as Redis.  There is no much point to encrypting in-memory caches.
+
+When used with `cached`, the key is expected to be simple bytes for encryption,
+thus you must provide an appropriate `key` function for this purpose.
+Possibly consider `json_key` and `StringCache` to trigger tuple to string and
+string to bytes conversions.
 
 ## StringCache
 
