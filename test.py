@@ -284,8 +284,8 @@ def test_stats_redis():
     c1 = ctu.StatsRedisCache(c0)
     run_cached(c1)
     assert len(c1) >= 50
-    assert c1[(1, "a", True)] == 111
-    assert c1[(3, None, False)] == -17
+    assert c1['[1,"a",true]'] == 111
+    assert c1['[3,null,false]'] == -17
     assert c1.hits() > 0.0
     assert isinstance(c1.stats(), dict)
     setgetdel(c1)
