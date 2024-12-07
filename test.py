@@ -547,9 +547,15 @@ def test_cache_key():
 
 def test_encrypted_cache():
     SECRET = b"incredible secret key for testing encrypted cache..."
+    # bytes
     cache = ctu.EncryptedCache(ctu.DictCache(), SECRET)
     cache[b"Hello"] = b"World!"
     assert b"Hello" in cache
     assert cache[b"Hello"] == b"World!"
     del cache[b"Hello"]
     assert b"Hello" not in cache
+    scache = ctu.StringCache(cache)
+    scache["Hello"] = "World!"
+    assert "Hello" in scache
+    assert scache["Hello"] == "World!"
+    del scache["Hello"]

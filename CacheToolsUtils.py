@@ -511,7 +511,7 @@ def full_hash_key(*args, **kwargs) -> str:
 #
 # Encrypted Cache
 #
-class EncryptedCache(_KeyMutMapMix):
+class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
     """Encrypted Bytes Key-Value Cache.
 
     :param secret: bytes of secret, at least 16 bytes.
@@ -554,6 +554,21 @@ class EncryptedCache(_KeyMutMapMix):
     def __getitem__(self, key):
         hkey, vkey, vnonce = self._keydev(key)
         return self._cipher.new(key=vkey, nonce=vnonce).decrypt(self._cache[hkey])
+
+
+class StringCache(_KeyMutMapMix, _StatsMix, MutableMapping):
+
+    def __init__(self, cache):
+        self._cache = cache
+
+    def _key(self, key):
+        return key.encode("UTF-8")
+
+    def __setitem__(self, key, val):
+        self._cache.__setitem__(self._key(key), val.encode("UTF-8"))
+
+    def __getitem__(self, key):
+        return self._cache.__getitem__(key).decode("UTF-8")
 
 
 #
