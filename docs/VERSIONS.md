@@ -18,6 +18,11 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   this could be for redis or memcached?
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
+- encrypted cache?
+
+## ? on ?
+
+Add `full_hash_key` function.
 
 ## 9.3 on 2024-12-06
 

@@ -5,6 +5,8 @@ CacheTools Utilities. This code is public domain.
 from typing import Any, Callable, MutableMapping
 import abc
 
+import base64
+import hashlib
 import cachetools
 import json
 
@@ -465,7 +467,8 @@ def cacheFunctions(
 
 # JSON-based key function
 # NOTE obviously this only works if parameters are json-serializable…
-def json_key(*args, **kwargs):
+def json_key(*args, **kwargs) -> str:
+    """JSON serialization of arguments."""
     if kwargs:  # object
         if args:
             val = {"*": args, "**": kwargs}
@@ -476,19 +479,17 @@ def json_key(*args, **kwargs):
     return json.dumps(val, sort_keys=True, separators=(",", ":"))
 
 
-# Hmmm…
+# Hmmm… is this useful?
 class _HashJsonKey:
     """A cache key with a persistant hash value."""
 
     def __init__(self, *args, **kwargs):
-        self._hashed = None
         self._args = args
         self._kwargs = kwargs
         self._key = json_key(*args, **kwargs)
+        self._hashed = self._key.__hash__()
 
     def __hash__(self):
-        if self._hashed is None:
-            self._hashed = self._key.__hash__()
         return self._hashed
 
     def __str__(self):
@@ -497,6 +498,13 @@ class _HashJsonKey:
 
 def hash_json_key(*args, **kwargs):
     return _HashJsonKey(*args, **kwargs)
+
+
+def full_hash_key(*args, **kwargs) -> str:
+    """Reduce arguments to a single 128-bits hash."""
+    skey = json_key(*args, **kwargs)
+    hkey = hashlib.sha3_256(skey.encode("UTF-8")).digest()[:16]
+    return base64.b85encode(hkey).decode("ASCII")
 
 
 #
