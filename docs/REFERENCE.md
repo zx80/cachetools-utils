@@ -77,6 +77,19 @@ the system would recover if the second level is back online later, because
 there is no provision to manage reconnections and the like at this level.
 The second level may manage that on its own, though.
 
+## EncryptedCache
+
+A wrapper to add an hash and encryption layer on bytes key-values:
+
+- keys are _hashed_ to have fixed-size keys.
+- values are encrypted depending on the key value.
+
+Hashing is based on _SHA3_, encryption uses on _Salsa20_.
+
+```python
+cache = EncryptedCache(actual_cache, b"super secret stuff you cannot guess")
+```
+
 ## MemCached
 
 Basic wrapper, possibly with JSON key encoding thanks to the `JsonSerde` class.
