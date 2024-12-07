@@ -19,9 +19,8 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
 - I cannot say that all this is clear wrt `str` vs `bytes` vs whatever…
-- remove some double encodings, eg in `RedisCache`?
 
-## 10.0 on ?
+## 10.0 on 2024-12-07
 
 Add `full_hash_key` function.
 Add `EncryptedCache`, `ToBytesCache` and `BytesCache`.
