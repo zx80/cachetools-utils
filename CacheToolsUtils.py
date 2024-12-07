@@ -558,6 +558,7 @@ class EncryptedCache(_KeyMutMapMix):
         hkey, vkey, vnonce = self._keydev(key)
         return Salsa20.new(key=vkey, nonce=vnonce).decrypt(self._cache[hkey])
 
+
 #
 # MEMCACHED
 #

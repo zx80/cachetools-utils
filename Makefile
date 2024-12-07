@@ -54,7 +54,7 @@ check.pyright: venv
 	source venv/bin/activate
 	pyright $(MODULE).py
 
-IGNORE  = E227,E501
+IGNORE  = E226,E227,E501
 
 .PHONY: check.flake8
 check.flake8: venv
