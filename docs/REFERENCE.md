@@ -88,6 +88,7 @@ with the _secret_ only:
   recovered without the key.
 
 Hashing is based on _SHA3_, encryption uses _Salsa20_.
+Because of the stream cipher the value length is somehow leaked.
 
 ```python
 cache = EncryptedCache(actual_cache, secret=b"super secret stuff you cannot guess", hsize=16)
