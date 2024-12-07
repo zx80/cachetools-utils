@@ -543,3 +543,13 @@ def test_cache_key():
     assert ctu.json_key(1, hi="hello") == '{"*":[1],"**":{"hi":"hello"}}'
     assert ctu.json_key(hi="bj") == '{"**":{"hi":"bj"}}'
     assert ctu.full_hash_key("Hello World!") == "j#jQnvD$Vrm{P2s(T`v8"
+
+
+def test_encrypted_cache():
+    SECRET = b"incredible secret key for testing encrypted cache..."
+    cache = ctu.EncryptedCache(ctu.DictCache(), SECRET)
+    cache[b"Hello"] = b"World!"
+    assert b"Hello" in cache
+    assert cache[b"Hello"] == b"World!"
+    del cache[b"Hello"]
+    assert b"Hello" not in cache

@@ -508,6 +508,57 @@ def full_hash_key(*args, **kwargs) -> str:
 
 
 #
+# Encrypted Cache
+#
+try:
+    from Crypto.Cipher import Salsa20
+except ModuleNotFoundError:
+    pass
+
+
+class EncryptedCache(_KeyMutMapMix):
+    """Encrypted Bytes Key-Value Cache.
+
+    :param secret: bytes of secret, at least 16 bytes.
+    :param hsize: size of hashed key, default is 16.
+
+    The key is *not* encrypted but simply hashed, thus they are
+    fixed size with a very low collision probability.
+
+    By design, the clear-text key is needed to recover the value,
+    as each value is encrypted with its own key.
+
+    There is no integrity check on the value.
+
+    Algorithms:
+    - SHA3: hash/key/nonce derivation.
+    - Salsa20: value encryption.
+    """
+
+    def __init__(self, cache: MutableMapping, secret: bytes, hsize: int = 16):
+        self._cache = cache
+        assert len(secret) >= 16
+        self._secret = secret
+        assert 8 <= hsize <= 24
+        self._hsize = hsize
+
+    def _keydev(self, key):
+        hkey = hashlib.sha3_512(key + self._secret).digest()
+        sz = self._hsize
+        return (hkey[:sz], hkey[sz:sz+32], hkey[sz+32:sz+40])
+
+    def _key(self, key):
+        return self._keydev(key)[0]
+
+    def __setitem__(self, key, val):
+        hkey, vkey, vnonce = self._keydev(key)
+        self._cache[hkey] = Salsa20.new(key=vkey, nonce=vnonce).encrypt(val)
+
+    def __getitem__(self, key):
+        hkey, vkey, vnonce = self._keydev(key)
+        return Salsa20.new(key=vkey, nonce=vnonce).decrypt(self._cache[hkey])
+
+#
 # MEMCACHED
 #
 class JsonSerde:

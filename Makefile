@@ -30,7 +30,7 @@ PIP		= venv/bin/pip
 venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install --upgrade pip
-	$(PIP) install -e .[doc,dev,pub,tests]
+	$(PIP) install -e .[doc,dev,pub,tests,crypt]
 
 .PHONY: dev
 dev: venv
