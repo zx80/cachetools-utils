@@ -717,10 +717,10 @@ class RedisCache(MutableMapping):
         """Flush Redis contents."""
         return self._cache.flushdb()
 
-    def _serialize(self, s):
+    def _serialize(self, s) -> str:
         return json_key(s)
 
-    def _deserialize(self, s):
+    def _deserialize(self, s: str):
         return json.loads(s)
 
     def _key(self, key):
