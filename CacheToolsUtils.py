@@ -563,29 +563,32 @@ class BytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):
         self._cache = cache
 
     def _key(self, key):
+        # assert isinstance(key, bytes)
         return base64.b85encode(key).decode("ASCII")
 
     def __setitem__(self, key, val):
         self._cache.__setitem__(self._key(key), self._key(val))
 
     def __getitem__(self, key):
-        return base64.b85decode(self._cache.__getitem__(self._key(key)).encode("ASCII"))
+        val = self._cache.__getitem__(self._key(key))
+        # assert isinstance(val, str)
+        return base64.b85decode(val)
 
 
-class StringCache(_KeyMutMapMix, _StatsMix, MutableMapping):
-    """Map strings to bytes."""
+class ToBytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):
+    """Map (JSON-serializable) cache keys and values to bytes."""
 
     def __init__(self, cache):
         self._cache = cache
 
     def _key(self, key):
-        return key.encode("UTF-8")
+        return json.dumps(key, sort_keys=True, separators=(",", ":")).encode("UTF-8")
 
     def __setitem__(self, key, val):
-        self._cache.__setitem__(self._key(key), val.encode("UTF-8"))
+        self._cache.__setitem__(self._key(key), self._key(val))
 
     def __getitem__(self, key):
-        return self._cache.__getitem__(self._key(key)).decode("UTF-8")
+        return json.loads(self._cache.__getitem__(self._key(key)).decode("UTF-8"))
 
 
 #
@@ -607,7 +610,7 @@ class JsonSerde:
         if isinstance(value, str):
             return value.encode("utf-8"), 1
         else:
-            return json_key(value).encode("utf-8"), 2
+            return json.dumps(value, sort_keys=True, separatos=(",", ":")).encode("utf-8"), 2
 
     # reverse previous serialization
     def deserialize(self, key, value, flag):
@@ -718,7 +721,7 @@ class RedisCache(MutableMapping):
         return self._cache.flushdb()
 
     def _serialize(self, s) -> str:
-        return json_key(s)
+        return json.dumps(s, sort_keys=True, separators=(",", ":"))
 
     def _deserialize(self, s: str):
         return json.loads(s)

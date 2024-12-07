@@ -42,7 +42,7 @@ with `cachetools`.
 - `TwoLevelCache` allows to combine two caches.
 - `DebugCache` to trace cache calls using `logging`.
 - `EncryptedCache` a cache with key hashing and value encryption.
-- `StringCache` maps strings to bytes.
+- `ToBytesCache` map keys and values to bytes.
 
 ### Cache utilities
 

@@ -240,11 +240,14 @@ def test_redis():
     import threading
 
     c0 = redis.Redis(host="localhost")
+    c0.flushdb()
+
     c1 = ctu.RedisCache(c0)
     c2 = ctu.BytesCache(c1)
     c3 = ctu.EncryptedCache(c2, SECRET)
-    c4 = ctu.StringCache(c3)
-    cache = ctu.LockedCache(c4, threading.RLock())
+    c4 = ctu.ToBytesCache(c3)
+    c5 = ctu.DebugCache(c4, log)
+    cache = ctu.LockedCache(c5, threading.RLock())
     run_cached(cache)
     assert len(cache) >= 50
     assert cache['[1,"a",true]'] == 111
@@ -564,7 +567,7 @@ def test_encrypted_cache():
     assert cache[b"Hello"] == b"World!"
     del cache[b"Hello"]
     assert b"Hello" not in cache
-    scache = ctu.StringCache(cache)
+    scache = ctu.ToBytesCache(cache)
     scache["Hello"] = "World!"
     assert "Hello" in scache
     assert scache["Hello"] == "World!"
