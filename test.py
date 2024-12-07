@@ -10,6 +10,7 @@ logging.basicConfig()
 log = logging.getLogger("ctu-test")
 # log.setLevel(logging.DEBUG)
 
+SECRET = b"incredible secret key for testing encrypted cache..."
 
 def has_service(host="localhost", port=22):
     """check whether a network TCP/IP service is available."""
@@ -233,14 +234,15 @@ def test_redis():
 
     c0 = redis.Redis(host="localhost")
     c1 = ctu.RedisCache(c0)
-    c2 = ctu.LockedCache(c1, threading.RLock())
-    run_cached(c2)
-    assert len(c2) >= 50
-    assert c2[(1, "a", True)] == 111
-    assert c2[(3, None, False)] == -17
-    setgetdel(c2)
+    c2 = ctu.EncryptedCache(c1, SECRET)
+    c3 = ctu.LockedCache(c2, threading.RLock())
+    run_cached(c3)
+    assert len(c3) >= 50
+    assert c3[(1, "a", True)] == 111
+    assert c3[(3, None, False)] == -17
+    setgetdel(c3)
     try:
-        c2.__iter__()
+        c3.__iter__()
         pytest.fail("not supported")
     except Exception as e:
         assert "not implemented yet" in str(e)
@@ -546,7 +548,6 @@ def test_cache_key():
 
 
 def test_encrypted_cache():
-    SECRET = b"incredible secret key for testing encrypted cache..."
     # bytes
     cache = ctu.EncryptedCache(ctu.DictCache(), SECRET)
     cache[b"Hello"] = b"World!"
