@@ -79,16 +79,21 @@ The second level may manage that on its own, though.
 
 ## EncryptedCache
 
-A wrapper to add an hash and encryption layer on bytes key-values:
+A wrapper to add an hash and encryption layer on bytes key-values.
+The design is write only, i.e. the cache contents _cannot_ be extracted
+with the _secret_ only:
 
-- keys are _hashed_ to have fixed-size keys.
-- values are encrypted depending on the key value.
+- keys are _hashed_ to have fixed-size keys, thus cannot be recovered simply.
+- values are encrypted depending on the actual key value, thus cannot be
+  recovered without the key.
 
 Hashing is based on _SHA3_, encryption uses on _Salsa20_.
 
 ```python
-cache = EncryptedCache(actual_cache, b"super secret stuff you cannot guess")
+cache = EncryptedCache(actual_cache, secret=b"super secret stuff you cannot guess", hsize=16)
 ```
+
+The hash size can be extended up to _24_, key collision probability is $$2^{-4 * hsize}$$.
 
 ## MemCached
 
