@@ -190,13 +190,15 @@ def test_caches():
 def test_memcached():
     import pymemcache as pmc
 
-    c0 = pmc.Client(server="localhost", serde=ctu.JsonSerde())
-    c1 = ctu.MemCached(c0)
-    run_cached(c1)
-    assert len(c1) >= 50
-    assert c1["(1, 'a', True)"] == 111
-    assert c1["(3, None, False)"] == -17
-    assert isinstance(c1.stats(), dict)
+    mc = pmc.Client(server="localhost", serde=ctu.JsonSerde())
+    mcc = ctu.MemCached(mc)
+    ec = ctu.EncryptedCache(mcc, SECRET)
+    cache = ctu.ToBytesCache(ec)
+    run_cached(cache)
+    assert len(cache) >= 50
+    assert cache['[1,"a",true]'] == 111
+    assert cache['[3,null,false]'] == -17
+    assert isinstance(cache.stats(), dict)
 
 
 @pytest.mark.skipif(
