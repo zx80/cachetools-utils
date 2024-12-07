@@ -93,7 +93,7 @@ Hashing is based on _SHA3_, encryption uses on _Salsa20_.
 cache = EncryptedCache(actual_cache, secret=b"super secret stuff you cannot guess", hsize=16)
 ```
 
-The hash size can be extended up to _24_, key collision probability is $2^{-4 * hsize}$.
+Hash size $s$ can be extended up to _24_, key collision probability is $2^{-4 s}$.
 
 The point of this class is to bring security to cached data on distributed systems such as Redis.
 
