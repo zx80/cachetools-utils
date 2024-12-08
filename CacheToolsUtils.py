@@ -384,6 +384,7 @@ class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
     as each value is encrypted with its own key and nonce.
 
     Algorithms:
+
     - SHA3: hash/key/nonce derivation and checksum.
     - Salsa20: value encryption.
     """
