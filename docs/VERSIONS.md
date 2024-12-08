@@ -23,8 +23,9 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 
 ## ? on ?
 
-Code cleanup.
 Add optional integrity check to `EncryptedCache`.
+Code cleanup.
+Reorder memcached serialization formats.
 
 ## 10.0 on 2024-12-07
 
