@@ -680,7 +680,7 @@ class JsonSerde:
         elif flag == 3:
             return json.loads(value.decode("utf-8"))
         else:
-            raise Exception("Unknown serialization format")
+            raise Exception(f"Unknown serialization format: {flag}")
 
 
 class MemCached(_KeyMutMapMix, MutableMapping):
