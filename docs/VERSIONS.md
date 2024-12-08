@@ -21,7 +21,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 - I cannot say that all this is clear wrt `str` vs `bytes` vs whatever…
 - allow to change encryption algorithm?
 
-## ? on ?
+## 10.1 on 2024-12-08
 
 Add optional integrity check to `EncryptedCache`.
 Code cleanup.
