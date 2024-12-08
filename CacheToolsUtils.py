@@ -374,45 +374,57 @@ class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
     """Encrypted Bytes Key-Value Cache.
 
     :param secret: bytes of secret, at least 16 bytes.
-    :param hsize: size of hashed key, default is 16.
+    :param hsize: size of hashed key, default is *16*.
+    :param csize: value checksum size, default is *0*.
 
     The key is *not* encrypted but simply hashed, thus they are
     fixed size with a very low collision probability.
 
     By design, the clear-text key is needed to recover the value,
-    as each value is encrypted with its own key.
-
-    There is no integrity check on the value.
+    as each value is encrypted with its own key and nonce.
 
     Algorithms:
-    - SHA3: hash/key/nonce derivation.
+    - SHA3: hash/key/nonce derivation and checksum.
     - Salsa20: value encryption.
     """
 
-    def __init__(self, cache: MutableMapping, secret: bytes, hsize: int = 16):
+    def __init__(self, cache: MutableMapping, secret: bytes, hsize: int = 16, csize: int = 0):
         self._cache = cache
         assert len(secret) >= 16
         self._secret = secret
-        assert 8 <= hsize <= 24
+        assert 8 <= hsize <= 32
         self._hsize = hsize
+        assert 0 <= csize <= 32
+        self._csize = csize
         from Crypto.Cipher import Salsa20
         self._cipher = Salsa20
 
-    def _keydev(self, key):
+    def _keydev(self, key) -> tuple[bytes, bytes, bytes]:
+        """Compute hash, key and nonce from initial key."""
         hkey = hashlib.sha3_512(key + self._secret).digest()
-        sz = self._hsize
-        return (hkey[:sz], hkey[sz:sz+32], hkey[sz+32:sz+40])
+        # NOTE hash and nonce may overlap, which is not an issue
+        return (hkey[:self._hsize], hkey[32:], hkey[24:32])
 
     def _key(self, key):
         return self._keydev(key)[0]
 
     def __setitem__(self, key, val):
         hkey, vkey, vnonce = self._keydev(key)
-        self._cache[hkey] = self._cipher.new(key=vkey, nonce=vnonce).encrypt(val)
+        xval = self._cipher.new(key=vkey, nonce=vnonce).encrypt(val)
+        if self._csize:
+            cs = hashlib.sha3_256(val).digest()[:self._csize]
+            xval = cs + xval
+        self._cache[hkey] = xval
 
     def __getitem__(self, key):
         hkey, vkey, vnonce = self._keydev(key)
-        return self._cipher.new(key=vkey, nonce=vnonce).decrypt(self._cache[hkey])
+        xval = self._cache[hkey]
+        if self._csize:  # split cs from encrypted value
+            cs, xval = xval[:self._csize], xval[self._csize:]
+        val = self._cipher.new(key=vkey, nonce=vnonce).decrypt(xval)
+        if self._csize and cs != hashlib.sha3_256(val).digest()[:self._csize]:
+            raise KeyError(f"invalid encrypted value for key {key}")
+        return val
 
 
 class BytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):

@@ -91,10 +91,11 @@ Hashing is based on _SHA3_, encryption uses _Salsa20_.
 Because of the stream cipher the value length is somehow leaked.
 
 ```python
-cache = EncryptedCache(actual_cache, secret=b"super secret stuff you cannot guess", hsize=16)
+cache = EncryptedCache(actual_cache, secret=b"super secret stuff you cannot guess", hsize=16, csize=0)
 ```
 
-Hash size $s$ can be extended up to _24_, key collision probability is $2^{-4 s}$.
+Hash size `hsize` can be extended up to _32_, key collision probability is $2^{-4 s}}$.
+An optional value checksum can be triggered by setting `csize`.
 
 The point of this class is to bring security to cached data on distributed
 systems such as Redis.  There is no much point to encrypting in-memory caches.
@@ -117,13 +118,10 @@ def foo(what, ever):
     return …
 ```
 
-## ToBytesCache
+## ToBytesCache and BytesCache
 
-Map keys and values to bytes.
-
-## BytesCache
-
-Handle bytes keys and values and map them to strings.
+Map keys and values to bytes, or
+handle bytes keys and values and map them to strings.
 
 ## MemCached
 

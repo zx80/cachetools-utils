@@ -246,7 +246,7 @@ def test_redis():
     c0.flushdb()
 
     c1 = ctu.RedisCache(c0, raw=True)
-    c2 = ctu.EncryptedCache(c1, SECRET, hsize=24)
+    c2 = ctu.EncryptedCache(c1, SECRET, hsize=20, csize=4)
     c3 = ctu.ToBytesCache(c2)
     c4 = ctu.DebugCache(c3, log)
     cache = ctu.LockedCache(c4, threading.RLock())
@@ -563,10 +563,20 @@ def test_cache_key():
 
 def test_encrypted_cache():
     # bytes
-    cache = ctu.EncryptedCache(ctu.DictCache(), SECRET)
+    actual = ctu.DictCache()
+    cache = ctu.EncryptedCache(actual, SECRET, csize=1)
     cache[b"Hello"] = b"World!"
     assert b"Hello" in cache
     assert cache[b"Hello"] == b"World!"
+    # bad checksum
+    assert len(actual) == 1
+    k = list(actual.keys())[0]
+    actual[k] = bytes([(actual[k][0] + 42) % 256]) + actual[k][1:]
+    try:
+        _ = cache[b"Hello"]
+        pytest.fail("must raise an exception")
+    except KeyError as ke:
+        assert "invalid encrypted value" in str(ke)
     del cache[b"Hello"]
     assert b"Hello" not in cache
     # strings
