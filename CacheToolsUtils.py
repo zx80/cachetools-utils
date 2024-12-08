@@ -421,6 +421,8 @@ class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
         xval = self._cache[hkey]
         if self._csize:  # split cs from encrypted value
             cs, xval = xval[:self._csize], xval[self._csize:]
+        else:
+            cs = None
         val = self._cipher.new(key=vkey, nonce=vnonce).decrypt(xval)
         if self._csize and cs != hashlib.sha3_256(val).digest()[:self._csize]:
             raise KeyError(f"invalid encrypted value for key {key}")
