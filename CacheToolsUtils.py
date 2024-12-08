@@ -621,21 +621,21 @@ class JsonSerde:
 
     # keep strings, else json
     def serialize(self, key, value):
-        if isinstance(value, str):
-            return value.encode("utf-8"), 1
-        elif isinstance(value, bytes):
-            return value, 3
+        if isinstance(value, bytes):
+            return value, 1
+        elif isinstance(value, str):
+            return value.encode("utf-8"), 2
         else:
-            return json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8"), 2
+            return json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8"), 3
 
     # reverse previous serialization
     def deserialize(self, key, value, flag):
         if flag == 1:
-            return value.decode("utf-8")
-        elif flag == 2:
-            return json.loads(value.decode("utf-8"))
-        elif flag == 3:
             return value
+        elif flag == 2:
+            return value.decode("utf-8")
+        elif flag == 3:
+            return json.loads(value.decode("utf-8"))
         else:
             raise Exception("Unknown serialization format")
 
