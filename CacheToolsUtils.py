@@ -367,6 +367,48 @@ class TwoLevelCache(_MutMapMix, MutableMapping):
         self._cache2.reset()  # type: ignore
 
 
+# NOTE this is quite costly, a Cipher object is created to encrypt/decrypt each value.
+# another design could keep a persistant cipher.
+class _Cipher:
+    """Not so convincing internal class to abstract cipher algorithms."""
+
+    def __init__(self, name):
+        self._name = name
+        if name == "Salsa20":
+            from Crypto.Cipher import Salsa20 as cipher
+            # NOTE hash and nonce may overlap, which is not an issue
+            params = {"key": (32, 64), "nonce": (24, 32)}
+            kwargs = {}
+            size = 0
+        elif name == "ChaCha20":
+            from Crypto.Cipher import ChaCha20 as cipher
+            # NOTE hash and nonce may overlap, which is not an issue
+            params = {"key": (32, 64), "nonce": (24, 32)}
+            kwargs = {}
+            size = 0
+        elif name in ("AES", "AES-128", "AES-128-CBC"):
+            from Crypto.Cipher import AES as cipher
+            params = {"key": (48, 64), "iv": (32, 48)}
+            kwargs = {"mode": cipher.MODE_CBC}
+            size = 16
+        else:
+            raise Exception(f"unexpected cipher: {name}")
+        self._cipher = cipher
+        self._params = params
+        self._kwargs = kwargs
+        if size:
+            from Crypto.Util.Padding import pad, unpad
+            self._pad = lambda s: pad(s, size)
+            self._unpad = lambda s: unpad(s, size)
+        else:
+            self._pad = lambda s: s
+            self._unpad = lambda s: s
+
+    def new(self, derived: bytes):
+        kwargs = {k: derived[v[0]: v[1]] for k, v in self._params.items()}
+        return self._cipher.new(**kwargs, **self._kwargs)  # type: ignore
+
+
 #
 # Encrypted Cache
 #
@@ -376,6 +418,7 @@ class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
     :param secret: bytes of secret, at least 16 bytes.
     :param hsize: size of hashed key, default is *16*.
     :param csize: value checksum size, default is *0*.
+    :param cipher: chose cipher from "Salsa20", "AES-128-CBC" or "ChaCha20".
 
     The key is *not* encrypted but simply hashed, thus they are
     fixed size with a very low collision probability.
@@ -386,10 +429,10 @@ class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
     Algorithms:
 
     - SHA3: hash/key/nonce derivation and checksum.
-    - Salsa20: value encryption.
+    - Salsa20, AES-128-CBC or ChaCha20: value encryption.
     """
 
-    def __init__(self, cache: MutableMapping, secret: bytes, hsize: int = 16, csize: int = 0):
+    def __init__(self, cache: MutableMapping, secret: bytes, hsize: int = 16, csize: int = 0, cipher: str = "Salsa20"):
         self._cache = cache
         assert len(secret) >= 16
         self._secret = secret
@@ -397,34 +440,31 @@ class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
         self._hsize = hsize
         assert 0 <= csize <= 32
         self._csize = csize
-        from Crypto.Cipher import Salsa20
-        self._cipher = Salsa20
+        self._cipher = _Cipher(cipher)
 
-    def _keydev(self, key) -> tuple[bytes, bytes, bytes]:
-        """Compute hash, key and nonce from initial key."""
-        hkey = hashlib.sha3_512(key + self._secret).digest()
-        # NOTE hash and nonce may overlap, which is not an issue
-        return (hkey[:self._hsize], hkey[32:], hkey[24:32])
+    def _derive(self, key) -> tuple[bytes, bytes]:
+        """Derive hash and stuff from initial key and secret."""
+        derived = hashlib.sha3_512(key + self._secret).digest()
+        return (derived[:self._hsize], derived)
 
     def _key(self, key):
-        return self._keydev(key)[0]
+        return self._derive(key)[0]
 
     def __setitem__(self, key, val):
-        hkey, vkey, vnonce = self._keydev(key)
-        xval = self._cipher.new(key=vkey, nonce=vnonce).encrypt(val)
+        hkey, derived = self._derive(key)
+        xval = self._cipher.new(derived).encrypt(self._cipher._pad(val))
         if self._csize:
-            cs = hashlib.sha3_256(val).digest()[:self._csize]
-            xval = cs + xval
+            xval = hashlib.sha3_256(val).digest()[:self._csize] + xval
         self._cache[hkey] = xval
 
     def __getitem__(self, key):
-        hkey, vkey, vnonce = self._keydev(key)
+        hkey, derived = self._derive(key)
         xval = self._cache[hkey]
         if self._csize:  # split cs from encrypted value
             cs, xval = xval[:self._csize], xval[self._csize:]
         else:
             cs = None
-        val = self._cipher.new(key=vkey, nonce=vnonce).decrypt(xval)
+        val = self._cipher._unpad(self._cipher.new(derived).decrypt(xval))
         if self._csize and cs != hashlib.sha3_256(val).digest()[:self._csize]:
             raise KeyError(f"invalid encrypted value for key {key}")
         return val

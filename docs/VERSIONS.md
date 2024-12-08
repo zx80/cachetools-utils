@@ -19,7 +19,12 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
   Maybe the existing client can do that with appropriate options?
 - `cached`: add `contains` and `delete` parameters to change names?
 - I cannot say that all this is clear wrt `str` vs `bytes` vs whatever…
-- allow to change encryption algorithm?
+- think again the encryption design to allow persistant ciphers?
+  this would require to change the `iv` at least?
+
+## ? on ?
+
+Allow to change the cipher within _Salsa20_, _AES-128-CBC_ and _ChaCha20_.
 
 ## 10.1 on 2024-12-08
 
