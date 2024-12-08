@@ -599,3 +599,9 @@ def test_encrypted_cache():
         loops += 1
     # check that we looped as expected
     assert loops == len(CIPHERS)
+    # just for coverage
+    try:
+        ctu._Cipher("foo")
+        pytest.fail("must raise an exception")
+    except Exception as e:
+        assert "unexpected" in str(e)
