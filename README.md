@@ -43,6 +43,7 @@ with `cachetools`.
 - `DebugCache` to trace cache calls using `logging`.
 - `EncryptedCache` a cache with key hashing and value encryption.
 - `ToBytesCache` map keys and values to bytes.
+- `BytesCache` map bytes keys and values to strings.
 
 ### Cache utilities
 
