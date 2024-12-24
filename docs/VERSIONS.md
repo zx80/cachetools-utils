@@ -22,7 +22,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 - think again the encryption design to allow persistant ciphers?
   this would require to change the `iv` at least?
 
-## ? on ?
+## 10.2 on 2024-12-24
 
 Allow to change the cipher within _Salsa20_, _AES-128-CBC_ and _ChaCha20_.
 
