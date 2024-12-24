@@ -7,12 +7,12 @@ are hosted on [GitHub](https://github.com).
 Install [package](https://pypi.org/project/CacheToolsUtils/) from
 [PyPI](https://pypi.org/).
 
-## TODO or NOT TODO…
+## TODO or NOT…
 
 - write a tutorial!
 - write recipes!
 - add a `close`?
-- rename `hits`  `hit_rate`?
+- rename `hits` as `hit_rate`?
 - add other efficiency statistics?
 - add ability to reconnect if an external cache fails?
   this could be for redis or memcached?
