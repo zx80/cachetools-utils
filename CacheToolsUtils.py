@@ -237,7 +237,7 @@ class AutoPrefixedCache(PrefixedCache):
 
     _COUNTER: int = 0
 
-    _METHODS = {
+    _METHODS: dict[str, Callable[[Any], bytes]] = {
         "b64": base64.b64encode,
         "b64u": base64.urlsafe_b64encode,
         "b32": base64.b32encode,
@@ -249,9 +249,9 @@ class AutoPrefixedCache(PrefixedCache):
     }
 
     def __init__(self, cache: MutableMapping, sep: str = ".", method: str = "b64"):
-        encoder = AutoPrefixedCache._METHODS.get(method)
-        if encoder is None:
+        if method not in AutoPrefixedCache._METHODS:
             raise Exception(f"invalid conversion method: {method}")
+        encoder = AutoPrefixedCache._METHODS[method]
         length = max(1, (AutoPrefixedCache._COUNTER.bit_length() + 7) // 8)
         # NOTE byteorder default added to 3.11
         prefix = encoder(AutoPrefixedCache._COUNTER.to_bytes(length, byteorder="big")).decode("ASCII")
