@@ -47,6 +47,22 @@ def bla(…):
     return …
 ```
 
+## AutoPrefixedCache
+
+Add a counter-based prefix to an underlying cache to avoid key collisions.
+
+```python
+ttl_cache = cachetools.TTLCache(maxsize=1048576, ttl=120)
+
+@cachetools.cached(cache=AutoPrefixedCache(ttl_cache))
+def foo(…):
+    return …
+
+@cachetools.cached(cache=AutoPrefixedCache(ttl_cache))
+def bla(…):
+    return …
+```
+
 ## StatsCache
 
 Keep stats, cache hit rate shown with `hits()`.

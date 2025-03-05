@@ -7,7 +7,7 @@ Classes to add key prefix and stats to
 and other cache-related utils.
 
 ![Status](https://github.com/zx80/cachetools-utils/actions/workflows/cachetools-utils.yml/badge.svg?branch=main&style=flat)
-![Tests](https://img.shields.io/badge/tests-22%20✓-success)
+![Tests](https://img.shields.io/badge/tests-23%20✓-success)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-success)
 ![Issues](https://img.shields.io/github/issues/zx80/cachetools-utils?style=flat)
 ![Python](https://img.shields.io/badge/python-3-informational)
@@ -35,6 +35,7 @@ with `cachetools`.
 
 - `PrefixedCache`, `PrefixedMemCached` and `PrefixedRedisCache` add a prefix to
   distinguish sources on a shared cache.
+- `AutoPrefixedCache` add a counter-based prefix.
 - `StatsCache`, `MemCached` and `RedisCache` add a `hits` method
   to report the cache hit rate, `stats` to report statistics and
   `reset` to reset statistics.

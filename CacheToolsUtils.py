@@ -226,6 +226,38 @@ class PrefixedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
         return self._prefix + self._cast(key)  # type: ignore
 
 
+class AutoPrefixedCache(PrefixedCache):
+    """Cache class with an automatic counter-based string prefix.
+
+    :param cache: actual cache.
+    :param sep: prefix separator, default is ".".
+    :param method: encoding method in "b64", "b64u", "b32", "b32x", "b16",
+        "a85" and "b85". Default is "b64".
+    """
+
+    _COUNTER: int = 0
+
+    _METHODS = {
+        "b64": base64.b64encode,
+        "b64u": base64.urlsafe_b64encode,
+        "b32": base64.b32encode,
+        "b32x": base64.b32hexencode,
+        "b16": base64.b16encode,
+        "a85": base64.a85encode,
+        "b85": base64.b85encode,
+        # "z85": base64.z85encode,  # Python 3.13
+    }
+
+    def __init__(self, cache: MutableMapping, sep: str = ".", method: str = "b64"):
+        encoder = AutoPrefixedCache._METHODS.get(method)
+        if encoder is None:
+            raise Exception(f"invalid conversion method: {method}")
+        length = max(1, (AutoPrefixedCache._COUNTER.bit_length() + 7) // 8)
+        prefix = encoder(AutoPrefixedCache._COUNTER.to_bytes(length)).decode("ASCII")
+        AutoPrefixedCache._COUNTER += 1
+        super().__init__(cache, prefix + sep)
+
+
 class StatsCache(_MutMapMix, MutableMapping):
     """Cache class to keep stats.
 

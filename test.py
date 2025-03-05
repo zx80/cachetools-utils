@@ -25,7 +25,6 @@ def has_service(host="localhost", port=22):
     finally:
         tcp_ip.close()
 
-
 def cached_fun(cache, cached=ct.cached, key=ct.keys.hashkey):
     """return a cached function with basic types."""
 
@@ -52,7 +51,6 @@ def reset_cache(cache):
     except:  # fails on redis
         pass
 
-
 def run_cached_keys(cache):
 
     for cached in (ct.cached, ctu.cached):
@@ -68,7 +66,6 @@ def run_cached_keys(cache):
                             # log.debug(f"fun{(i, s, b)} = {v} {type(v)}")
                             x += v
             assert x == 30000
-
 
 def run_cached(cache, key=ct.keys.hashkey):
     """run something on a cached function."""
@@ -112,7 +109,6 @@ def setgetdel(cache):
     # FIXME memcached error
     # assert KEY not in cache
 
-
 def setgetdel_bytes(cache):
     key, val, cst = KEY.encode("UTF8"), VAL.encode("UTF8"), b"FOO"
     cache.setdefault(key, val)
@@ -128,7 +124,6 @@ def setgetdel_bytes(cache):
         pytest.fail("should raise KeyError")
     except KeyError as e:
         assert True, "KeyError was raised"
-
 
 def test_key_ct():
     c0 = ct.TTLCache(maxsize=100, ttl=100)
@@ -159,7 +154,6 @@ def test_key_ct():
     setgetdel_bytes(c2)
     setgetdel_bytes(c3)
 
-
 def test_stats_ct():
     c0 = ct.TTLCache(maxsize=100, ttl=100)
     cache = ctu.StatsCache(c0)
@@ -173,7 +167,6 @@ def test_stats_ct():
     cache.clear()
     setgetdel(c0)
     setgetdel(cache)
-
 
 def test_caches():
     n = 0
@@ -200,7 +193,6 @@ def test_memcached():
     assert ec[b'[3,null,false]'] == b"-17"
     assert isinstance(cache.stats(), dict)
 
-
 @pytest.mark.skipif(
     not has_service(port=11211),
     reason="no local memcached service available for testing",
@@ -214,7 +206,6 @@ def test_key_memcached():
     assert len(c1) >= 50
     assert c1['[1,"a",true]'] == 111
     assert c1['[3,null,false]'] == -17
-
 
 @pytest.mark.skipif(
     not has_service(port=11211),
@@ -233,7 +224,6 @@ def test_stats_memcached():
     assert isinstance(c1.stats(), dict)
     setgetdel(c0)
     setgetdel(c1)
-
 
 @pytest.mark.skipif(
     not has_service(port=6379), reason="no local redis service available for testing"
@@ -261,7 +251,6 @@ def test_redis():
     except Exception as e:
         assert "not implemented yet" in str(e)
 
-
 @pytest.mark.skipif(
     not has_service(port=6379), reason="no local redis service available for testing"
 )
@@ -280,7 +269,6 @@ def test_key_redis():
     c1.delete("Hello")
     assert "Hello" not in c1
 
-
 @pytest.mark.skipif(
     not has_service(port=6379), reason="no local redis service available for testing"
 )
@@ -296,7 +284,6 @@ def test_stats_redis():
     assert c1.hits() > 0.0
     assert isinstance(c1.stats(), dict)
     setgetdel(c1)
-
 
 @pytest.mark.skipif(
     not has_service(port=6379), reason="no local redis service available for testing"
@@ -315,7 +302,6 @@ def test_stacked_redis():
     setgetdel(c1)
     setgetdel(c2)
     setgetdel(c3)
-
 
 def test_two_level_small():
     # front cache is too small, always fallback
@@ -340,7 +326,6 @@ def test_two_level_small():
     setgetdel(c0s)
     setgetdel(c1s)
     setgetdel(c2)
-
 
 def test_two_level_ok():
     # front cache is too small, always fallback
@@ -372,7 +357,6 @@ def test_two_level_ok():
     c2[KEY] = VAL
     del c0s[KEY]
     del c2[KEY]
-
 
 def test_twolevel_bad_stats():
     c0 = ctu.DictCache()
@@ -424,10 +408,8 @@ def test_methods():
     except Exception as e:
         assert "missing method" in str(e)
 
-
 def sum_n2(n: int):
     return n * n + sum_n2(n - 1) if n >= 1 else 0
-
 
 def test_functions():
     c = ct.TTLCache(1024, ttl=60.0)
@@ -441,7 +423,6 @@ def test_functions():
     assert len(c) == 129
     assert cs.hits() > 0.7
     assert isinstance(cs.stats(), dict)
-
 
 def test_corners():
     # _MutMapMix coverage
@@ -552,7 +533,6 @@ def test_debug():
     del cache["Hello"]
     assert "Hello" not in cache
 
-
 def test_cache_key():
     assert ctu.json_key(1, "hi") == '[1,"hi"]'
     assert str(ctu.hash_json_key(1, "hi")) == '[1,"hi"]'
@@ -561,6 +541,7 @@ def test_cache_key():
     assert ctu.full_hash_key("Hello World!") == "j#jQnvD$Vrm{P2s(T`v8"
 
 
+# available ciphers
 CIPHERS = [ "Salsa20", "AES-128-CBC", "ChaCha20" ]
 
 def test_encrypted_cache():
@@ -605,3 +586,36 @@ def test_encrypted_cache():
         pytest.fail("must raise an exception")
     except Exception as e:
         assert "unexpected" in str(e)
+
+def test_autoprefix_cache():
+    cache = ctu.DictCache()
+
+    @ctu.cached(cache=ctu.AutoPrefixedCache(cache))
+    def p1(i: int):
+        return i + 1
+
+    @ctu.cached(cache=ctu.AutoPrefixedCache(cache))
+    def m1(i: int):
+        return i - 1
+
+    assert len(cache) == 0
+    assert p1(0) == 1 and p1(41) == 42 and p1(2) == 3 and p1(0) == 1
+    assert len(cache) == 3
+    assert m1(1) == 0 and m1(43) == 42 and m1(2) == 1 and m1(43) == 42
+    assert len(cache) == 6
+    assert p1(0) == 1 and p1(41) == 42 and p1(2) == 3 and p1(0) == 1
+    assert m1(1) == 0 and m1(43) == 42 and m1(2) == 1 and m1(43) == 42
+    assert len(cache) == 6
+    assert all("." in k for k in cache._cache.keys())
+    prefixes = set(k.split(".", 1)[0] for k in cache._cache.keys())
+    assert len(prefixes) == 2
+    params = set(k.split(".", 1)[1] for k in cache._cache.keys())
+    assert len(params) == 5  # 0, 41, 2, 1, 43
+    values = set(cache._cache.values())
+    assert len(values) == 4  # 1, 42, 3, 0
+
+    try:
+        cache = ctu.AutoPrefixedCache(cache, method="bad-method")
+        pytest.fail("must raise an exception")
+    except Exception as e:
+        assert "method: bad-method" in str(e)
