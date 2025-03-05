@@ -253,7 +253,8 @@ class AutoPrefixedCache(PrefixedCache):
         if encoder is None:
             raise Exception(f"invalid conversion method: {method}")
         length = max(1, (AutoPrefixedCache._COUNTER.bit_length() + 7) // 8)
-        prefix = encoder(AutoPrefixedCache._COUNTER.to_bytes(length)).decode("ASCII")
+        # NOTE byteorder default added to 3.11
+        prefix = encoder(AutoPrefixedCache._COUNTER.to_bytes(length, byteorder="big")).decode("ASCII")
         AutoPrefixedCache._COUNTER += 1
         super().__init__(cache, prefix + sep)
 
