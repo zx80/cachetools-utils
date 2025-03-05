@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
       - name: Install dependencies
         run: make venv
       - name: Check documentation syntax
@@ -25,7 +25,7 @@ jobs:
           find docs/_build -type d -print | xargs chmod a+rx
           find docs/_build -type f -print | xargs chmod a+r
       - name: Upload to GitHub Pages
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
   deploy:
     # "Pages" must accept GitHub Actions as a source
     needs: build
