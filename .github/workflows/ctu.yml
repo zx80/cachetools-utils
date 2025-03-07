@@ -41,6 +41,7 @@ jobs:
           cover: 83.9
         - version: "3.14"
           deps: doc,dev,tests,crypt
+          cover: 100.0
     steps:
     # Setup
     - uses: actions/checkout@v4
