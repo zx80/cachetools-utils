@@ -32,6 +32,7 @@ jobs:
           deps: doc,dev,tests
           env: PYTHON_GIL=1
         - version: "3.14"
+          deps: doc,dev,tests,crypt
     steps:
     # Setup
     - uses: actions/checkout@v4
