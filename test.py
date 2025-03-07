@@ -185,8 +185,8 @@ def test_caches():
     assert n == 4
 
 @pytest.mark.skipif(
-    not has_service(port=11211),
-    reason="no local memcached service available for testing",
+    not has_service(port=11211) or not has_package("Crypto"),
+    reason="requires memcached service and Crypto module",
 )
 def test_memcached():
     import pymemcache as pmc
@@ -234,7 +234,8 @@ def test_stats_memcached():
     setgetdel(c1)
 
 @pytest.mark.skipif(
-    not has_service(port=6379), reason="no local redis service available for testing"
+    not has_service(port=6379) or not has_package("Crypto"),
+    reason="requires redis service and Crypto module"
 )
 def test_redis():
     import redis
