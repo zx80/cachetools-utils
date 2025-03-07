@@ -11,14 +11,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "pypy3.10"]
+        python:
+        - version: "pypy3.10"
+        - version: "pypy3.11"
+        - version: "3.10"
+        - version: "3.11"
+        - version: "3.12"
+        - version: "3.13"
+        - version: "3.13t"
+          env: PYTHON_GIL=0
+        - version: "3.13t"
+          env: PYTHON_GIL=1
+        - version: "3.14"
     steps:
     # Setup
     - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+    - name: Set up Python ${{ matrix.python.version }}
+      # uses: actions/setup-python@v5
+      uses: actions/setup-python@main
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ matrix.python.version }}
         allow-prereleases: true
     # Dependencies
     - name: Install Python dependencies and module
