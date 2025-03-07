@@ -79,12 +79,14 @@ check.pytest: venv
 	source venv/bin/activate
 	$(PYTEST) $(PYTOPT) test.py
 
+# expected coverage
+COVER   = 100.0
+
 .PHONY: check.coverage
 check.coverage: venv
 	source venv/bin/activate
 	coverage run -m $(PYTEST) $(PYTOPT) test.py
-	# coverage html $(MODULE).py
-	coverage report --fail-under=100 --precision=1 --show-missing --include=CacheToolsUtils.py
+	coverage report --fail-under=$(COVER) --precision=1 --show-missing --include=CacheToolsUtils.py
 
 .PHONY: check.docs
 check.docs: venv

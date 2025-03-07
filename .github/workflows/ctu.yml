@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env: COVER=100.0
     strategy:
       fail-fast: false
       matrix:
@@ -27,10 +28,10 @@ jobs:
         - version: "3.13t"
           # 2025-03-07 KO crypt => cryptography
           deps: doc,dev,tests
-          env: PYTHON_GIL=0
+          env: PYTHON_GIL=0 COVER=83.9
         - version: "3.13t"
           deps: doc,dev,tests
-          env: PYTHON_GIL=1
+          env: PYTHON_GIL=1 COVER=83.9
         - version: "3.14"
           deps: doc,dev,tests,crypt
     steps:
@@ -59,7 +60,7 @@ jobs:
     - name: Check with pytest
       run: make check.pytest
     - name: Check with coverage
-      run: make check.coverage
+      run: make COVER=$COVER check.coverage
     - name: Check with pyright
       run: make check.pyright
     # 2025-03-07: KO with 3.13t because types-redis requires cryptography
