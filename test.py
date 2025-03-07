@@ -1,8 +1,9 @@
 #! /usr/bin/env python
 
+import socket
+import importlib
 import cachetools as ct
 import CacheToolsUtils as ctu
-import socket
 import pytest
 import logging
 
@@ -12,7 +13,7 @@ log = logging.getLogger("ctu-test")
 
 SECRET = b"incredible secret key for testing encrypted cache..."
 
-def has_service(host="localhost", port=22):
+def has_service(host="localhost", port=22) -> bool:
     """check whether a network TCP/IP service is available."""
     try:
         tcp_ip = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,6 +25,13 @@ def has_service(host="localhost", port=22):
         return False
     finally:
         tcp_ip.close()
+
+def has_package(pkg_name: str) -> bool:
+    try:
+        importlib.import_module(pkg_name)
+        return True
+    except ModuleNotFoundError:
+        return False
 
 def cached_fun(cache, cached=ct.cached, key=ct.keys.hashkey):
     """return a cached function with basic types."""
@@ -540,11 +548,11 @@ def test_cache_key():
     assert ctu.json_key(hi="bj") == '{"**":{"hi":"bj"}}'
     assert ctu.full_hash_key("Hello World!") == "j#jQnvD$Vrm{P2s(T`v8"
 
-
-# available ciphers
-CIPHERS = [ "Salsa20", "AES-128-CBC", "ChaCha20" ]
-
+@pytest.mark.skipif(not has_package("Crypto"), reason="module Crypto is required")
 def test_encrypted_cache():
+    # available ciphers
+    CIPHERS = [ "Salsa20", "AES-128-CBC", "ChaCha20" ]
+
     loops = 0
     for cipher in CIPHERS:
         # bytes

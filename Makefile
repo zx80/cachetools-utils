@@ -27,10 +27,13 @@ clean.dev: clean.venv
 PYTHON	= python
 PIP		= venv/bin/pip
 
+# tmp workaround for python 3.13t tests
+DEPS    = doc,dev,pub,tests,crypt
+
 venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install --upgrade pip
-	$(PIP) install -e .[doc,dev,pub,tests,crypt]
+	$(PIP) install -e .[$(DEPS)]
 
 .PHONY: dev
 dev: venv

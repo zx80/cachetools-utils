@@ -30,7 +30,13 @@ package = "https://pypi.org/project/CacheToolsUtils/"
 py-modules = [ "CacheToolsUtils" ]
 
 [project.optional-dependencies]
-dev = [ "mypy", "pyright", "black", "flake8", "ruff", "pytest", "coverage", "pymarkdownlnt", "types-redis", "types-cachetools" ]
+dev = [
+  "mypy", "pyright",
+  # "types-redis", "types-cachetools",
+  "black", "flake8", "ruff",
+  "pytest", "coverage",
+  "pymarkdownlnt",
+]
 doc = [ "sphinx", "sphinx_rtd_theme", "sphinx-autoapi", "sphinx-lint", "myst_parser" ]
 crypt = [ "pycryptodome" ]
 tests = [ "pymemcache", "redis" ]

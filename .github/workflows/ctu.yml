@@ -13,14 +13,23 @@ jobs:
       matrix:
         python:
         - version: "pypy3.10"
+          deps: doc,dev,tests,crypt
         - version: "pypy3.11"
+          deps: doc,dev,tests,crypt
         - version: "3.10"
+          deps: doc,dev,tests,crypt
         - version: "3.11"
+          deps: doc,dev,tests,crypt
         - version: "3.12"
+          deps: doc,dev,tests,crypt
         - version: "3.13"
+          deps: doc,dev,tests,crypt
         - version: "3.13t"
+          # 2025-03-07 KO crypt => cryptography
+          deps: doc,dev,tests
           env: PYTHON_GIL=0
         - version: "3.13t"
+          deps: doc,dev,tests
           env: PYTHON_GIL=1
         - version: "3.14"
     steps:
@@ -34,7 +43,7 @@ jobs:
         allow-prereleases: true
     # Dependencies
     - name: Install Python dependencies and module
-      run: make venv
+      run: make DEPS=${{ matrix.python.deps }} dev
     - name: Start Redis
       uses: supercharge/redis-github-action@1.7.0
     - name: Start MemCached
