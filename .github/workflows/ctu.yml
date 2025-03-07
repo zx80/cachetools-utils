@@ -30,7 +30,7 @@ jobs:
           # 2025-03-07 KO crypt => cryptography
           deps: doc,dev,tests
           env:
-            PYTHON_GIL: 1
+            PYTHON_GIL: 0
             COVER: 83.9
         - version: "3.13t"
           deps: doc,dev,tests
