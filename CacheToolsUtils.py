@@ -2,6 +2,9 @@
 CacheTools Utilities. This code is public domain.
 """
 
+# FIXME 3.13t checks without Cipher package
+# pyright: reportMissingImports=false
+
 from typing import Any, Callable, MutableMapping
 import abc
 
