@@ -22,6 +22,12 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 - think again the encryption design to allow persistant ciphers?
   this would require to change the `iv` at least?
 
+## ? on ?
+
+Add _PyPy 3.11_ and _Python 3.13t_ to GitHub CI.
+As of 2025-03-07 _3.13t_ is a pain because `cryptography` does not install, thus only partial testing is enabled.
+The dependency comes from `pycryptodome` _and_ `types-redis`.
+
 ## 10.3 on 2025-03-05
 
 Add `AutoPrefixedCache`.
