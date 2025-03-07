@@ -62,6 +62,7 @@ jobs:
       run: make check.coverage
     - name: Check with pyright
       run: make check.pyright
-    - name: Check with mypy
-      # mypy is much too slow, this is a pain:-/
-      run: make check.mypy
+    # 2025-03-07: KO with 3.13t because types-redis requires cryptography
+    # - name: Check with mypy
+    #   # mypy is much too slow, this is a pain:-/
+    #   run: make check.mypy
