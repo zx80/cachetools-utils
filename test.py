@@ -656,4 +656,24 @@ def test_nogil():
     assert banged("a", 3) == "aaa!"  # hit
     assert cache.hits() == 0.5
 
+    # reset stats
+    cache.reset()
+
+    import threading
+    NTHREADS = 4
+    barrier = threading.barrier(NTHREADS, timeout=2)
+    
+    def run():
+        barrier.wait()
+        for s in ("a", "b", "c"):
+            for n in range(3):
+                assert banged(s, n) == s * n + "!"
+        barrier.wait()
+
+    threads = [ threading.Thread(target=run, name=f"thread {i}") for i in range(NTHREADS) ] 
+    map(lambda t: t.start(), threads)
+    map(lambda t: t.join(), threads)
+
+    assert cache.hits() == 0.25
+
     assert not sys._is_gil_enabled()
