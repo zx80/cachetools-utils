@@ -33,26 +33,22 @@ jobs:
         - version: "3.13t"
           # 2025-03-07 KO crypt => cryptography
           cover: 84.0
-          env:
-            PYTHON_GIL: 0
+          gil: 0
           deps: doc,dev,tests
         - version: "3.13t"
           cover: 84.0
-          env:
-            PYTHON_GIL: 1
+          gil: 1
           deps: doc,dev,tests
         - version: "3.14"
           cover: 100.0
           deps: doc,dev,tests,crypt
         - version: "3.14t"
           cover: 84.0
-          env:
-            PYTHON_GIL: 0
+          gil: 0
           deps: doc,dev,tests
         - version: "3.14t"
           cover: 84.0
-          env:
-            PYTHON_GIL: 1
+          gil: 1
           deps: doc,dev,tests
     steps:
     # Setup
@@ -64,8 +60,6 @@ jobs:
         python-version: ${{ matrix.python.version }}
         allow-prereleases: true
         cache: "pip"
-    - name: Show PYTHON_GIL
-      run: echo ${PYTHON_GIL} / ${{ matrix.python.env }}
     # Dependencies
     - name: Install Python dependencies and module
       run: make DEPS=${{ matrix.python.deps }} dev
@@ -81,9 +75,9 @@ jobs:
     - name: Check the docs
       run: make check.docs
     - name: Check with pytest
-      run: make check.pytest
+      run: PYTHON_GIL=${{ matrix.python.gil }} make check.pytest
     - name: Check with coverage
-      run: make COVER=${{ matrix.python.cover }} check.coverage
+      run: PYTHON_GIL=${{ matrix.python.gil }} make COVER=${{ matrix.python.cover }} check.coverage
     - name: Check with pyright
       run: make check.pyright
     # 2025-03-07: KO with 3.13t because types-redis requires cryptography
