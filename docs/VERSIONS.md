@@ -24,6 +24,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 
 ## ? on ?
 
+Collect tests (contains) stats.
 Add _PyPy 3.11_, _Python 3.13t_ and _Python 3.14t_ to GitHub CI.
 Improve documentation.
 

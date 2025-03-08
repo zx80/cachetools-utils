@@ -289,18 +289,24 @@ class StatsCache(_MutMapMix, MutableMapping):
 
     def reset(self):
         """Reset internal stats data."""
-        self._reads, self._writes, self._dels, self._hits = 0, 0, 0, 0
+        self._tests, self._reads, self._writes, self._dels, self._hits = 0, 0, 0, 0, 0
 
     def stats(self) -> dict[str, Any]:
         """Return available stats data as dict."""
         return {
             "type": 1,
+            "tests": self._tests,
             "reads": self._reads,
             "writes": self._writes,
             "dels": self._dels,
-            "hits": self.hits(),
+            "hits": self._hits,
+            "hit_rate": self.hits(),
             "size": self._cache.__len__()
         }
+
+    def __contains__(self, key):
+        self._tests += 1
+        return self._cache.__contains__(key)
 
     def __getitem__(self, key):
         self._reads += 1
