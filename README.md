@@ -1,10 +1,8 @@
 # CacheToolsUtils
 
-Stackable cache classes, for instance to add key prefix and stats to
-[cachetools](https://pypi.org/project/cachetools/) classes and use
-[redis](https://redis.io/) and
-[memcached](https://memcached.org/) as storage backends,
-and other cache-related utils.
+Stackable cache classes for sharing, encryption, statistics _and more_
+on top of [cachetools](https://pypi.org/project/cachetools/),
+[redis](https://redis.io/) and [memcached](https://memcached.org/).
 
 ![Status](https://github.com/zx80/cachetools-utils/actions/workflows/ctu.yml/badge.svg?branch=main&style=flat)
 ![Tests](https://img.shields.io/badge/tests-23%20✓-success)
@@ -40,9 +38,14 @@ def repeat(s: str, n: int) -> str:
 def banged(s: str, n: int) -> str:
     return repeat(s, n) + "!"
 
-print(banged("aa", 3))  # add 2 cache entries
-print(repeat("aa", 3))  # cache hit!
-print(banged("aa", 3))  # cache hit!
+@ctu.cached(ctu.AutoPrefixedCache(cache), key=ctu.json_key)
+def question(s: str, n: int) -> str:
+    return repeat(s, n) + "?"
+
+print(banged("aa", 3))    # add 2 cache entries
+print(question("aa", 3))  # add 1 entry, 1 hit
+print(repeat("aa", 3))    # cache hit!
+print(banged("aa", 3))    # cache hit!
 
 assert cache.hits() > 0
 ```
