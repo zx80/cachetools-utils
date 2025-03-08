@@ -32,22 +32,22 @@ jobs:
           deps: doc,dev,tests,crypt
         - version: "3.13t"
           # 2025-03-07 KO crypt => cryptography
-          cover: 83.9
+          cover: 84.0
           env: PYTHON_GIL=0
           deps: doc,dev,tests
         - version: "3.13t"
-          cover: 83.9
+          cover: 84.0
           env: PYTHON_GIL=1
           deps: doc,dev,tests
         - version: "3.14"
           cover: 100.0
           deps: doc,dev,tests,crypt
         - version: "3.14t"
-          cover: 83.9
+          cover: 84.0
           env: PYTHON_GIL=0
           deps: doc,dev,tests
         - version: "3.14t"
-          cover: 83.9
+          cover: 84.0
           env: PYTHON_GIL=1
           deps: doc,dev,tests
     steps:
