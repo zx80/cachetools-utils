@@ -22,7 +22,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 - think again the encryption design to allow persistant ciphers?
   this would require to change the `iv` at least?
 
-## ? on ?
+## 10.4 on 2025-03-08
 
 Collect tests (contains) stats.
 Add _PyPy 3.11_, _Python 3.13t_ and _Python 3.14t_ to GitHub CI.
