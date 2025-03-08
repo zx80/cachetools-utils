@@ -1,6 +1,6 @@
 # CacheToolsUtils
 
-Classes to add key prefix and stats to
+Stackable cache classes, for instance to add key prefix and stats to
 [cachetools](https://pypi.org/project/cachetools/) classes and use
 [redis](https://redis.io/) and
 [memcached](https://memcached.org/) as storage backends,
@@ -20,7 +20,32 @@ and other cache-related utils.
 For our purpose, a cache is a key-value store, aka a dictionary, possibly with
 some constraints on keys (type, size) and values (size, serialization).
 This module provides new caches, wrappers and other utilities suitable to use
-with `cachetools`.
+with `cachetools`. Example:
+
+```python
+import redis
+import CacheToolsUtils as ctu
+import secrets
+
+redis_storage = redis.Redis(host="redis-service.wikipedia.org")
+storage = ctu.RedisCache(redis_storage, raw=True, ttl=120)
+crypto = ctu.EncryptedCache(storage, secrets.CACHE_KEY)
+cache = ctu.ToBytesCache(crypto)
+
+@ctu.cached(ctu.AutoPrefixedCache(cache), key=ctu.json_key)
+def repeat(s: str, n: int) -> str:
+    return s * n
+
+@ctu.cached(ctu.AutoPrefixedCache(cache), key=ctu.json_key)
+def banged(s: str, n: int) -> str:
+    return repeat(s, n) + "!"
+
+print(banged("aa", 3))  # add 2 cache entries
+print(repeat("aa", 3))  # cache hit!
+print(banged("aa", 3))  # cache hit!
+
+assert cache.hits() > 0
+```
 
 ### Cache classes
 
