@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import sys
 import socket
 import importlib
 import cachetools as ct
@@ -628,3 +629,26 @@ def test_autoprefix_cache():
         pytest.fail("must raise an exception")
     except Exception as e:
         assert "method: bad-method" in str(e)
+
+def test_nogil():
+
+    try:
+        if sys._is_gil_enabled():
+            pytest.skip("gil is enabled")
+    except AttributeError as e:
+        assert "_is_gil_enabled" in str(e)
+        pytest.skip("nogil not supported")
+
+    assert sys.is_gil_enabled()
+
+    cache = ctu.StatsCache(ctu.DictCache())
+
+    @ctu.cached(ctu.AutoPrefixedCache(cache))
+    def repeat(s: str, n: int) -> str:
+        return s * n
+
+    assert foo("a", 3) == "aaa" and foo("a", 2) == "aa"
+    assert foo("a", 3) == "aaa" and foo("a", 2) == "aa"
+    assert cache.hits() == 0.5
+
+    assert sys.is_gil_enabled()
