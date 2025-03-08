@@ -42,6 +42,16 @@ jobs:
         - version: "3.14"
           deps: doc,dev,tests,crypt
           cover: 100.0
+        - version: "3.14t"
+          deps: doc,dev,tests
+          env: PYTHON_GIL=0
+          # cover: 83.9
+          cover: 100.0
+        - version: "3.14t"
+          deps: doc,dev,tests
+          env: PYTHON_GIL=1
+          # cover: 83.9
+          cover: 100.0
     steps:
     # Setup
     - uses: actions/checkout@v4
