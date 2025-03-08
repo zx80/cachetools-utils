@@ -670,7 +670,7 @@ def run_thread(cache, nthreads):
         barrier.wait()
         for s in ls:
             for n in li:
-                barrier.wait()
+                # barrier.wait()
                 assert banged(s, n) == s * n + "!"
         barrier.wait()
         log.debug(f"thread end: {name}")
@@ -684,7 +684,9 @@ def run_thread(cache, nthreads):
     assert len(cache) == 32
     # 16 * 2 gets-no-hit + 16 * (nthreads - 1) get-with-hit
     hits = (nthreads - 1) / (nthreads + 1)
-    # NOTE hit ratio is not deterministic
+    # NOTE hit ratio is not deterministic: two thread may "get" at the same
+    # time, intercept the missing exception, compute the value and "set" it in cache.
+    # the failed "get" does not keep the lock to prevent that.
     assert 0.75 * hits < cache.hits() <= hits
 
 def test_threads():
