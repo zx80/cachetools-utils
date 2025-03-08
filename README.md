@@ -5,7 +5,7 @@ on top of [cachetools](https://pypi.org/project/cachetools/),
 [redis](https://redis.io/) and [memcached](https://memcached.org/).
 
 ![Status](https://github.com/zx80/cachetools-utils/actions/workflows/ctu.yml/badge.svg?branch=main&style=flat)
-![Tests](https://img.shields.io/badge/tests-23%20✓-success)
+![Tests](https://img.shields.io/badge/tests-24%20✓-success)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-success)
 ![Issues](https://img.shields.io/github/issues/zx80/cachetools-utils?style=flat)
 ![Python](https://img.shields.io/badge/python-3-informational)
@@ -23,11 +23,11 @@ with `cachetools`. Example:
 ```python
 import redis
 import CacheToolsUtils as ctu
-import secrets
+import config
 
-redis_storage = redis.Redis(host="redis-service.wikipedia.org")
+redis_storage = redis.Redis(**config.REDIS_SERVER)
 storage = ctu.RedisCache(redis_storage, raw=True, ttl=120)
-crypto = ctu.EncryptedCache(storage, secrets.CACHE_KEY)
+crypto = ctu.EncryptedCache(storage, config.CACHE_KEY)
 cache = ctu.ToBytesCache(crypto)
 
 @ctu.cached(ctu.AutoPrefixedCache(cache), key=ctu.json_key)
