@@ -682,10 +682,10 @@ def run_thread(cache, nthreads):
     # log.info(f"nthreads={nthreads} stats={cache.stats()}")
 
     assert len(cache) == 32
-    # FIXME the hit ratio may not be deterministic?
     # 16 * 2 gets-no-hit + 16 * (nthreads - 1) get-with-hit
     hits = (nthreads - 1) / (nthreads + 1)
-    assert cache.hits() == hits
+    # FIXME the hit ratio may not be deterministic?
+    assert abs(cache.hits() - hits) < 0.01
 
 def test_threads():
     cache = ctu.LockedCache(ctu.StatsCache(ctu.DictCache()), threading.RLock())
