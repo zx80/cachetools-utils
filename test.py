@@ -639,7 +639,7 @@ def test_nogil():
         assert "_is_gil_enabled" in str(e)
         pytest.skip("nogil not supported")
 
-    assert sys.is_gil_enabled()
+    assert sys._is_gil_enabled()
 
     cache = ctu.StatsCache(ctu.DictCache())
 
@@ -651,4 +651,4 @@ def test_nogil():
     assert foo("a", 3) == "aaa" and foo("a", 2) == "aa"
     assert cache.hits() == 0.5
 
-    assert sys.is_gil_enabled()
+    assert sys._is_gil_enabled()
