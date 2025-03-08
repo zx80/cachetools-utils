@@ -51,6 +51,7 @@ jobs:
       with:
         python-version: ${{ matrix.python.version }}
         allow-prereleases: true
+        cache: "pip"
     # Dependencies
     - name: Install Python dependencies and module
       run: make DEPS=${{ matrix.python.deps }} dev
