@@ -647,8 +647,13 @@ def test_nogil():
     def repeat(s: str, n: int) -> str:
         return s * n
 
-    assert foo("a", 3) == "aaa" and foo("a", 2) == "aa"
-    assert foo("a", 3) == "aaa" and foo("a", 2) == "aa"
+    @ctu.cached(ctu.AutoPrefixedCache(cache))
+    def banged(s: str, n: int) -> str:
+        return repeat(s, n) + "!"
+
+    assert banged("a", 3) == "aaa!"  # +2 entries
+    assert repeat("a", 3) == "aaa"   # hit
+    assert banged("a", 3) == "aaa!"  # hit
     assert cache.hits() == 0.5
 
     assert not sys._is_gil_enabled()
