@@ -634,6 +634,7 @@ def test_autoprefix_cache():
 
 def run_thread(cache, nthreads):
 
+    # direct tests
     cache.clear()
     cache.reset()
     assert len(cache) == 0
@@ -651,6 +652,7 @@ def run_thread(cache, nthreads):
     assert banged("a", 3) == "aaa!"  # hit
     assert cache.hits() == 0.5
 
+    # threaded tests
     cache.clear()
     cache.reset()
     assert len(cache) == 0
@@ -660,6 +662,8 @@ def run_thread(cache, nthreads):
     LS, LI = ["a", "b", "c", "d"], list(range(4))
 
     def run():
+        name = threading.current_thread().name
+        log.debug(f"thread start: {name}")
         ls, li = LS.copy(), LI.copy()
         random.shuffle(ls)
         random.shuffle(li)
@@ -669,17 +673,23 @@ def run_thread(cache, nthreads):
                 barrier.wait()
                 assert banged(s, n) == s * n + "!"
         barrier.wait()
+        log.debug(f"thread end: {name}")
 
     threads = [ threading.Thread(target=run, name=f"thread {i}") for i in range(nthreads) ]
     list(map(lambda t: t.start(), threads))
     list(map(lambda t: t.join(), threads))
 
+    # log.info(f"nthreads={nthreads} stats={cache.stats()}")
+
     assert len(cache) == 32
-    assert abs(cache.hits() - (1.0 / (nthreads + 1))) < 0.001
+    # FIXME the hit ratio may not be deterministic?
+    # 16 * 2 gets-no-hit + 16 * (nthreads - 1) get-with-hit
+    hits = (nthreads - 1) / (nthreads + 1)
+    assert cache.hits() == hits
 
 def test_threads():
-    cache = ctu.StatsCache(ctu.DictCache())
-    run_thread(cache, 2)
+    cache = ctu.LockedCache(ctu.StatsCache(ctu.DictCache()), threading.RLock())
+    run_thread(cache, 4)
     del cache
 
 def test_nogil():
