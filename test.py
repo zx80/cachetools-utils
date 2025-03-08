@@ -661,7 +661,7 @@ def test_nogil():
 
     import threading
     NTHREADS = 4
-    barrier = threading.barrier(NTHREADS, timeout=2)
+    barrier = threading.Barrier(NTHREADS, timeout=2)
     
     def run():
         barrier.wait()
