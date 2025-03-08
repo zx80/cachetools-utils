@@ -64,11 +64,13 @@ jobs:
         python-version: ${{ matrix.python.version }}
         allow-prereleases: true
         cache: "pip"
+    - name: Show PYTHON_GIL
+      run: echo ${PYTHON_GIL} / ${{ matrix.python.env }}
     # Dependencies
     - name: Install Python dependencies and module
       run: make DEPS=${{ matrix.python.deps }} dev
     - name: Start Redis
-      uses: supercharge/redis-github-action@1.7.0
+      uses: supercharge/redis-github-action@1.8.0
     - name: Start MemCached
       uses: niden/actions-memcached@v7
     # Checks
