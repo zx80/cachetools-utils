@@ -6,7 +6,7 @@ Classes to add key prefix and stats to
 [memcached](https://memcached.org/) as storage backends,
 and other cache-related utils.
 
-![Status](https://github.com/zx80/cachetools-utils/actions/workflows/cachetools-utils.yml/badge.svg?branch=main&style=flat)
+![Status](https://github.com/zx80/cachetools-utils/actions/workflows/ctu.yml/badge.svg?branch=main&style=flat)
 ![Tests](https://img.shields.io/badge/tests-23%20✓-success)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-success)
 ![Issues](https://img.shields.io/github/issues/zx80/cachetools-utils?style=flat)
