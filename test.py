@@ -3,6 +3,8 @@
 import sys
 import socket
 import importlib
+import random
+import threading
 import cachetools as ct
 import CacheToolsUtils as ctu
 import pytest
@@ -630,8 +632,57 @@ def test_autoprefix_cache():
     except Exception as e:
         assert "method: bad-method" in str(e)
 
-def test_nogil():
+def run_thread(cache, nthreads):
 
+    cache.clear()
+    cache.reset()
+    assert len(cache) == 0
+
+    @ctu.cached(cache=ctu.AutoPrefixedCache(cache))
+    def repeat(s: str, n: int) -> str:
+        return s * n
+
+    @ctu.cached(cache=ctu.AutoPrefixedCache(cache))
+    def banged(s: str, n: int) -> str:
+        return repeat(s, n) + "!"
+
+    assert banged("a", 3) == "aaa!"  # +2 entries
+    assert repeat("a", 3) == "aaa"   # hit
+    assert banged("a", 3) == "aaa!"  # hit
+    assert cache.hits() == 0.5
+
+    cache.clear()
+    cache.reset()
+    assert len(cache) == 0
+
+    barrier = threading.Barrier(nthreads, timeout=2)
+
+    LS, LI = ["a", "b", "c", "d"], list(range(4))
+
+    def run():
+        ls, li = LS.copy(), LI.copy()
+        random.shuffle(ls)
+        random.shuffle(li)
+        barrier.wait()
+        for s in ls:
+            for n in li:
+                barrier.wait()
+                assert banged(s, n) == s * n + "!"
+        barrier.wait()
+
+    threads = [ threading.Thread(target=run, name=f"thread {i}") for i in range(nthreads) ]
+    list(map(lambda t: t.start(), threads))
+    list(map(lambda t: t.join(), threads))
+
+    assert len(cache) == 32
+    assert abs(cache.hits() - (1.0 / (nthreads + 1))) < 0.001
+
+def test_threads():
+    cache = ctu.StatsCache(ctu.DictCache())
+    run_thread(cache, 2)
+    del cache
+
+def test_nogil():
     try:
         if sys._is_gil_enabled():
             pytest.skip("gil is enabled")
@@ -641,39 +692,8 @@ def test_nogil():
 
     assert not sys._is_gil_enabled()
 
-    cache = ctu.StatsCache(ctu.DictCache())
-
-    @ctu.cached(ctu.AutoPrefixedCache(cache))
-    def repeat(s: str, n: int) -> str:
-        return s * n
-
-    @ctu.cached(ctu.AutoPrefixedCache(cache))
-    def banged(s: str, n: int) -> str:
-        return repeat(s, n) + "!"
-
-    assert banged("a", 3) == "aaa!"  # +2 entries
-    assert repeat("a", 3) == "aaa"   # hit
-    assert banged("a", 3) == "aaa!"  # hit
-    assert cache.hits() == 0.5
-
-    # reset stats
-    cache.reset()
-
-    import threading
-    NTHREADS = 4
-    barrier = threading.Barrier(NTHREADS, timeout=2)
-    
-    def run():
-        barrier.wait()
-        for s in ("a", "b", "c"):
-            for n in range(3):
-                assert banged(s, n) == s * n + "!"
-        barrier.wait()
-
-    threads = [ threading.Thread(target=run, name=f"thread {i}") for i in range(NTHREADS) ] 
-    map(lambda t: t.start(), threads)
-    map(lambda t: t.join(), threads)
-
-    assert cache.hits() == 0.25
+    cache = ctu.LockedCache(ctu.StatsCache(ctu.DictCache()), threading.Lock())
+    run_thread(cache, 4)
+    del cache
 
     assert not sys._is_gil_enabled()
