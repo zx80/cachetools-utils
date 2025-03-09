@@ -50,9 +50,12 @@ jobs:
           cover: 84.0
           gil: 1
           deps: doc,dev,tests
+    env:
+      PYTHON_GIL: ${{ matrix.python.gil }}
     steps:
     # Setup
-    - uses: actions/checkout@v4
+    - name: Checkout Project
+      uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python.version }}
       # uses: actions/setup-python@v5
       uses: actions/setup-python@main
@@ -75,9 +78,9 @@ jobs:
     - name: Check the docs
       run: make check.docs
     - name: Check with pytest
-      run: PYTHON_GIL=${{ matrix.python.gil }} make check.pytest
+      run: make check.pytest
     - name: Check with coverage
-      run: PYTHON_GIL=${{ matrix.python.gil }} make COVER=${{ matrix.python.cover }} check.coverage
+      run: make COVER=${{ matrix.python.cover }} check.coverage
     - name: Check with pyright
       run: make check.pyright
     # 2025-03-07: KO with 3.13t because types-redis requires cryptography
