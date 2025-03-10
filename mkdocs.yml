@@ -2,6 +2,7 @@ site_name: CacheTools-Utils Python Package
 site_url: https://zx80.github.io/cachetools-utils/
 repo_url: https://github.com/zx80/cachetools-utils
 site_dir: _site
+copyright: 2022-2025 Fabien Coelho
 
 theme:
   name: material
