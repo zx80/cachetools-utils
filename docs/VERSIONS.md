@@ -25,6 +25,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 ## ? on ?
 
 Switch documentation to MkDocs.
+Switch docstrings to markdown.
 
 ## 10.4 on 2025-03-08
 
