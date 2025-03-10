@@ -28,7 +28,7 @@ _NO_DEFAULT = object()
 
 
 class _MutMapMix:
-    """Convenient MutableMapping Mixin, forward to _cache."""
+    """Convenient MutableMapping Mixin, forward to `_cache`."""
 
     # FIXME coverage reports this as missing with Python 3.14
     _cache: MutableMapping  # pragma: no cover
@@ -53,7 +53,7 @@ class _MutMapMix:
 
 
 class _KeyMutMapMix(_MutMapMix):
-    """Convenient MutableMapping Mixin with a key filter, forward to _cache."""
+    """Convenient MutableMapping Mixin with a key filter, forward to `_cache`."""
 
     @abc.abstractmethod
     def _key(self, key: Any) -> Any:  # pragma: no cover
@@ -73,7 +73,7 @@ class _KeyMutMapMix(_MutMapMix):
 
 
 class _StatsMix:
-    """Convenient Mixin to forward stats methods to _cache."""
+    """Convenient Mixin to forward stats methods to `_cache`."""
 
     def hits(self) -> float|None:
         return self._cache.hits()  # type: ignore
@@ -114,9 +114,11 @@ class _RedisMix:  # pragma: no cover
 class DebugCache(_StatsMix, MutableMapping):
     """Debug class.
 
-    :param cache: actual cache
-    :param log: logging instance
-    :param name: name of instance for output
+    Parameters:
+
+    - cache: actual cache
+    - log: logging instance
+    - name: name of instance for output
     """
 
     def __init__(self, cache: MutableMapping, log: logging.Logger, name="cache"):
@@ -162,7 +164,7 @@ class DebugCache(_StatsMix, MutableMapping):
 
 
 class DictCache(_MutMapMix, MutableMapping):
-    """Cache class based on dict."""
+    """Cache class based on `dict`."""
 
     def __init__(self):
         self._cache = dict()
@@ -174,17 +176,19 @@ class DictCache(_MutMapMix, MutableMapping):
 class LockedCache(_MutMapMix, _StatsMix, _RedisMix, MutableMapping):
     """Cache class with a lock.
 
-    :param cache: actual cache.
-    :param lock: lock (context manager) to use
+    Parameters:
+
+    - cache: actual cache.
+    - lock: lock (context manager) to use
 
     The locked layer should be the last one before the actual cache.
 
-    .. code-block: python
-
-       import threading
-       import cachetools as ct
-       import CacheToolsUtils as ctu
-       cache = ctu.LockedCache(ct.LFUCache(), threading.RLock())
+    ```python
+    import threading
+    import cachetools as ct
+    import CacheToolsUtils as ctu
+    cache = ctu.LockedCache(ct.LFUCache(), threading.RLock())
+    ```
     """
 
     def __init__(self, cache: MutableMapping, lock):
