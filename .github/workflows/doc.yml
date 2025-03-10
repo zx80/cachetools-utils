@@ -17,13 +17,11 @@ jobs:
       - name: Check documentation syntax
         run: make check.docs
       - name: Generate documentation
-        run: |
-          make docs
-          ln -s docs/_build/html _site
+        run: make docs
       - name: Fix permissions
         run: |
-          find docs/_build -type d -print | xargs chmod a+rx
-          find docs/_build -type f -print | xargs chmod a+r
+          find _site -type d -print | xargs chmod a+rx
+          find _site -type f -print | xargs chmod a+r
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
   deploy:

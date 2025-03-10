@@ -37,7 +37,7 @@ dev = [
   "pytest", "coverage",
   "pymarkdownlnt",
 ]
-doc = [ "sphinx", "sphinx_rtd_theme", "sphinx-autoapi", "sphinx-lint", "myst_parser" ]
+doc = [ "mkdocs", "mkdocs-material", "mkdocstrings[python]" ]
 crypt = [ "pycryptodome" ]
 tests = [ "pymemcache", "redis" ]
 pub = [ "build", "wheel", "twine" ]

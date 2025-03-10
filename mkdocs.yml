@@ -1,0 +1,86 @@
+site_name: CacheTools-Utils Python Package
+site_url: https://zx80.github.io/cachetools-utils/
+repo_url: https://github.com/zx80/cachetools-utils
+site_dir: _site
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.tracking  # update url bar
+    - navigation.top
+    - navigation.footer
+    # - navigation.instant.progress
+    # - navigation.sections
+    # - navigation.path
+    # - navigation.expand
+    # - content.code.copy
+    - search.suggest
+    - search.highlight
+    - toc.follow
+    # - toc.integrate  # vs separated TOC
+    # - search.share
+    - header.autohide
+  logo: cachetools-utils-dalle-logo.webp
+  favicon: favicon.ico
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      primary: orange
+      accent: orange
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      primary: deep-orange
+      accent: deep-orange
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+plugins:
+  - search
+  # - glightbox  # image pop-up
+  - mkdocstrings
+
+extra:
+  generator: false  # drop footer notice about mkdocs material
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - attr_list  # images
+  - md_in_html  # images
+  - pymdownx.arithmatex:
+      generic: true
+#  - markdown_include.include:
+#     # {!filename!}
+#     # {!filename!lines=1 5-10}
+#     base_path: docs
+
+nav:
+  - Index: index.md
+  - Documentation: DOCUMENTATION.md
+  - Explanations: EXPLANATIONS.md
+  - Tutorial: TUTORIAL.md
+  - Recipes: RECIPES.md
+  - API: REFERENCE.md
+  - Versions: VERSIONS.md

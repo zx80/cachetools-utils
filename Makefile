@@ -12,9 +12,8 @@ F.pdf	= $(F.md:%.md=%.pdf)
 
 .PHONY: clean
 clean:
-	$(RM) -r __pycache__ *.egg-info dist build .mypy_cache .pytest_cache htmlcov .ruff_cache
+	$(RM) -r __pycache__ *.egg-info dist build .mypy_cache .pytest_cache htmlcov .ruff_cache _site
 	$(RM) .coverage $(F.pdf)
-	$(MAKE) -C docs clean
 
 .PHONY: clean.venv
 clean.venv: clean
@@ -92,12 +91,11 @@ check.coverage: venv
 check.docs: venv
 	source venv/bin/activate
 	pymarkdown -d MD013 scan *.md */*.md
-	sphinx-lint docs/
 
 .PHONY: docs
 docs: venv
 	source venv/bin/activate
-	make -C docs html
+	mkdocs build
 
 .PHONY: install
 install: $(MODULE).egg-info
