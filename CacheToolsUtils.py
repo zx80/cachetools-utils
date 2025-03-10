@@ -215,8 +215,10 @@ class LockedCache(_MutMapMix, _StatsMix, _RedisMix, MutableMapping):
 class PrefixedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
     """Cache class to add a key prefix.
 
-    :param cache: actual cache.
-    :param prefix: prefix to prepend to keys.
+    Parameters:
+
+    - cache: actual cache.
+    - prefix: prefix to prepend to keys.
     """
 
     def __init__(self, cache: MutableMapping, prefix: str|bytes = ""):
@@ -236,9 +238,11 @@ class PrefixedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
 class AutoPrefixedCache(PrefixedCache):
     """Cache class with an automatic counter-based string prefix.
 
-    :param cache: actual cache.
-    :param sep: prefix separator, default is ".".
-    :param method: encoding method in "b64", "b64u", "b32", "b32x", "b16",
+    Parameters:
+
+    - cache: actual cache.
+    - sep: prefix separator, default is ".".
+    - method: encoding method in "b64", "b64u", "b32", "b32x", "b16",
         "a85" and "b85". Default is "b64".
     """
 
@@ -269,16 +273,17 @@ class AutoPrefixedCache(PrefixedCache):
 class StatsCache(_MutMapMix, MutableMapping):
     """Cache class to keep stats.
 
-    :param cache: actual cache.
+    Parameter:
 
-    .. code-block: python
+    - cache: actual cache.
 
-       import cachetools as ct
-       import CacheToolsUtils as ctu
-       cache = ctu.StatsCache(ct.LRUCache())
-       ...
+    ```python
+    import cachetools as ct
+    import CacheToolsUtils as ctu
+    cache = ctu.StatsCache(ct.LRUCache())
+    ```
 
-    Note that CacheTools ``cached`` decorator with ``info=True`` provides
+    Note that CacheTools `cached` decorator with `info=True` provides
     hits, misses, maxsize and currsize information.
     However, this only works for its own classes.
     """
@@ -333,9 +338,11 @@ class StatsCache(_MutMapMix, MutableMapping):
 class TwoLevelCache(_MutMapMix, MutableMapping):
     """Two-Level Cache class for CacheTools.
 
-    :param cache: first (smaller, shorter TTL) cache
-    :param cache2: second (larger, longer TTL) cache
-    :param resilient: whether to ignore cache2 failures
+    Parameters:
+
+    - cache: first (smaller, shorter TTL) cache
+    - cache2: second (larger, longer TTL) cache
+    - resilient: whether to ignore cache2 failures
     """
 
     def __init__(self, cache: MutableMapping, cache2: MutableMapping, resilient=False):
@@ -461,10 +468,12 @@ class _Cipher:
 class EncryptedCache(_KeyMutMapMix, _StatsMix, MutableMapping):
     """Encrypted Bytes Key-Value Cache.
 
-    :param secret: bytes of secret, at least 16 bytes.
-    :param hsize: size of hashed key, default is *16*.
-    :param csize: value checksum size, default is *0*.
-    :param cipher: chose cipher from "Salsa20", "AES-128-CBC" or "ChaCha20".
+    Parameters:
+
+    - secret: bytes of secret, at least 16 bytes.
+    - hsize: size of hashed key, default is *16*.
+    - csize: value checksum size, default is *0*.
+    - cipher: chose cipher from "Salsa20", "AES-128-CBC" or "ChaCha20".
 
     The key is *not* encrypted but simply hashed, thus they are
     fixed size with a very low collision probability.
@@ -557,14 +566,16 @@ class ToBytesCache(_KeyMutMapMix, _StatsMix, MutableMapping):
 def cached(cache, *args, **kwargs):
     """Extended decorator with delete and exists.
 
-    All parameters are forwarded to ``cachetools.cached``.
+    All parameters are forwarded to `cachetools.cached`.
 
-    :param cache: actual cache.
+    Parameter:
 
-    If *f(\\*args, \\*\\*kwargs)* is the ``cached`` function, then:
+    - cache: actual cache.
 
-    - ``f.cache_in(*args, **kwargs)`` tells whether the result is cached.
-    - ``f.cache_del(*args, **kwargs)`` deletes (invalidates) the cached result.
+    If *f(\\*args, \\*\\*kwargs)* is the _cached_ function, then:
+
+    - `f.cache_in(*args, **kwargs)` tells whether the result is cached.
+    - `f.cache_del(*args, **kwargs)` deletes (invalidates) the cached result.
     """
 
     def decorate(fun: Callable):
@@ -607,15 +618,17 @@ def cacheMethods(
 ):
     """Cache some object methods.
 
-    :param cache: cache to use.
-    :param obj: object instance to be cached.
-    :param gen: generator of PrefixedCache.
-    :param opts: additional parameters when calling `cached`.
-    :param funs: name of methods and corresponding prefix
+    Parameters:
 
-    .. code-block:: python
+    - cache: cache to use.
+    - obj: object instance to be cached.
+    - gen: generator of PrefixedCache.
+    - opts: additional parameters when calling `cached`.
+    - funs: name of methods and corresponding prefix
 
-       cacheMethods(cache, item, PrefixedCache, compute1="c1.", compute2="c2.")
+    ```python
+    cacheMethods(cache, item, PrefixedCache, compute1="c1.", compute2="c2.")
+    ```
     """
     for fun, prefix in funs.items():
         assert hasattr(obj, fun), f"cannot cache missing method {fun} on {obj}"
@@ -634,15 +647,17 @@ def cacheFunctions(
 ):
     """Cache some global functions, with a prefix.
 
-    :param cache: cache to use.
-    :param globs: global object dictionary.
-    :param gen: generator of PrefixedCache.
-    :param opts: additional parameters when calling `cached`.
-    :param funs: name of functions and corresponding prefix
+    Parameters:
 
-    .. code-block:: python
+    - cache: cache to use.
+    - globs: global object dictionary.
+    - gen: generator of PrefixedCache.
+    - opts: additional parameters when calling `cached`.
+    - funs: name of functions and corresponding prefix
 
-       cacheFunctions(cache, globals(), PrefixedCache, fun1="f1.", fun2="f2.")
+    ```python
+    cacheFunctions(cache, globals(), PrefixedCache, fun1="f1.", fun2="f2.")
+    ```
     """
     for fun, prefix in funs.items():
         assert fun in globs, "caching functions: {fun} not found"
@@ -701,13 +716,13 @@ def full_hash_key(*args, **kwargs) -> str:
 # MEMCACHED
 #
 class JsonSerde:
-    """JSON serialize/deserialize class for MemCached (``pymemcache``).
+    """JSON serialize/deserialize class for MemCached (`pymemcache`).
 
-    .. code-block:: python
-
-       import pymemcache as pmc
-       import CacheToolsUtils as ctu
-       pmc_cache = pmc.Client(server="localhost", serde=ctu.JsonSerde())
+    ```python
+    import pymemcache as pmc
+    import CacheToolsUtils as ctu
+    pmc_cache = pmc.Client(server="localhost", serde=ctu.JsonSerde())
+    ```
     """
 
     # keep strings, else json
@@ -734,16 +749,19 @@ class JsonSerde:
 class MemCached(_KeyMutMapMix, MutableMapping):
     """MemCached-compatible wrapper class for cachetools with key encoding.
 
-    :param cache: actual memcached cache.
+    Parameter:
 
-    .. code-block:: python
+    - cache: actual memcached cache.
 
-       import pymemcache as pmc
-       import CacheToolsUtils as ctu
-       cache = ctu.MemCached(pmc.Client(server="localhost", serde=ctu.JsonSerde()))
+    ```python
+    import pymemcache as pmc
+    import CacheToolsUtils as ctu
+    cache = ctu.MemCached(pmc.Client(server="localhost", serde=ctu.JsonSerde()))
 
-       @ctu.cached(cache=cache)
-       def whatever(...):
+    @ctu.cached(cache=cache)
+    def whatever(...):
+        ...
+    ```
     """
 
     def __init__(self, cache):
@@ -777,15 +795,17 @@ class MemCached(_KeyMutMapMix, MutableMapping):
 class PrefixedMemCached(MemCached):
     """MemCached-compatible wrapper class for cachetools with a key prefix.
 
-    :param cache: actual memcached cache.
-    :param prefix: post key-encoding prepended prefix.
+    Parameters:
 
-    .. code-block:: python
+    - cache: actual memcached cache.
+    - prefix: post key-encoding prepended prefix.
 
-       import pymemcache as pmc
-       import CacheToolsUtils as ctu
-       # add a "app." prefix to keys, after serialization
-       cache = ctu.PrefixedMemCached(pmc.Client(server="localhost", serde=ctu.JsonSerde()), "app.")
+    ```python
+    import pymemcache as pmc
+    import CacheToolsUtils as ctu
+    # add a "app." prefix to keys, after serialization
+    cache = ctu.PrefixedMemCached(pmc.Client(server="localhost", serde=ctu.JsonSerde()), "app.")
+    ```
     """
 
     def __init__(self, cache, prefix: str = ""):
@@ -800,20 +820,22 @@ class PrefixedMemCached(MemCached):
 # REDIS
 #
 class RedisCache(MutableMapping):
-    """Redis TTL-ed wrapper for cachetools (``redis``).
+    """Redis TTL-ed wrapper for cachetools (`redis`).
 
-    :param cache: actual redis cache.
-    :param ttl: time-to-live in seconds, used as default expiration (``ex``), default is 600.
-    :param raw: whether to serialize keys and values, default is *False*.
+    Parameters:
+
+    - cache: actual redis cache.
+    - ttl: time-to-live in seconds, used as default expiration (`ex`), default is _600_.
+    - raw: whether to serialize keys and values, default is *False*.
 
     Keys and values are serialized in *JSON*.
 
-    .. code-block:: python
-
-       import redis
-       import CacheToolsUtils as ctu
-       # redis with 1 hour expiration
-       cache = ctu.RedisCache(redis.Redis(host="localhost"), 3600)
+    ```python
+    import redis
+    import CacheToolsUtils as ctu
+    # redis with 1 hour expiration
+    cache = ctu.RedisCache(redis.Redis(host="localhost"), 3600)
+    ```
     """
 
     def __init__(self, cache, ttl=600, raw=False):
@@ -893,16 +915,18 @@ class RedisCache(MutableMapping):
 class PrefixedRedisCache(RedisCache):
     """Prefixed Redis wrapper class for cachetools.
 
-    :param cache: actual redis cache.
-    :param prefix: post key encoding prefix, default is empty.
-    :param ttl: time-to-live in seconds, used as default expiration (``ex``), default is 600.
+    Parameters:
 
-    .. code-block:: python
+    - cache: actual redis cache.
+    - prefix: post key encoding prefix, default is empty.
+    - ttl: time-to-live in seconds, used as default expiration (`ex`), default is _600_.
 
-       import redis
-       import CacheToolsUtils as ctu
-       # redis with "app." prefix and 1 hour expiration
-       cache = ctu.PrefixedRedisCache(redis.Redis(host="localhost"), "app.", 3600)
+    ```python
+    import redis
+    import CacheToolsUtils as ctu
+    # redis with "app." prefix and 1 hour expiration
+    cache = ctu.PrefixedRedisCache(redis.Redis(host="localhost"), "app.", 3600)
+    ```
     """
 
     def __init__(self, cache, prefix: str = "", ttl=600):
