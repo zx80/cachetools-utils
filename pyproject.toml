@@ -8,13 +8,12 @@ version = "10.4"
 authors = [ { name = "Fabien Coelho", email = "cachetools.utils@coelho.net" } ]
 description = "Cachetools Utilities"
 readme = "README.md"
-license = { text = "CC0" }
+license = "CC0-1.0"
 requires-python = ">= 3.10"
 dependencies = [ "cachetools" ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
-  "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
   "Programming Language :: Python",
   "Topic :: Software Development :: Libraries :: Python Modules"
 ]
