@@ -27,6 +27,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 Switch documentation to MkDocs.
 Switch docstrings to markdown.
 Use SPDX licensing format.
+Update GitHub CI versions.
 
 ## 10.4 on 2025-03-08
 
