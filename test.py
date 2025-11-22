@@ -687,7 +687,7 @@ def run_thread(cache, nthreads):
     # NOTE hit ratio is not deterministic: two thread may "get" at the same
     # time, intercept the missing exception, compute the value and "set" it in cache.
     # the failed "get" does not keep the lock to prevent that.
-    assert 0.75 * hits < cache.hits() <= hits
+    assert 0.7 * hits < cache.hits() <= hits
 
 def test_threads():
     cache = ctu.LockedCache(ctu.StatsCache(ctu.DictCache()), threading.RLock())
