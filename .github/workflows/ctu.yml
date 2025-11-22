@@ -43,13 +43,13 @@ jobs:
           cover: 100.0
           deps: doc,dev,tests,crypt
         - version: "3.14t"
-          cover: 84.0
+          cover: 100.0
           gil: 0
-          deps: doc,dev,tests
+          deps: doc,dev,tests,crypt
         - version: "3.14t"
-          cover: 84.0
+          cover: 100.0
           gil: 1
-          deps: doc,dev,tests
+          deps: doc,dev,tests,crypt
     env:
       PYTHON_GIL: ${{ matrix.python.gil }}
     steps:
