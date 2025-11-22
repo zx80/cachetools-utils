@@ -318,7 +318,7 @@ def test_stacked_redis():
 def test_two_level_small():
     # front cache is too small, always fallback
     c0 = ct.TTLCache(100, ttl=60)
-    c1 = ct.LFUCache(10)
+    c1 = ct.LRUCache(10)
     c0s = ctu.StatsCache(c0)
     c1s = ctu.StatsCache(c1)
     c2 = ctu.TwoLevelCache(c1s, c0s)
