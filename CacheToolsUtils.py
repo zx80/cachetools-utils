@@ -27,8 +27,10 @@ log = logging.getLogger(__name__)
 
 _NO_DEFAULT = object()
 
+
 class CTUError(Exception):
     pass
+
 
 class _MutMapMix:
     """Convenient MutableMapping Mixin, forward to `_cache`."""
