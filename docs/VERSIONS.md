@@ -22,6 +22,10 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 - think again the encryption design to allow persistant ciphers?
   this would require to change the `iv` at least?
 
+## 11.1 on 2026-11-10
+
+- bump github action versions.
+
 ## 11.0 on 2025-11-22
 
 - switch documentation to MkDocs.
