@@ -27,7 +27,7 @@ Install [package](https://pypi.org/project/CacheToolsUtils/) from
 - bump github action versions.
 - update Python CI versions, add _3.15_, remove _3.10_.
 - add `CTUError` custom exception and adapt tests.
-- minor updates to please `ruff` and `flake8`.
+- minor updates to please `ruff`, `flake8`, `pymarkdown`.
 
 ## 11.0 on 2025-11-22
 
@@ -112,7 +112,7 @@ The dependency comes from `pycryptodome` _and_ `types-redis`.
 - add `DebugCache` for helping debug.
 - sort keys on JSON dumps.
 - upgrade GitHub actions.
-- test with Python *3.12*.
+- test with Python _3.12_.
 - improved documentation.
 
 ## 8.2 on 2023-08-27
@@ -137,7 +137,7 @@ The dependency comes from `pycryptodome` _and_ `types-redis`.
 ## 7.0 on 2023-06-17
 
 - switch to `pyproject.toml`.
-- require Python *3.10+* for easier typing.
+- require Python _3.10+_ for easier typing.
 
 ## 6.0 on 2023-03-19
 
@@ -146,7 +146,7 @@ The dependency comes from `pycryptodome` _and_ `types-redis`.
 
 ## 5.1 on 2022-11-12
 
-- test with Python *3.12*.
+- test with Python _3.12_.
 
 ## 5.0 on 2022-09-11
 

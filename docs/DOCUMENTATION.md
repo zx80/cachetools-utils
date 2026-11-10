@@ -188,7 +188,7 @@ keys and values are scalars.
 
 ## PrefixedRedisCache
 
-Wrapper with a prefix *and* a ttl.
+Wrapper with a prefix _and_ a ttl.
 A specific class is needed because of key encoding and value
 serialization and deserialization.
 
