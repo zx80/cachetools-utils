@@ -13,53 +13,29 @@ jobs:
       matrix:
         python:
         # - version: "pypy3.10"
-        #   cover: 100.0
         #   deps: doc,dev,tests,crypt
         - version: "pypy3.11"
-          cover: 100.0
-          deps: doc,dev,tests,crypt
         - version: "3.11"
-          cover: 100.0
-          deps: doc,dev,tests,crypt
         - version: "3.12"
-          cover: 100.0
-          deps: doc,dev,tests,crypt
         - version: "3.13"
-          cover: 100.0
-          deps: doc,dev,tests,crypt
-        - version: "3.13t"
-          # 2025-03-07 KO crypt => cryptography
-          cover: 84.0
-          gil: 0
-          deps: doc,dev,tests
-        - version: "3.13t"
-          cover: 84.0
-          gil: 1
-          deps: doc,dev,tests
+        # 2025-03-07 KO crypt => cryptography
+        # 2026-11-10 KO maturin rustc pyo3 failure on ast-serialize
+        # - version: "3.13t"
+        #   gil: 0
+        # - version: "3.13t"
+        #   gil: 1
         # Python 3.14
         - version: "3.14"
-          cover: 100.0
-          deps: doc,dev,tests,crypt
         - version: "3.14t"
-          cover: 100.0
           gil: 0
-          deps: doc,dev,tests,crypt
         - version: "3.14t"
-          cover: 100.0
           gil: 1
-          deps: doc,dev,tests,crypt
         # Python 3.15
         - version: "3.15"
-          cover: 100.0
-          deps: doc,dev,tests,crypt
         - version: "3.15t"
-          cover: 100.0
           gil: 0
-          deps: doc,dev,tests,crypt
         - version: "3.15t"
-          cover: 100.0
           gil: 1
-          deps: doc,dev,tests,crypt
     env:
       PYTHON_GIL: ${{ matrix.python.gil }}
     steps:
@@ -74,7 +50,7 @@ jobs:
         cache: "pip"
     # Dependencies
     - name: Install Python dependencies and module
-      run: make DEPS=${{ matrix.python.deps }} dev
+      run: make DEPS=doc,dev,tests,crypt dev
     - name: Start Redis
       uses: supercharge/redis-github-action@1.8.1
     - name: Start MemCached
@@ -89,7 +65,7 @@ jobs:
     - name: Check with pytest
       run: make check.pytest
     - name: Check with coverage
-      run: make COVER=${{ matrix.python.cover }} check.coverage
+      run: make check.coverage
     - name: Check with pyright
       run: make check.pyright
     # 2025-03-07: KO with 3.13t because types-redis requires cryptography
