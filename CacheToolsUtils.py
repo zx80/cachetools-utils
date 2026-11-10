@@ -5,7 +5,8 @@ CacheTools Utilities. This code is public domain.
 # FIXME 3.13t checks without Cipher package
 # pyright: reportMissingImports=false
 
-from typing import Any, Callable, MutableMapping
+from typing import Any
+from collections.abc import Callable, MutableMapping
 import abc
 
 import base64
@@ -26,6 +27,8 @@ log = logging.getLogger(__name__)
 
 _NO_DEFAULT = object()
 
+class CTUError(Exception):
+    pass
 
 class _MutMapMix:
     """Convenient MutableMapping Mixin, forward to `_cache`."""
@@ -167,7 +170,7 @@ class DictCache(_MutMapMix, MutableMapping):
     """Cache class based on `dict`."""
 
     def __init__(self):
-        self._cache = dict()
+        self._cache = {}
 
     def clear(self):
         self._cache.clear()
@@ -261,7 +264,7 @@ class AutoPrefixedCache(PrefixedCache):
 
     def __init__(self, cache: MutableMapping, sep: str = ".", method: str = "b64"):
         if method not in AutoPrefixedCache._METHODS:
-            raise Exception(f"invalid conversion method: {method}")
+            raise CTUError(f"invalid conversion method: {method}")
         encoder = AutoPrefixedCache._METHODS[method]
         length = max(1, (AutoPrefixedCache._COUNTER.bit_length() + 7) // 8)
         # NOTE byteorder default added to 3.11
@@ -445,7 +448,7 @@ class _Cipher:
             kwargs = {"mode": cipher.MODE_CBC}
             size = 16
         else:
-            raise Exception(f"unexpected cipher: {name}")
+            raise CTUError(f"unexpected cipher: {name}")
         self._cipher = cipher
         self._params = params
         self._kwargs = kwargs
@@ -743,7 +746,7 @@ class JsonSerde:
         elif flag == 3:
             return json.loads(value.decode("utf-8"))
         else:
-            raise Exception(f"Unknown serialization format: {flag}")
+            raise CTUError(f"Unknown serialization format: {flag}")
 
 
 class MemCached(_KeyMutMapMix, MutableMapping):
@@ -875,7 +878,7 @@ class RedisCache(MutableMapping):
         return self._cache.dbsize()
 
     def __iter__(self):
-        raise Exception("not implemented yet")
+        raise NotImplementedError("not implemented yet")
 
     def info(self, *args, **kwargs):
         """Return redis informations."""
@@ -947,5 +950,3 @@ class StatsRedisCache(PrefixedRedisCache):
 
     def flushdb(self):
         self._cache.clear()
-
-    pass

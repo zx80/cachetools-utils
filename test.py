@@ -110,8 +110,8 @@ def setgetdel(cache):
     try:
         val = cache[KEY]
         pytest.fail("should raise KeyError")
-    except Exception as e:
-        assert isinstance(e, KeyError)
+    except KeyError as e:
+        assert True, "KeyError was raised"
     # int value
     cache[KEY] = 65536
     # assert KEY in cache
@@ -260,8 +260,8 @@ def test_redis():
     try:
         cache.__iter__()
         pytest.fail("not supported")
-    except Exception as e:
-        assert "not implemented yet" in str(e)
+    except NotImplementedError as e:
+        assert True, "not implemented yet as expected"
 
 @pytest.mark.skipif(
     not has_service(port=6379), reason="no local redis service available for testing"
@@ -417,7 +417,7 @@ def test_methods():
     try:
         ctu.cacheMethods(cs, s, no_such_method="?.")
         pytest.fail("exception must be raised")
-    except Exception as e:
+    except AssertionError as e:
         assert "missing method" in str(e)
 
 def sum_n2(n: int):
@@ -451,7 +451,7 @@ def test_corners():
         js = ctu.JsonSerde()
         js.deserialize("foo", "bla", 42)
         pytest.fail("exception must be raised")
-    except Exception as e:
+    except ctu.CTUError as e:
         assert "Unknown serialization format" in str(e)
 
 
@@ -596,7 +596,7 @@ def test_encrypted_cache():
     try:
         ctu._Cipher("foo")
         pytest.fail("must raise an exception")
-    except Exception as e:
+    except ctu.CTUError as e:
         assert "unexpected" in str(e)
 
 def test_autoprefix_cache():
@@ -629,7 +629,7 @@ def test_autoprefix_cache():
     try:
         cache = ctu.AutoPrefixedCache(cache, method="bad-method")
         pytest.fail("must raise an exception")
-    except Exception as e:
+    except ctu.CTUError as e:
         assert "method: bad-method" in str(e)
 
 def run_thread(cache, nthreads):
